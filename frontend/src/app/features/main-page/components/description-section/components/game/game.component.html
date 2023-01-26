@@ -1,0 +1,6 @@
+<p>
+    {{ oneHundredPercentIconName }} {{ name }}
+    <ng-container *ngIf="iconNames?.length">
+        <ng-container *ngFor="let iconName of iconNames">{{ iconName }} </ng-container>
+    </ng-container>
+</p>

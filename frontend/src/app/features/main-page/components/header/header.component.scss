@@ -1,0 +1,11 @@
+@use 'src/styles/colors' as *;
+
+.heading {
+    font-size: 32px
+}
+
+.first-letter {
+    font-size: 42px;
+    color: $color-lan-blue;
+    font-weight: 500;
+}
