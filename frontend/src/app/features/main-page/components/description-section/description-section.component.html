@@ -1,4 +1,6 @@
-<section *ngIf="(description$ | async) as description" class="description">
+<mados-section-heading [headingText]="headingText"></mados-section-heading>
+
+<section *ngIf="description$ | async as description" class="description">
     <div>
         <mados-category
             *ngFor="let category of description?.categories"
@@ -14,12 +16,7 @@
         <p>{{ sectionSeparator }}</p>
     </div>
     <div class="margin-top">
-        <mados-game
-            *ngFor="let game of description?.completedGames"
-            [oneHundredPercentIconName]="game.oneHundredPercentIconName"
-            [name]="game.name"
-            [iconNames]="game.iconNames"
-        ></mados-game>
+        <mados-game *ngFor="let game of description?.completedGames" [oneHundredPercentIconName]="game.oneHundredPercentIconName" [name]="game.name" [iconNames]="game.iconNames"></mados-game>
     </div>
     <div class="margin-top">
         <p>{{ sectionSeparator }}</p>

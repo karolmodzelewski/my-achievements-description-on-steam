@@ -16,7 +16,7 @@ import { MockMainInterceptor } from './mocks/mock-main.interceptor';
             provide: HTTP_INTERCEPTORS,
             useClass: MockMainInterceptor,
             multi: true,
-        }
+        },
     ],
     bootstrap: [AppComponent],
 })

@@ -60,7 +60,7 @@ export class MockMainData {
                 iconName: 'ːcsgo_deadːːcsgo_deadːːcsgo_deadː',
                 description: 'Ultra hard game to master',
             },
-        ]
+        ],
     };
 
     public descriptionResponseBody: DescriptionResponseBody = {
@@ -135,61 +135,39 @@ export class MockMainData {
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'FINAL FANTASY X / X-2 HD Remaster',
-                iconNames: [
-                    'ːHeartPixː',
-                    'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
-                    'ːcsgo_deadːːcsgo_deadː',
-                ],
+                iconNames: ['ːHeartPixː', 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː', 'ːcsgo_deadːːcsgo_deadː'],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Pixel Puzzles Traditional Jigsaws',
-                iconNames: [
-                    'ːcleandinoː',
-                    'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
-                ],
+                iconNames: ['ːcleandinoː', 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː'],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Sniper Elite 4',
-                iconNames: [
-                    'ːcleanhourglassːːcleanhourglassː',
-                ],
+                iconNames: ['ːcleanhourglassːːcleanhourglassː'],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Stardew Valley',
-                iconNames: [
-                    'ːHeartPixː',
-                    'ːcleanhourglassːːcleanhourglassː',
-                    'ːcsgo_deadː',
-                ],
+                iconNames: ['ːHeartPixː', 'ːcleanhourglassːːcleanhourglassː', 'ːcsgo_deadː'],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Warframe',
-                iconNames: [
-                    'ːHeartPixː',
-                    'ːcleanhourglassːːcleanhourglassː',
-                ],
+                iconNames: ['ːHeartPixː', 'ːcleanhourglassːːcleanhourglassː'],
             },
         ],
         gamesWithNewAchievements: [
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Cuphead',
-                iconNames: [
-                    'ːcleanhourglassː',
-                    'ːcsgo_deadːːcsgo_deadː'
-                ],
+                iconNames: ['ːcleanhourglassː', 'ːcsgo_deadːːcsgo_deadː'],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Graveyard Keeper',
-                iconNames: [
-                    'ːHeartPixː',
-                    'ːcleanhourglassː',
-                ],
+                iconNames: ['ːHeartPixː', 'ːcleanhourglassː'],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
@@ -199,11 +177,7 @@ export class MockMainData {
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'The Binding of Isaac: Rebirth',
-                iconNames: [
-                    'ːHeartPixː',
-                    'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
-                    'ːcsgo_deadː',
-                ],
+                iconNames: ['ːHeartPixː', 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː', 'ːcsgo_deadː'],
             },
         ],
     };

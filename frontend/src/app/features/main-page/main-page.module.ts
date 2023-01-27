@@ -16,28 +16,10 @@ import { AddGameFormComponent } from './components/add-game-form/add-game-form.c
 import { DescriptionSectionComponent } from './components/description-section/description-section.component';
 import { CategoryComponent } from './components/description-section/components/category/category.component';
 import { GameComponent } from './components/description-section/components/game/game.component';
-
+import { SectionHeadingComponent } from './components/section-heading/section-heading.component';
 
 @NgModule({
-  declarations: [
-    MainPageComponent,
-    HeaderComponent,
-    AddCategoriesFormComponent,
-    AddGameFormComponent,
-    DescriptionSectionComponent,
-    CategoryComponent,
-    GameComponent
-  ],
-  imports: [
-    CommonModule,
-    MainPageRoutingModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatInputModule,
-    ClipboardModule,
-    HttpClientModule,
-    MatIconModule,
-    MatTooltipModule,
-  ]
+    declarations: [MainPageComponent, HeaderComponent, AddCategoriesFormComponent, AddGameFormComponent, DescriptionSectionComponent, CategoryComponent, GameComponent, SectionHeadingComponent],
+    imports: [CommonModule, MainPageRoutingModule, ReactiveFormsModule, MatButtonModule, MatInputModule, ClipboardModule, HttpClientModule, MatIconModule, MatTooltipModule],
 })
-export class MainPageModule { }
+export class MainPageModule {}

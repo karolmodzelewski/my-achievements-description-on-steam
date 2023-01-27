@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'mados-game',
-  templateUrl: './game.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'mados-game',
+    templateUrl: './game.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GameComponent {
     @Input()

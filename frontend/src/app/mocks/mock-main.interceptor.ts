@@ -31,10 +31,6 @@ export class MockMainInterceptor extends MockMainData implements HttpInterceptor
     private mockSuccess(body: any = null, delayTime: number = 500): Observable<HttpEvent<unknown>> {
         const httpResponse: HttpResponse<any> = new HttpResponse({ status: 200, body });
 
-        return of(httpResponse).pipe(
-            materialize(),
-            delay(delayTime),
-            dematerialize()
-        );
+        return of(httpResponse).pipe(materialize(), delay(delayTime), dematerialize());
     }
 }

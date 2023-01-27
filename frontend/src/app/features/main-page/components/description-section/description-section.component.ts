@@ -11,17 +11,17 @@ import { Destroyable } from '../../../../utils/destroyable.util';
 import { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
 import { CategoryType } from '../../../../enums/category-type.enum';
 
-
 @Component({
-  selector: 'mados-description-section',
-  templateUrl: './description-section.component.html',
-  styleUrls: ['./description-section.component.scss']
+    selector: 'mados-description-section',
+    templateUrl: './description-section.component.html',
+    styleUrls: ['./description-section.component.scss'],
 })
 export class DescriptionSectionComponent extends Destroyable implements OnInit {
     public description$: Observable<DescriptionResponseBody>;
     public descriptionToCopy: string;
     public sectionSeparator: string = '_______________________________';
     public tooltipText: string = 'Copied!';
+    public headingText: string = 'Description';
 
     constructor(private httpClient: HttpClient) {
         super();
@@ -77,9 +77,8 @@ export class DescriptionSectionComponent extends Destroyable implements OnInit {
                 categoriesToCopy += '\n';
             }
 
-            categoriesToCopy += `${category?.iconName} ${category?.description} (${category?.amount})\n`
+            categoriesToCopy += `${category?.iconName} ${category?.description} (${category?.amount})\n`;
         });
-
 
         return categoriesToCopy;
     }
@@ -101,7 +100,7 @@ export class DescriptionSectionComponent extends Destroyable implements OnInit {
             gamesToCopy += `${game?.oneHundredPercentIconName} ${game?.name} `;
 
             game?.iconNames?.forEach((iconName: string) => {
-                gamesToCopy += `${iconName }`
+                gamesToCopy += `${iconName}`;
             });
 
             gamesToCopy += '\n';
