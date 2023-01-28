@@ -1,10 +1,75 @@
-import { Component } from '@angular/core';
+
+import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+
+import { CategoryType } from './../../../../enums/category-type.enum';
+import { Category } from './../../../../interfaces/category.interface';
 
 @Component({
     selector: 'mados-add-categories-form',
     templateUrl: './add-categories-form.component.html',
     styleUrls: ['./add-categories-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddCategoriesFormComponent {
+export class AddCategoriesFormComponent implements OnInit {
+    @Input()
+    public categories: Category[];
+
     public headingText: string = 'Add categories';
+    public form: FormGroup = new FormGroup({});
+    public CategoryType: typeof CategoryType = CategoryType;
+    public shouldShowCategories: boolean;
+
+    constructor(private httpClient: HttpClient) {}
+
+    public ngOnInit(): void {
+        this.buildForm();
+    }
+
+    public iterateByOriginalOrder = (): number => 0;
+
+    // TODO add states when backend is ready
+    public saveCategories(): void {
+        const requestBody: Omit<Category, 'amount'>[] = this.prepareCategoriesDataForRequest();
+
+        this.httpClient.post<Omit<Category, 'amount'>[]>('categories', requestBody);
+    }
+
+    public handleCategoriesVisibility(): void {
+        this.shouldShowCategories = !this.shouldShowCategories;
+    }
+
+    private prepareCategoriesDataForRequest(): Omit<Category, 'amount'>[] {
+        const categories: Omit<Category, 'amount'>[] = [];
+
+        for (const categoryType in this.form.value) {
+            if (categoryType) {
+                const category: Omit<Category, 'amount'> = {
+                    type: categoryType as CategoryType,
+                    iconName: this.form.value[categoryType].iconName,
+                    description: this.form.value[categoryType].description,
+                };
+
+                categories.push(category);
+            }
+        }
+
+        return categories;
+    }
+
+    private buildForm(): void {
+        this.categories?.forEach((category: Category) => this.form?.addControl(category.type, this.buildCategoryFormGroup(category)));
+    }
+
+    private buildCategoryFormGroup(category: Category): FormGroup {
+        const { iconName, description, type } = category;
+
+        return type === CategoryType.ONE_HUNDRED_PERCENT
+            ? new FormGroup({ iconName: new FormControl(iconName) })
+            : new FormGroup({
+                  iconName: new FormControl(iconName),
+                  description: new FormControl(description),
+              });
+    }
 }

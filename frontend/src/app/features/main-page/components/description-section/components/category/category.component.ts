@@ -16,7 +16,7 @@ export class CategoryComponent {
     @Input()
     public description: string | null;
     @Input()
-    public amount: number;
+    public amount: number | null;
 
     public CategoryType: typeof CategoryType = CategoryType;
 }

@@ -3,6 +3,7 @@ import { CategoriesResponseBody } from '../interfaces/categories-response-body.i
 import { CategoryType } from '../enums/category-type.enum';
 
 export class MockMainData {
+    // consider endpoint delete?
     public categoriesResponseBody: CategoriesResponseBody = {
         categories: [
             {
@@ -66,30 +67,6 @@ export class MockMainData {
     public descriptionResponseBody: DescriptionResponseBody = {
         categories: [
             {
-                type: CategoryType.LOVED_GAME,
-                iconName: 'ːHeartPixː',
-                description: 'Game which I fall in love',
-                amount: 31,
-            },
-            {
-                type: CategoryType.BAD_GAME,
-                iconName: 'ːcleandinoː',
-                description: 'This game sucks for various reasons',
-                amount: 13,
-            },
-            {
-                type: CategoryType.DOESNT_COUNT,
-                iconName: 'ːQuestion_mː',
-                description: `Somehow it doesn't count`,
-                amount: 5,
-            },
-            {
-                type: CategoryType.BUGGED_GAME,
-                iconName: 'ːpukeː',
-                description: 'Bugged game with broken achievements',
-                amount: 2,
-            },
-            {
                 type: CategoryType.LONG_GAME,
                 iconName: 'ːcleanhourglassː',
                 description: 'Long game (+25h)',
@@ -124,6 +101,36 @@ export class MockMainData {
                 iconName: 'ːcsgo_deadːːcsgo_deadːːcsgo_deadː',
                 description: 'Ultra hard game to master',
                 amount: 5,
+            },
+            {
+                type: CategoryType.LOVED_GAME,
+                iconName: 'ːHeartPixː',
+                description: 'Game which I fall in love',
+                amount: 31,
+            },
+            {
+                type: CategoryType.BAD_GAME,
+                iconName: 'ːcleandinoː',
+                description: 'This game sucks for various reasons',
+                amount: 13,
+            },
+            {
+                type: CategoryType.DOESNT_COUNT,
+                iconName: 'ːQuestion_mː',
+                description: `Somehow it doesn't count`,
+                amount: 5,
+            },
+            {
+                type: CategoryType.BUGGED_GAME,
+                iconName: 'ːpukeː',
+                description: 'Bugged game with broken achievements',
+                amount: 2,
+            },
+            {
+                type: CategoryType.ONE_HUNDRED_PERCENT,
+                iconName: 'ː100ftː',
+                description: null,
+                amount: 135,
             },
         ],
         completedGames: [

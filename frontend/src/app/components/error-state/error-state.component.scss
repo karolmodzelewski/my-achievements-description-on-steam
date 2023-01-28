@@ -1,0 +1,27 @@
+@use 'src/styles/colors' as *;
+
+:host {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.icon-warning,
+.warning-text {
+    font-size: 32px;
+    color: $color-red;
+}
+
+.icon-warning {
+    width: 36px;
+    height: 36px;
+}
+
+.warning-text {
+    font-weight: bold;
+    margin: 0 0 0 20px;
+    line-height: 40px;
+    text-align: center;
+}
