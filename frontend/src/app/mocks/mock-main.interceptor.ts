@@ -16,8 +16,6 @@ export class MockMainInterceptor extends MockMainData implements HttpInterceptor
         const { url, method } = request;
 
         switch (true) {
-            case url.endsWith('categories') && method === HttpRequestMethod.GET:
-                return this.mockSuccess(this.categoriesResponseBody);
             case url.endsWith('description') && method === HttpRequestMethod.GET:
                 return this.mockSuccess(this.descriptionResponseBody);
             case url.endsWith('categories') && method === HttpRequestMethod.POST:

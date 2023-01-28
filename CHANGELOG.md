@@ -2,6 +2,14 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.3.0 - 28.01.2022 [FE]
+
+- Create 'Add categories' view and logic
+- Add ignore *html rule to prettier
+- Improve colors and margins in app
+- Add states standalone components
+- Delete categories endpoint and its data from mocks
+
 ## 0.2.0 - 27.01.2022 [FE]
 
 - Add section-heading component
