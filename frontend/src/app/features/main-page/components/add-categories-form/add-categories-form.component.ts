@@ -45,6 +45,7 @@ export class AddCategoriesFormComponent implements OnInit {
 
     public resetInputField(control: FormControl | any): void {
         control.reset();
+        control.updateValueAndValidity();
     }
 
     private prepareCategoriesDataForRequest(): Category[] {

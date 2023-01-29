@@ -1,0 +1,42 @@
+@use 'src/styles/colors' as *;
+
+.form {
+    background: $color-magnolia-white;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.form-fields-container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 20px;
+}
+
+.game-name-form-field {
+    grid-column: 1 / 4;
+}
+
+.length-form-field {
+    grid-column: 4 / 6;
+}
+
+.difficulty-form-field {
+    grid-column: 6 / 8;
+}
+
+.icon-clear {
+    cursor: pointer;
+}
+
+.checkboxes-container {
+    display: flex;
+    margin-top: 5px;
+    gap: 0 20px;
+}
+
+.add-game-button {
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+    margin-top: 40px;
+}

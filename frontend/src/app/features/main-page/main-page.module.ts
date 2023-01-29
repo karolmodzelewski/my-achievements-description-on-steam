@@ -7,6 +7,8 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { HttpClientModule } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { MainPageComponent } from './main-page.component';
 import { MainPageRoutingModule } from './main-page-routing.module';
@@ -49,6 +51,8 @@ import { ExpansionButtonTextComponent } from './components/add-categories-form/c
         MatTooltipModule,
         ErrorStateComponent,
         LoadingStateComponent,
+        MatSelectModule,
+        MatCheckboxModule,
     ],
 })
 export class MainPageModule {}
