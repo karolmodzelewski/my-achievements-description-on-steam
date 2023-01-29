@@ -8,17 +8,22 @@
             <mat-form-field>
                 <mat-label>Icon name:</mat-label>
                 <input formControlName="iconName" type="text" matInput />
+                <mat-icon (click)="resetInputField(control?.value?.get('iconName'))" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
+                <mat-error *ngIf="control?.value?.get('iconName')?.errors?.['required']">Icon name is required</mat-error>
             </mat-form-field>
 
-            <mat-form-field *ngIf="control.key !== CategoryType.ONE_HUNDRED_PERCENT">
+            <mat-form-field *ngIf="control.key !== CategoryType.ONE_HUNDRED_PERCENT" class="description">
                 <mat-label>Description:</mat-label>
                 <input formControlName="description" type="text" matInput />
+                <mat-icon (click)="resetInputField(control?.value?.get('description'))" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
+                <mat-error *ngIf="control?.value?.get('description')?.errors?.['required']">Description is required</mat-error>
             </mat-form-field>
         </div>
     </form>
 
     <button
         (click)="saveCategories()"
+        [disabled]="form.invalid"
         class="save-categories-button button"
         color="primary"
         mat-stroked-button

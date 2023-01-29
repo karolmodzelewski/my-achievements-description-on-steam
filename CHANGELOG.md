@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.4.0 - 29.01.2022 [FE]
+
+- Add missing validations to 'Add categories' form
+- Add 'x' icon to handle reset of specific input field in 'Add categories' form
+
 ## 0.3.0 - 28.01.2022 [FE]
 
 - Create 'Add categories' view and logic

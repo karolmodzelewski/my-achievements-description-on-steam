@@ -1,7 +1,6 @@
-
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { CategoryType } from './../../../../enums/category-type.enum';
 import { Category } from './../../../../interfaces/category.interface';
@@ -31,6 +30,10 @@ export class AddCategoriesFormComponent implements OnInit {
 
     // TODO add states when backend is ready
     public saveCategories(): void {
+        if (this.form.invalid) {
+            return;
+        }
+
         const requestBody: Omit<Category, 'amount'>[] = this.prepareCategoriesDataForRequest();
 
         this.httpClient.post<Omit<Category, 'amount'>[]>('categories', requestBody);
@@ -38,6 +41,10 @@ export class AddCategoriesFormComponent implements OnInit {
 
     public handleCategoriesVisibility(): void {
         this.shouldShowCategories = !this.shouldShowCategories;
+    }
+
+    public resetInputField(control: FormControl | any): void {
+        control.reset();
     }
 
     private prepareCategoriesDataForRequest(): Omit<Category, 'amount'>[] {
@@ -66,10 +73,10 @@ export class AddCategoriesFormComponent implements OnInit {
         const { iconName, description, type } = category;
 
         return type === CategoryType.ONE_HUNDRED_PERCENT
-            ? new FormGroup({ iconName: new FormControl(iconName) })
+            ? new FormGroup({ iconName: new FormControl<string | null>(iconName, Validators.required) })
             : new FormGroup({
-                  iconName: new FormControl(iconName),
-                  description: new FormControl(description),
+                  iconName: new FormControl<string | null>(iconName, Validators.required),
+                  description: new FormControl<string | null>(description, Validators.required),
               });
     }
 }
