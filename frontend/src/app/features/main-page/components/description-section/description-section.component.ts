@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { Game } from './../../../../interfaces/game.interface';
@@ -11,6 +11,7 @@ import { GameCategory } from '../../../../interfaces/game-category.interface';
     selector: 'mados-description-section',
     templateUrl: './description-section.component.html',
     styleUrls: ['./description-section.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DescriptionSectionComponent implements OnInit {
     @Input()

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ViewportScroller } from '@angular/common';
 
 import { filter, takeUntil } from 'rxjs';
 
@@ -17,6 +18,7 @@ import { DescriptionResponseBody } from '../../../../interfaces/description-resp
     selector: 'mados-add-game-form',
     templateUrl: './add-game-form.component.html',
     styleUrls: ['./add-game-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddGameFormComponent extends Destroyable implements OnInit {
     @Input()
@@ -26,10 +28,12 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     public form: FormGroup;
     public AddGameFormControl: typeof AddGameFormControl = AddGameFormControl;
     public CategoryType: typeof CategoryType = CategoryType;
+    public headingId: string = 'heading';
 
     constructor(
         private httpClient: HttpClient,
         private editGameService: EditGameService,
+        private viewportScroller: ViewportScroller,
     ) {
         super();
     }
@@ -102,6 +106,7 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         this.form.get(AddGameFormControl.NAME)?.setValue(gameName);
         this.updateFormCategoriesWhenEditingGame(game);
         this.form.updateValueAndValidity();
+        this.viewportScroller.scrollToAnchor(this.headingId);
     }
 
     private updateFormCategoriesWhenEditingGame(game: Game): void {

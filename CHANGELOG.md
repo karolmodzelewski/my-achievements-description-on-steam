@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.8.0 - 29.01.2022 [FE]
+
+- Add ViewportScroller to 'Add categories' and 'Add game' components
+- Add missing ChangeDetectionStrategy.OnPush
+
 ## 0.7.0 - 29.01.2022 [FE]
 
 - Add edition mode for specific game

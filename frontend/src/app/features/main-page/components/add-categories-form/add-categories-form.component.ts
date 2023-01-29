@@ -1,3 +1,4 @@
+import { ViewportScroller } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -19,8 +20,12 @@ export class AddCategoriesFormComponent implements OnInit {
     public form: FormGroup = new FormGroup({});
     public CategoryType: typeof CategoryType = CategoryType;
     public shouldShowCategories: boolean;
+    public headingId: string = 'heading';
 
-    constructor(private httpClient: HttpClient) {}
+    constructor(
+        private httpClient: HttpClient,
+        private viewportScroller: ViewportScroller,
+    ) {}
 
     public ngOnInit(): void {
         this.buildForm();
@@ -41,6 +46,8 @@ export class AddCategoriesFormComponent implements OnInit {
 
     public handleCategoriesVisibility(): void {
         this.shouldShowCategories = !this.shouldShowCategories;
+
+        this.viewportScroller.scrollToAnchor(this.headingId);
     }
 
     public resetInputField(control: FormControl | any): void {
