@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.9.0 - 30.01.2022 [FE]
+
+- Adjust views to mobile devices
+
 ## 0.8.1 - 29.01.2022 [FE]
 
 - Lint and format application
