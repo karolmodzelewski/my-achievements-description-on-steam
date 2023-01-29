@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.4.1 - 29.01.2022 [FE]
+
+- Restore categories GET endpoint
+- Fix invalid description presentation
+
 ## 0.4.0 - 29.01.2022 [FE]
 
 - Add missing validations to 'Add categories' form
