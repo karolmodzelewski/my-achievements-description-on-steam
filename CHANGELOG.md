@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.5.0 - 29.01.2022 [FE]
+
+- Add custom scrollbar for description component
+
 ## 0.4.2 - 29.01.2022 [FE]
 
 - Change Omit<Category, 'amount'> to optional 'amount' parameter in 'Category' interface
