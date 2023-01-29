@@ -13,7 +13,7 @@ import { Category } from './../../../../interfaces/category.interface';
 })
 export class AddCategoriesFormComponent implements OnInit {
     @Input()
-    public categories: Omit<Category, 'amount'>[];
+    public categories: Category[];
 
     public headingText: string = 'Add categories';
     public form: FormGroup = new FormGroup({});
@@ -34,9 +34,9 @@ export class AddCategoriesFormComponent implements OnInit {
             return;
         }
 
-        const requestBody: Omit<Category, 'amount'>[] = this.prepareCategoriesDataForRequest();
+        const requestBody: Category[] = this.prepareCategoriesDataForRequest();
 
-        this.httpClient.post<Omit<Category, 'amount'>[]>('categories', requestBody);
+        this.httpClient.post<Category[]>('categories', requestBody);
     }
 
     public handleCategoriesVisibility(): void {
@@ -47,12 +47,12 @@ export class AddCategoriesFormComponent implements OnInit {
         control.reset();
     }
 
-    private prepareCategoriesDataForRequest(): Omit<Category, 'amount'>[] {
-        const categories: Omit<Category, 'amount'>[] = [];
+    private prepareCategoriesDataForRequest(): Category[] {
+        const categories: Category[] = [];
 
         for (const categoryType in this.form.value) {
             if (categoryType) {
-                const category: Omit<Category, 'amount'> = {
+                const category: Category = {
                     type: categoryType as CategoryType,
                     iconName: this.form.value[categoryType].iconName,
                     description: this.form.value[categoryType].description,
@@ -66,10 +66,10 @@ export class AddCategoriesFormComponent implements OnInit {
     }
 
     private buildForm(): void {
-        this.categories?.forEach((category: Omit<Category, 'amount'>) => this.form?.addControl(category.type, this.buildCategoryFormGroup(category)));
+        this.categories?.forEach((category: Category) => this.form?.addControl(category.type, this.buildCategoryFormGroup(category)));
     }
 
-    private buildCategoryFormGroup(category: Omit<Category, 'amount'>): FormGroup {
+    private buildCategoryFormGroup(category: Category): FormGroup {
         const { iconName, description, type } = category;
 
         return type === CategoryType.ONE_HUNDRED_PERCENT

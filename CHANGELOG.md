@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.4.2 - 29.01.2022 [FE]
+
+- Change Omit<Category, 'amount'> to optional 'amount' parameter in 'Category' interface
+
 ## 0.4.1 - 29.01.2022 [FE]
 
 - Restore categories GET endpoint
