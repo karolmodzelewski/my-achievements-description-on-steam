@@ -22,10 +22,7 @@ export class AddCategoriesFormComponent implements OnInit {
     public shouldShowCategories: boolean;
     public headingId: string = 'heading';
 
-    constructor(
-        private httpClient: HttpClient,
-        private viewportScroller: ViewportScroller,
-    ) {}
+    constructor(private httpClient: HttpClient, private viewportScroller: ViewportScroller) {}
 
     public ngOnInit(): void {
         this.buildForm();

@@ -55,6 +55,6 @@ import { EditGameService } from './services/edit-game.service';
         MatSelectModule,
         MatCheckboxModule,
     ],
-    providers: [EditGameService]
+    providers: [EditGameService],
 })
 export class MainPageModule {}

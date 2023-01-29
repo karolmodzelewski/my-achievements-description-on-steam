@@ -1,6 +1,7 @@
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+
 import { GameCategory } from '../../../../../../interfaces/game-category.interface';
 import { EditGameService } from '../../../../services/edit-game.service';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'mados-game',
@@ -18,7 +19,7 @@ export class GameComponent {
     @Input()
     public shouldShowEdition: boolean;
 
-    constructor(private editGameService: EditGameService) { }
+    constructor(private editGameService: EditGameService) {}
 
     public editGame(): void {
         this.editGameService.editingGameName$.next(this.name);

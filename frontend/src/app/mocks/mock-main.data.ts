@@ -146,7 +146,7 @@ export class MockMainData {
                     {
                         type: CategoryType.VERY_HARD_GAME,
                         iconName: 'ːcsgo_deadːːcsgo_deadː',
-                    }
+                    },
                 ],
             },
             {
@@ -160,7 +160,7 @@ export class MockMainData {
                     {
                         type: CategoryType.ULTRA_LONG_GAME,
                         iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
-                    }
+                    },
                 ],
             },
             {
@@ -188,7 +188,7 @@ export class MockMainData {
                     {
                         type: CategoryType.HARD_GAME,
                         iconName: 'ːcsgo_deadː',
-                    }
+                    },
                 ],
             },
             {
@@ -202,7 +202,7 @@ export class MockMainData {
                     {
                         type: CategoryType.ULTRA_LONG_GAME,
                         iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
-                    }
+                    },
                 ],
             },
         ],
@@ -218,7 +218,7 @@ export class MockMainData {
                     {
                         type: CategoryType.VERY_HARD_GAME,
                         iconName: 'ːcsgo_deadːːcsgo_deadː',
-                    }
+                    },
                 ],
             },
             {

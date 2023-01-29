@@ -30,11 +30,7 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     public CategoryType: typeof CategoryType = CategoryType;
     public headingId: string = 'heading';
 
-    constructor(
-        private httpClient: HttpClient,
-        private editGameService: EditGameService,
-        private viewportScroller: ViewportScroller,
-    ) {
+    constructor(private httpClient: HttpClient, private editGameService: EditGameService, private viewportScroller: ViewportScroller) {
         super();
     }
 
@@ -91,10 +87,7 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     }
 
     private handleGameEdition(): void {
-        this.editGameService.editingGameName$.pipe(
-            filter(Boolean),
-            takeUntil(this.destroyed$)
-        ).subscribe((gameName: string) => this.updateFormWhenEditingGame(gameName));
+        this.editGameService.editingGameName$.pipe(filter(Boolean), takeUntil(this.destroyed$)).subscribe((gameName: string) => this.updateFormWhenEditingGame(gameName));
     }
 
     private updateFormWhenEditingGame(gameName: string): void {

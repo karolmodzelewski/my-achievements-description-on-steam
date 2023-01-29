@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.8.1 - 29.01.2022 [FE]
+
+- Lint and format application
+
 ## 0.8.0 - 29.01.2022 [FE]
 
 - Add ViewportScroller to 'Add categories' and 'Add game' components
@@ -15,7 +19,7 @@ Both frontend and backend changes and the final version of the application will 
 
 ## 0.6.0 - 29.01.2022 [FE]
 
-- Create 'Add game' view and logic 
+- Create 'Add game' view and logic
 
 ## 0.5.0 - 29.01.2022 [FE]
 
