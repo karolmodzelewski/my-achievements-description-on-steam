@@ -1,41 +1,33 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
-
-import { takeUntil, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 
 import { Game } from './../../../../interfaces/game.interface';
 import { Category } from './../../../../interfaces/category.interface';
-import { Destroyable } from '../../../../utils/destroyable.util';
 import { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
 import { CategoryType } from '../../../../enums/category-type.enum';
+import { GameCategory } from '../../../../interfaces/game-category.interface';
 
 @Component({
     selector: 'mados-description-section',
     templateUrl: './description-section.component.html',
     styleUrls: ['./description-section.component.scss'],
 })
-export class DescriptionSectionComponent extends Destroyable implements OnInit {
-    public description$: Observable<DescriptionResponseBody>;
+export class DescriptionSectionComponent implements OnInit {
+    @Input()
+    public description: DescriptionResponseBody;
+
     public descriptionToCopy: string;
     public sectionSeparator: string = '_______________________________';
     public tooltipText: string = 'Copied!';
     public headingText: string = 'Description';
-
-    constructor(private httpClient: HttpClient) {
-        super();
-    }
+    public shouldShowEdition: boolean;
 
     public ngOnInit(): void {
-        this.getDescription();
+        this.prepareDescriptionToCopy();
     }
 
-    public getDescription(): void {
-        this.description$ = this.httpClient.get<DescriptionResponseBody>('description').pipe(
-            takeUntil(this.destroyed$),
-            tap((description: DescriptionResponseBody) => this.prepareDescriptionToCopy(description))
-        );
+    public handleEditionMode(): void {
+        this.shouldShowEdition = !this.shouldShowEdition;
     }
 
     public handleTooltip(event: Event, tooltip: MatTooltip): void {
@@ -48,23 +40,23 @@ export class DescriptionSectionComponent extends Destroyable implements OnInit {
         }, 2000);
     }
 
-    private prepareDescriptionToCopy(description: DescriptionResponseBody): void {
+    private prepareDescriptionToCopy(): void {
         let descriptionToCopy: string = '';
 
         // Categories
-        descriptionToCopy += this.getCategoriesPartOfDescription(description?.categories);
+        descriptionToCopy += this.getCategoriesPartOfDescription(this.description?.categories);
 
         // Separator 1
-        descriptionToCopy += this.getSeparatorPartOfDescription('Completed', description?.completedGames?.length);
+        descriptionToCopy += this.getSeparatorPartOfDescription('Completed', this.description?.completedGames?.length);
 
         // Completed games
-        descriptionToCopy += this.getGamePartOfDescription(description?.completedGames);
+        descriptionToCopy += this.getGamePartOfDescription(this.description?.completedGames);
 
         // Separator 2
-        descriptionToCopy += this.getSeparatorPartOfDescription('New achievements', description?.gamesWithNewAchievements?.length);
+        descriptionToCopy += this.getSeparatorPartOfDescription('New achievements', this.description?.gamesWithNewAchievements?.length);
 
         // Games with new achievements
-        descriptionToCopy += this.getGamePartOfDescription(description?.gamesWithNewAchievements);
+        descriptionToCopy += this.getGamePartOfDescription(this.description?.gamesWithNewAchievements);
 
         this.descriptionToCopy = descriptionToCopy;
     }
@@ -99,8 +91,8 @@ export class DescriptionSectionComponent extends Destroyable implements OnInit {
         games?.forEach((game: Game) => {
             gamesToCopy += `${game?.oneHundredPercentIconName} ${game?.name} `;
 
-            game?.iconNames?.forEach((iconName: string) => {
-                gamesToCopy += `${iconName}`;
+            game?.categories?.forEach((gameCategory: GameCategory) => {
+                gamesToCopy += `${gameCategory.iconName}`;
             });
 
             gamesToCopy += '\n';

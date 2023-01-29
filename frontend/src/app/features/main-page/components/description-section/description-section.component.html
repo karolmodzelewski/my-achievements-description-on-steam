@@ -1,6 +1,6 @@
 <mados-section-heading [headingText]="headingText"></mados-section-heading>
 
-<section *ngIf="description$ | async as description" class="description">
+<section class="description">
     <div>
         <mados-category
             *ngFor="let category of description?.categories"
@@ -12,15 +12,21 @@
     </div>
     <div class="margin-top">
         <p>{{ sectionSeparator }}</p>
-        <p>COMPLETED ({{ description?.completedGames?.length }}):</p>
+        <p>COMPLETED ({{ description.completedGames.length }}):</p>
         <p>{{ sectionSeparator }}</p>
     </div>
     <div class="margin-top">
-        <mados-game *ngFor="let game of description?.completedGames" [oneHundredPercentIconName]="game.oneHundredPercentIconName" [name]="game.name" [iconNames]="game.iconNames"></mados-game>
+        <mados-game
+            *ngFor="let game of description?.completedGames"
+            [oneHundredPercentIconName]="game.oneHundredPercentIconName"
+            [name]="game.name"
+            [categories]="game?.categories"
+            [shouldShowEdition]="shouldShowEdition"
+        ></mados-game>
     </div>
     <div class="margin-top">
         <p>{{ sectionSeparator }}</p>
-        <p>NEW ACHIEVEMENTS ({{ description?.gamesWithNewAchievements?.length }}):</p>
+        <p>NEW ACHIEVEMENTS ({{ description.gamesWithNewAchievements.length }}):</p>
         <p>{{ sectionSeparator }}</p>
     </div>
     <div class="margin-top">
@@ -28,17 +34,32 @@
             *ngFor="let game of description?.gamesWithNewAchievements"
             [oneHundredPercentIconName]="game.oneHundredPercentIconName"
             [name]="game.name"
-            [iconNames]="game.iconNames"
+            [categories]="game?.categories"
+            [shouldShowEdition]="shouldShowEdition"
         ></mados-game>
     </div>
-    <mat-icon
-        #tooltip="matTooltip"
-        (click)="handleTooltip($event, tooltip)"
-        (mouseenter)="$event.stopImmediatePropagation()"
-        (mouseleave)="$event.stopImmediatePropagation()"
-        [matTooltip]="tooltipText"
-        [cdkCopyToClipboard]="descriptionToCopy"
-        fontIcon="content_copy"
-        class="icon-copy"
-    ></mat-icon>
+    <div class="icons-container">
+        <mat-icon
+            *ngIf="!shouldShowEdition"
+            (click)="handleEditionMode()"
+            fontIcon="edit_off"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            *ngIf="shouldShowEdition"
+            (click)="handleEditionMode()"
+            fontIcon="edit"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            #tooltip="matTooltip"
+            (click)="handleTooltip($event, tooltip)"
+            (mouseenter)="$event.stopImmediatePropagation()"
+            (mouseleave)="$event.stopImmediatePropagation()"
+            [matTooltip]="tooltipText"
+            [cdkCopyToClipboard]="descriptionToCopy"
+            fontIcon="content_copy"
+            class="icon"
+        ></mat-icon>
+    </div>
 </section>

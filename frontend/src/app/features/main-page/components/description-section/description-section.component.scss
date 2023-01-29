@@ -22,21 +22,24 @@
     margin-top: 30px;
 }
 
-.icon-copy {
-    width: 50px;
-    height: 50px;
-    font-size: 50px;
-    color: $color-dark-white;
+.icons-container {
     position: absolute;
     top: 15px;
     right: 15px;
+}
+
+.icon {
+    width: 42px;
+    height: 42px;
+    font-size: 42px;
+    color: $color-dark-white;
     cursor: pointer;
 
     &:hover {
         transform: scale(1.05);
     }
-}
 
-.pre {
-    line-height: 1;
+    &:nth-of-type(n + 1) {
+        margin-left: 10px;
+    }
 }

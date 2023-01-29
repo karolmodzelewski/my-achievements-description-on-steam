@@ -130,54 +130,132 @@ export class MockMainData {
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'DeathComing',
-                iconNames: null,
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'FINAL FANTASY X / X-2 HD Remaster',
-                iconNames: ['ːHeartPixː', 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː', 'ːcsgo_deadːːcsgo_deadː'],
+                categories: [
+                    {
+                        type: CategoryType.LOVED_GAME,
+                        iconName: 'ːHeartPixː',
+                    },
+                    {
+                        type: CategoryType.ULTRA_LONG_GAME,
+                        iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
+                    },
+                    {
+                        type: CategoryType.VERY_HARD_GAME,
+                        iconName: 'ːcsgo_deadːːcsgo_deadː',
+                    }
+                ],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Pixel Puzzles Traditional Jigsaws',
-                iconNames: ['ːcleandinoː', 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː'],
+                categories: [
+                    {
+                        type: CategoryType.BAD_GAME,
+                        iconName: 'ːcleandinoː',
+                    },
+                    {
+                        type: CategoryType.ULTRA_LONG_GAME,
+                        iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
+                    }
+                ],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Sniper Elite 4',
-                iconNames: ['ːcleanhourglassːːcleanhourglassː'],
+                categories: [
+                    {
+                        type: CategoryType.VERY_LONG_GAME,
+                        iconName: 'ːcleanhourglassːːcleanhourglassː',
+                    },
+                ],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Stardew Valley',
-                iconNames: ['ːHeartPixː', 'ːcleanhourglassːːcleanhourglassː', 'ːcsgo_deadː'],
+                categories: [
+                    {
+                        type: CategoryType.LOVED_GAME,
+                        iconName: 'ːHeartPixː',
+                    },
+                    {
+                        type: CategoryType.VERY_LONG_GAME,
+                        iconName: 'ːcleanhourglassːːcleanhourglassː',
+                    },
+                    {
+                        type: CategoryType.HARD_GAME,
+                        iconName: 'ːcsgo_deadː',
+                    }
+                ],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Warframe',
-                iconNames: ['ːHeartPixː', 'ːcleanhourglassːːcleanhourglassː'],
+                categories: [
+                    {
+                        type: CategoryType.LOVED_GAME,
+                        iconName: 'ːHeartPixː',
+                    },
+                    {
+                        type: CategoryType.ULTRA_LONG_GAME,
+                        iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
+                    }
+                ],
             },
         ],
         gamesWithNewAchievements: [
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Cuphead',
-                iconNames: ['ːcleanhourglassː', 'ːcsgo_deadːːcsgo_deadː'],
+                categories: [
+                    {
+                        type: CategoryType.LONG_GAME,
+                        iconName: 'ːcleanhourglassː',
+                    },
+                    {
+                        type: CategoryType.VERY_HARD_GAME,
+                        iconName: 'ːcsgo_deadːːcsgo_deadː',
+                    }
+                ],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Graveyard Keeper',
-                iconNames: ['ːHeartPixː', 'ːcleanhourglassː'],
+                categories: [
+                    {
+                        type: CategoryType.LOVED_GAME,
+                        iconName: 'ːHeartPixː',
+                    },
+                    {
+                        type: CategoryType.LONG_GAME,
+                        iconName: 'ːcleanhourglassː',
+                    },
+                ],
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'House Flipper',
-                iconNames: null,
             },
             {
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'The Binding of Isaac: Rebirth',
-                iconNames: ['ːHeartPixː', 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː', 'ːcsgo_deadː'],
+                categories: [
+                    {
+                        type: CategoryType.LOVED_GAME,
+                        iconName: 'ːHeartPixː',
+                    },
+                    {
+                        type: CategoryType.ULTRA_LONG_GAME,
+                        iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
+                    },
+                    {
+                        type: CategoryType.HARD_GAME,
+                        iconName: 'ːcsgo_deadː',
+                    },
+                ],
             },
         ],
     };

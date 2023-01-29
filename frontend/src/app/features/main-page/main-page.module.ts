@@ -24,6 +24,7 @@ import { ErrorStateComponent } from '../../components/error-state/error-state.co
 import { LoadingStateComponent } from '../../components/loading-state/loading-state.component';
 import { CategoryTypeTranslationHeadingComponent } from './components/category-type-translation/components/category-type-translation-heading/category-type-translation-heading.component';
 import { ExpansionButtonTextComponent } from './components/add-categories-form/components/expansion-button-text/expansion-button-text.component';
+import { EditGameService } from './services/edit-game.service';
 
 @NgModule({
     declarations: [
@@ -54,5 +55,6 @@ import { ExpansionButtonTextComponent } from './components/add-categories-form/c
         MatSelectModule,
         MatCheckboxModule,
     ],
+    providers: [EditGameService]
 })
 export class MainPageModule {}

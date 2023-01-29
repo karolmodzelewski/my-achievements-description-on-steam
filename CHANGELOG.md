@@ -2,6 +2,12 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.7.0 - 29.01.2022 [FE]
+
+- Add edition mode for specific game
+- Change description data model
+- Fix getting data from description endpoint on description component
+
 ## 0.6.0 - 29.01.2022 [FE]
 
 - Create 'Add game' view and logic 

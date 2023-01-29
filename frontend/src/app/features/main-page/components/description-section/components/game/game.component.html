@@ -1,6 +1,14 @@
-<p>
-    {{ oneHundredPercentIconName }} {{ name }}
-    <ng-container *ngIf="iconNames?.length">
-        <ng-container *ngFor="let iconName of iconNames">{{ iconName }} </ng-container>
-    </ng-container>
-</p>
+<div class="game-container">
+    <p class="game-data">
+        {{ oneHundredPercentIconName }} {{ name }}
+        <ng-container *ngIf="categories?.length">
+            <ng-container *ngFor="let category of categories">{{ category.iconName }} </ng-container>
+        </ng-container>
+    </p>
+    <mat-icon
+        *ngIf="shouldShowEdition"
+        (click)="editGame()"
+        fontIcon="edit"
+        class="icon-edit"
+    ></mat-icon>
+</div>
