@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.10.0 - 11.02.2022 [FE]
+
+- Add favicon
+- Minor refactor
+
 ## 0.9.0 - 30.01.2022 [FE]
 
 - Adjust views to mobile devices

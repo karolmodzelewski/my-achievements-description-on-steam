@@ -47,7 +47,9 @@
         grid-template-columns: 1fr;
     }
 
-    .game-name-form-field, .length-form-field, .difficulty-form-field {
+    .game-name-form-field,
+    .length-form-field,
+    .difficulty-form-field {
         grid-column: auto;
     }
 }
