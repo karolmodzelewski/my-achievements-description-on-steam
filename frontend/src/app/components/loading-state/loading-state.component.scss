@@ -1,0 +1,23 @@
+@use 'src/styles/colors' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.icon-loop,
+.loading-text {
+    font-size: 32px;
+    color: $color-purple;
+}
+
+.icon-loop {
+    width: 36px;
+    height: 36px;
+}
+
+.loading-text {
+    font-weight: bold;
+    margin-top: 20px;
+}

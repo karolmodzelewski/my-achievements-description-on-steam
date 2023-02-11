@@ -1,0 +1,52 @@
+<mados-section-heading [headingText]="headingText" [id]="headingId" class="section-heading"></mados-section-heading>
+
+<div *ngIf="shouldShowCategories" class="categories">
+    <form [formGroup]="form" class="form">
+        <div *ngFor="let control of form?.controls | keyvalue: iterateByOriginalOrder" [formGroupName]="control.key" class="category-form-group">
+            <mados-category-type-translation [key]="control.key"></mados-category-type-translation>
+
+            <mat-form-field>
+                <mat-label>Icon name:</mat-label>
+                <input formControlName="iconName" type="text" matInput />
+                <mat-icon (click)="resetInputField(control?.value?.get('iconName'))" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
+                <mat-error *ngIf="control?.value?.get('iconName')?.errors?.['required']">Icon name is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="control.key !== CategoryType.ONE_HUNDRED_PERCENT" class="description">
+                <mat-label>Description:</mat-label>
+                <input formControlName="description" type="text" matInput />
+                <mat-icon (click)="resetInputField(control?.value?.get('description'))" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
+                <mat-error *ngIf="control?.value?.get('description')?.errors?.['required']">Description is required</mat-error>
+            </mat-form-field>
+        </div>
+    </form>
+
+    <button
+        (click)="saveCategories()"
+        [disabled]="form.invalid"
+        class="save-categories-button button"
+        color="primary"
+        mat-stroked-button
+    >
+        Save categories
+    </button>
+</div>
+
+<button
+    (click)="handleCategoriesVisibility()"
+    class="expansion-button button"
+    color="primary"
+    mat-raised-button
+>
+    <mados-expansion-button-text
+        *ngIf="!shouldShowCategories"
+        iconName="expand_more"
+        buttonText="Expand"
+    ></mados-expansion-button-text>
+    <mados-expansion-button-text
+        *ngIf="shouldShowCategories"
+        iconName="expand_less"
+        buttonText="Collapse"
+    ></mados-expansion-button-text>
+</button>
+

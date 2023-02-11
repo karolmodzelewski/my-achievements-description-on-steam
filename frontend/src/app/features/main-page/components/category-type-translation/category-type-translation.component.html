@@ -1,0 +1,50 @@
+<ng-container [ngSwitch]="key">
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.LONG_GAME"
+        headingText="Long game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.VERY_LONG_GAME"
+        headingText="Very long game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.ULTRA_LONG_GAME"
+        headingText="Ultra long game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.HARD_GAME"
+        headingText="Hard game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.VERY_HARD_GAME"
+        headingText="Very hard game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.ULTRA_HARD_GAME"
+        headingText="Ultra hard game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.LOVED_GAME"
+        headingText="Loved game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.BAD_GAME"
+        headingText="Bad game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.DOESNT_COUNT"
+        headingText="It doesn't count:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.BUGGED_GAME"
+        headingText="Bugged game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.ONE_HUNDRED_PERCENT"
+        headingText="100%:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
+        *ngSwitchDefault=""
+        [headingText]="key + ':'"
+    ></mados-category-type-translation-heading>
+</ng-container>

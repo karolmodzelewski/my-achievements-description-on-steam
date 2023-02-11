@@ -1,0 +1,10 @@
+<mados-header></mados-header>
+
+<ng-container *ngIf="viewState === ViewState.SUCCESS">
+    <mados-add-categories-form [categories]="(categories$ | async)!.categories"></mados-add-categories-form>
+    <mados-add-game-form [description]="(description$ | async)!"></mados-add-game-form>
+    <mados-description-section [description]="(description$ | async)!"></mados-description-section>
+</ng-container>
+
+<mados-loading-state *ngIf="viewState === ViewState.LOADING" class="view-state-component"></mados-loading-state>
+<mados-error-state *ngIf="viewState === ViewState.ERROR" class="view-state-component"></mados-error-state>

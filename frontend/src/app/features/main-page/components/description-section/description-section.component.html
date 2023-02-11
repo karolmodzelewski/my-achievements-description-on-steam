@@ -1,0 +1,65 @@
+<mados-section-heading [headingText]="headingText"></mados-section-heading>
+
+<section class="description">
+    <div>
+        <mados-category
+            *ngFor="let category of description?.categories"
+            [type]="category.type"
+            [iconName]="category.iconName"
+            [description]="category.description"
+            [amount]="category?.amount"
+        ></mados-category>
+    </div>
+    <div class="margin-top">
+        <p>{{ sectionSeparator }}</p>
+        <p>COMPLETED ({{ description.completedGames.length }}):</p>
+        <p>{{ sectionSeparator }}</p>
+    </div>
+    <div class="margin-top">
+        <mados-game
+            *ngFor="let game of description?.completedGames"
+            [oneHundredPercentIconName]="game.oneHundredPercentIconName"
+            [name]="game.name"
+            [categories]="game?.categories"
+            [shouldShowEdition]="shouldShowEdition"
+        ></mados-game>
+    </div>
+    <div class="margin-top">
+        <p>{{ sectionSeparator }}</p>
+        <p>NEW ACHIEVEMENTS ({{ description.gamesWithNewAchievements.length }}):</p>
+        <p>{{ sectionSeparator }}</p>
+    </div>
+    <div class="margin-top">
+        <mados-game
+            *ngFor="let game of description?.gamesWithNewAchievements"
+            [oneHundredPercentIconName]="game.oneHundredPercentIconName"
+            [name]="game.name"
+            [categories]="game?.categories"
+            [shouldShowEdition]="shouldShowEdition"
+        ></mados-game>
+    </div>
+    <div class="icons-container">
+        <mat-icon
+            *ngIf="!shouldShowEdition"
+            (click)="handleEditionMode()"
+            fontIcon="edit_off"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            *ngIf="shouldShowEdition"
+            (click)="handleEditionMode()"
+            fontIcon="edit"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            #tooltip="matTooltip"
+            (click)="handleTooltip($event, tooltip)"
+            (mouseenter)="$event.stopImmediatePropagation()"
+            (mouseleave)="$event.stopImmediatePropagation()"
+            [matTooltip]="tooltipText"
+            [cdkCopyToClipboard]="descriptionToCopy"
+            fontIcon="content_copy"
+            class="icon"
+        ></mat-icon>
+    </div>
+</section>

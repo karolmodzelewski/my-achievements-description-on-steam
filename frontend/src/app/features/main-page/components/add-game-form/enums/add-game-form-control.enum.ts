@@ -1,0 +1,9 @@
+export enum AddGameFormControl {
+    NAME = 'NAME',
+    LENGTH = 'LENGTH',
+    DIFFICULTY = 'DIFFICULTY',
+    LOVED_GAME = 'LOVED_GAME',
+    BAD_GAME = 'BAD_GAME',
+    DOESNT_COUNT = 'DOESNT_COUNT',
+    BUGGED_GAME = 'BUGGED_GAME',
+}

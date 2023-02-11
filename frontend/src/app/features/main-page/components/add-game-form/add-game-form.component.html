@@ -1,0 +1,64 @@
+<mados-section-heading [headingText]="headingText" [id]="headingId"></mados-section-heading>
+
+<form [formGroup]="form" class="form">
+    <div class="form-fields-container">
+        <mat-form-field class="game-name-form-field">
+            <mat-label>Game name:</mat-label>
+            <input [formControlName]="AddGameFormControl.NAME" type="text" matInput />
+            <mat-icon (click)="resetInputField(form.get(AddGameFormControl.NAME))" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
+            <mat-error *ngIf="form.get(AddGameFormControl.NAME)?.errors?.['required']">Game name is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="length-form-field">
+            <mat-label>Length:</mat-label>
+            <mat-select [formControlName]="AddGameFormControl.LENGTH">
+                <mat-option [value]="CategoryType.LONG_GAME">Long game</mat-option>
+                <mat-option [value]="CategoryType.VERY_LONG_GAME">Very long game</mat-option>
+                <mat-option [value]="CategoryType.ULTRA_LONG_GAME">Ultra long game</mat-option>
+                <mat-option [value]="null">...</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="difficulty-form-field">
+            <mat-label>Difficulty:</mat-label>
+            <mat-select [formControlName]="AddGameFormControl.DIFFICULTY">
+                <mat-option [value]="CategoryType.HARD_GAME">Hard game</mat-option>
+                <mat-option [value]="CategoryType.VERY_HARD_GAME">Very hard game</mat-option>
+                <mat-option [value]="CategoryType.ULTRA_HARD_GAME">Ultra hard game</mat-option>
+                <mat-option [value]="null">...</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="checkboxes-container">
+        <div>
+            <mat-label>Loved game:</mat-label>
+            <mat-checkbox [formControlName]="AddGameFormControl.LOVED_GAME" color="primary"></mat-checkbox>
+        </div>
+
+        <div>
+            <mat-label>Bad game:</mat-label>
+            <mat-checkbox [formControlName]="AddGameFormControl.BAD_GAME" color="primary"></mat-checkbox>
+        </div>
+
+        <div>
+            <mat-label>It doesn't count:</mat-label>
+            <mat-checkbox [formControlName]="AddGameFormControl.DOESNT_COUNT" color="primary"></mat-checkbox>
+        </div>
+
+        <div>
+            <mat-label>Bugged game:</mat-label>
+            <mat-checkbox [formControlName]="AddGameFormControl.BUGGED_GAME" color="primary"></mat-checkbox>
+        </div>
+    </div>
+
+    <button
+        (click)="addGame()"
+        [disabled]="form.invalid"
+        class="add-game-button"
+        color="primary"
+        mat-stroked-button
+    >
+        Add game
+    </button>
+</form>
