@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.13.0 - 12.02.2022 [BE]
+
+- Configure environments
+- Add validation schema config
+
 ## 0.12.0 - 12.02.2022 [BE]
 
 - Add joi library
