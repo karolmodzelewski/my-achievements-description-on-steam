@@ -2,6 +2,12 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.15.0 - 15.02.2022 [FE]
+
+- Add proxy to backend
+- Add environments
+- Add global interceptor to handle 'api' prefix in requests
+
 ## 0.14.0 - 15.02.2022 [BE]
 
 - Add categories
