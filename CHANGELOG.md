@@ -2,6 +2,24 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.14.0 - 15.02.2022 [BE]
+
+- Add categories
+
+## 0.13.0 - 12.02.2022 [BE]
+
+- Configure environments
+- Add validation schema config
+
+## 0.12.0 - 12.02.2022 [BE]
+
+- Add joi library
+- Update outdated packages
+
+## 0.11.0 - 11.02.2022 [BE]
+
+- Init backend project and basic configuration
+
 ## 0.10.0 - 11.02.2022 [FE]
 
 - Add favicon
