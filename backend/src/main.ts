@@ -15,6 +15,7 @@ async function bootstrap(): Promise<void> {
     );
 
     await app.listen(port);
+
     logger.log(`Starts listening on port: ${port}`);
 }
 

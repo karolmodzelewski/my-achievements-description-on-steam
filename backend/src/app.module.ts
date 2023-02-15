@@ -4,9 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSource, DataSourceOptions } from 'typeorm';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { validationSchemaConfig } from './configs/validation-schema.config';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
     imports: [
@@ -29,8 +28,7 @@ import { validationSchemaConfig } from './configs/validation-schema.config';
             }),
             dataSourceFactory: async (options: DataSourceOptions) => await new DataSource(options).initialize(),
         }),
+        CategoriesModule,
     ],
-    controllers: [AppController],
-    providers: [AppService],
 })
 export class AppModule {}
