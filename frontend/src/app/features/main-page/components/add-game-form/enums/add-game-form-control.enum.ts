@@ -6,4 +6,5 @@ export enum AddGameFormControl {
     BAD_GAME = 'BAD_GAME',
     DOESNT_COUNT = 'DOESNT_COUNT',
     BUGGED_GAME = 'BUGGED_GAME',
+    NEW_ACHIEVEMENTS = 'NEW_ACHIEVEMENTS',
 }
