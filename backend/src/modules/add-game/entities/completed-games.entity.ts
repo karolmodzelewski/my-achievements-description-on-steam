@@ -5,7 +5,7 @@ import { Category } from '../interface/category.interface';
 @Entity()
 export class CompletedGames {
     @PrimaryGeneratedColumn()
-    public id: string;
+    public id: number;
 
     @Column({ unique: true })
     public name: string;

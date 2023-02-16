@@ -5,7 +5,7 @@ import { CategoryType } from '../../../enums/category-type.enum';
 @Entity()
 export class Category {
     @PrimaryGeneratedColumn()
-    public id: string;
+    public id: number;
 
     @Column({ unique: true })
     public type: CategoryType;
