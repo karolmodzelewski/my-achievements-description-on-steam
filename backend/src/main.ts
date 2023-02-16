@@ -8,6 +8,7 @@ async function bootstrap(): Promise<void> {
     const app: INestApplication = await NestFactory.create(AppModule);
     const port: number = 3000;
 
+    app.setGlobalPrefix('api');
     app.useGlobalPipes(
         new ValidationPipe({
             forbidUnknownValues: false,
