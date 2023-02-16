@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ViewportScroller } from '@angular/common';
 
 import { filter, takeUntil } from 'rxjs';
@@ -13,6 +13,7 @@ import { GameCategory } from './../../../../interfaces/game-category.interface';
 import { Game } from './../../../../interfaces/game.interface';
 import { EditGameService } from './../../services/edit-game.service';
 import { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
+import { AddGameFormGroup } from './enums/add-game-form-group.enum';
 
 @Component({
     selector: 'mados-add-game-form',
@@ -27,10 +28,20 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     public headingText: string = 'Add game';
     public form: FormGroup;
     public AddGameFormControl: typeof AddGameFormControl = AddGameFormControl;
+    public AddGameFormGroup: typeof AddGameFormGroup = AddGameFormGroup;
     public CategoryType: typeof CategoryType = CategoryType;
     public headingId: string = 'heading';
 
-    constructor(private httpClient: HttpClient, private editGameService: EditGameService, private viewportScroller: ViewportScroller) {
+    private get gameCategoriesFormGroup(): FormGroup {
+        return this.form.get(AddGameFormGroup.GAME_CATEGORIES) as FormGroup;
+    }
+
+    constructor(
+        private httpClient: HttpClient,
+        private editGameService: EditGameService,
+        private viewportScroller: ViewportScroller,
+        private formBuilder: FormBuilder
+    ) {
         super();
     }
 
@@ -55,32 +66,23 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     }
 
     private prepareAddGameDataForRequest(): AddGameRequestBody {
-        let requestBody: AddGameRequestBody = {
+        const requestBody: AddGameRequestBody = {
             name: this.form.get(AddGameFormControl.NAME)?.value,
+            newAchievements: this.form.get(AddGameFormControl.NEW_ACHIEVEMENTS)?.value,
+            gameCategories: [],
         };
 
-        if (this.form.get(AddGameFormControl.LENGTH)?.value) {
-            requestBody = { ...requestBody, length: this.form.get(AddGameFormControl.LENGTH)?.value };
-        }
-
-        if (this.form.get(AddGameFormControl.DIFFICULTY)?.value) {
-            requestBody = { ...requestBody, difficulty: this.form.get(AddGameFormControl.DIFFICULTY)?.value };
-        }
-
-        if (this.form.get(AddGameFormControl.LOVED_GAME)?.value) {
-            requestBody = { ...requestBody, lovedGame: this.form.get(AddGameFormControl.LOVED_GAME)?.value };
-        }
-
-        if (this.form.get(AddGameFormControl.BAD_GAME)?.value) {
-            requestBody = { ...requestBody, badGame: this.form.get(AddGameFormControl.BAD_GAME)?.value };
-        }
-
-        if (this.form.get(AddGameFormControl.DOESNT_COUNT)?.value) {
-            requestBody = { ...requestBody, doesntCount: this.form.get(AddGameFormControl.DOESNT_COUNT)?.value };
-        }
-
-        if (this.form.get(AddGameFormControl.BUGGED_GAME)?.value) {
-            requestBody = { ...requestBody, buggedGame: this.form.get(AddGameFormControl.BUGGED_GAME)?.value };
+        for (const categoryType in this.gameCategoriesFormGroup?.value) {
+            if (this.gameCategoriesFormGroup.value[categoryType]) {
+                switch (categoryType) {
+                    case AddGameFormControl.LENGTH:
+                    case AddGameFormControl.DIFFICULTY:
+                        requestBody.gameCategories.push(this.gameCategoriesFormGroup.value[categoryType])
+                        break;
+                    default:
+                        requestBody.gameCategories.push(categoryType as CategoryType);
+                }
+            }
         }
 
         return requestBody;
@@ -135,14 +137,17 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     }
 
     private initForm(): void {
-        this.form = new FormGroup({
-            [AddGameFormControl.NAME]: new FormControl<string>('', Validators.required),
-            [AddGameFormControl.LENGTH]: new FormControl<CategoryType | null>(null),
-            [AddGameFormControl.DIFFICULTY]: new FormControl<CategoryType | null>(null),
-            [AddGameFormControl.LOVED_GAME]: new FormControl<boolean>(false),
-            [AddGameFormControl.BAD_GAME]: new FormControl<boolean>(false),
-            [AddGameFormControl.DOESNT_COUNT]: new FormControl<boolean>(false),
-            [AddGameFormControl.BUGGED_GAME]: new FormControl<boolean>(false),
+        this.form = this.formBuilder.group({
+            [AddGameFormControl.NAME]: ['', Validators.required],
+            [AddGameFormControl.NEW_ACHIEVEMENTS]: [false],
+            [AddGameFormGroup.GAME_CATEGORIES]: this.formBuilder.group({
+                [AddGameFormControl.LENGTH]: [null],
+                [AddGameFormControl.DIFFICULTY]: [null],
+                [AddGameFormControl.LOVED_GAME]: [false],
+                [AddGameFormControl.BAD_GAME]: [false],
+                [AddGameFormControl.DOESNT_COUNT]: [false],
+                [AddGameFormControl.BUGGED_GAME]: [false],
+            }),
         });
     }
 }
