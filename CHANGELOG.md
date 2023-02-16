@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.16.1 - 16.02.2022 [FE]
+
+- Add missing 'New achievements' value to 'Add game' form
+- Adjust 'Add game' form to backend changes
+
 ## 0.16.0 - 16.02.2022 [BE]
 
 - Create Add game endpoint
