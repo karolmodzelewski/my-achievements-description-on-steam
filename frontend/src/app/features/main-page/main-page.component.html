@@ -2,7 +2,10 @@
 
 <ng-container *ngIf="viewState === ViewState.SUCCESS">
     <mados-add-categories-form [categories]="(categories$ | async)!.categories"></mados-add-categories-form>
-    <mados-add-game-form [description]="(description$ | async)!"></mados-add-game-form>
+    <mados-add-game-form
+        (reloadDescription)="reloadDescription()"
+        [description]="(description$ | async)!"
+    ></mados-add-game-form>
     <mados-description-section [description]="(description$ | async)!"></mados-description-section>
 </ng-container>
 

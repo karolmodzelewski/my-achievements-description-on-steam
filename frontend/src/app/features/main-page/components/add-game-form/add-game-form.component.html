@@ -63,7 +63,7 @@
 
     <button
         (click)="addGame()"
-        [disabled]="form.invalid"
+        [disabled]="form.invalid || viewState === ViewState.LOADING"
         class="add-game-button"
         color="primary"
         mat-stroked-button

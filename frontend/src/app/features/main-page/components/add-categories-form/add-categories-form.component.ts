@@ -3,6 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
+import { EMPTY, take } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+import { ViewState } from './../../../../enums/view-state.enum';
 import { CategoryType } from './../../../../enums/category-type.enum';
 import { Category } from './../../../../interfaces/category.interface';
 
@@ -19,6 +23,8 @@ export class AddCategoriesFormComponent implements OnInit {
     public headingText: string = 'Add categories';
     public form: FormGroup = new FormGroup({});
     public CategoryType: typeof CategoryType = CategoryType;
+    public ViewState: typeof ViewState = ViewState;
+    public viewState: ViewState;
     public shouldShowCategories: boolean;
     public headingId: string = 'heading';
 
@@ -30,15 +36,28 @@ export class AddCategoriesFormComponent implements OnInit {
 
     public iterateByOriginalOrder = (): number => 0;
 
-    // TODO add states when backend is ready
+    // TODO: Add snackbars
     public saveCategories(): void {
         if (this.form.invalid) {
             return;
         }
 
-        const requestBody: Category[] = this.prepareCategoriesDataForRequest();
+        this.viewState = ViewState.LOADING;
 
-        this.httpClient.post<Category[]>('categories', requestBody);
+        const requestBody: Omit<Category, 'id'>[] = this.prepareCategoriesDataForRequest();
+
+        this.httpClient.post<Category[]>('categories', requestBody)
+            .pipe(
+                take(1),
+                catchError(() => {
+                    this.viewState = ViewState.ERROR;
+
+                    return EMPTY;
+                })
+            )
+            .subscribe(() => {
+                this.viewState = ViewState.SUCCESS;
+            });
     }
 
     public handleCategoriesVisibility(): void {
@@ -52,12 +71,12 @@ export class AddCategoriesFormComponent implements OnInit {
         control.updateValueAndValidity();
     }
 
-    private prepareCategoriesDataForRequest(): Category[] {
-        const categories: Category[] = [];
+    private prepareCategoriesDataForRequest(): Omit<Category, 'id'>[] {
+        const categories: Omit<Category, 'id'>[] = [];
 
         for (const categoryType in this.form.value) {
             if (categoryType) {
-                const category: Category = {
+                const category: Omit<Category, 'id'> = {
                     type: categoryType as CategoryType,
                     iconName: this.form.value[categoryType].iconName,
                     description: this.form.value[categoryType].description,
