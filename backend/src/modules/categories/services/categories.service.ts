@@ -1,12 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { from, Observable } from 'rxjs';
+import { from, map, Observable, take } from 'rxjs';
 
 import { InsertResult, Repository } from 'typeorm';
 
 import { CategoriesDto } from '../dtos/categories.dto';
 import { Category } from '../entities/category.entity';
+import { CategoryDto } from '../dtos/category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -17,10 +18,13 @@ export class CategoriesService {
         private readonly categoriesRepository: Repository<Category>
     ) {}
 
-    public getCategories(): Observable<Category[]> {
+    public getCategories(): Observable<CategoriesDto> {
         this.logger.log(`Getting categories from database`);
 
-        return from(this.categoriesRepository.find());
+        return from(this.categoriesRepository.find()).pipe(
+            take(1),
+            map((categories: CategoryDto[]) => ({ categories }))
+        );
     }
 
     public upsertCategories(categoriesDto: CategoriesDto): Observable<InsertResult> {

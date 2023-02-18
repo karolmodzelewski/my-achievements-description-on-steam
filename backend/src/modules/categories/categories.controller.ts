@@ -6,7 +6,6 @@ import { InsertResult } from 'typeorm';
 
 import { CategoriesDto } from './dtos/categories.dto';
 import { CategoriesService } from './services/categories.service';
-import { Category } from './entities/category.entity';
 
 @Controller('categories')
 export class CategoriesController {
@@ -15,7 +14,7 @@ export class CategoriesController {
     constructor(private categoriesService: CategoriesService) {}
 
     @Get()
-    public getCategories(): Observable<Category[]> {
+    public getCategories(): Observable<CategoriesDto> {
         this.logger.log(`GET Request: Categories`);
 
         return this.categoriesService.getCategories();
