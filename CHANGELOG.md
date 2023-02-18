@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.17.3 - 18.02.2022 [FE]
+
+- Add missing id parameters to mock data
+
 ## 0.17.2 - 18.02.2022 [BE]
 
 - Fix categories endpoint returning data in wrong format

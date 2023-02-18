@@ -36,7 +36,7 @@ export class AddCategoriesFormComponent implements OnInit {
             return;
         }
 
-        const requestBody: Category[] = this.prepareCategoriesDataForRequest();
+        const requestBody: Omit<Category, 'id'>[] = this.prepareCategoriesDataForRequest();
 
         this.httpClient.post<Category[]>('categories', requestBody);
     }
@@ -52,12 +52,12 @@ export class AddCategoriesFormComponent implements OnInit {
         control.updateValueAndValidity();
     }
 
-    private prepareCategoriesDataForRequest(): Category[] {
-        const categories: Category[] = [];
+    private prepareCategoriesDataForRequest(): Omit<Category, 'id'>[] {
+        const categories: Omit<Category, 'id'>[] = [];
 
         for (const categoryType in this.form.value) {
             if (categoryType) {
-                const category: Category = {
+                const category: Omit<Category, 'id'> = {
                     type: categoryType as CategoryType,
                     iconName: this.form.value[categoryType].iconName,
                     description: this.form.value[categoryType].description,
