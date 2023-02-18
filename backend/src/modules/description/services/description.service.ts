@@ -15,6 +15,18 @@ import { CategoryWithAmount } from '../interfaces/category-with-amount.interface
 @Injectable()
 export class DescriptionService {
     private readonly logger: Logger = new Logger(DescriptionService.name, { timestamp: true });
+    private categoriesSortOrder: CategoryType[] = [
+        CategoryType.LOVED_GAME,
+        CategoryType.BAD_GAME,
+        CategoryType.DOESNT_COUNT,
+        CategoryType.BUGGED_GAME,
+        CategoryType.LONG_GAME,
+        CategoryType.VERY_LONG_GAME,
+        CategoryType.ULTRA_LONG_GAME,
+        CategoryType.HARD_GAME,
+        CategoryType.VERY_HARD_GAME,
+        CategoryType.ULTRA_HARD_GAME,
+    ];
 
     constructor(
         @InjectRepository(CompletedGames)
@@ -51,12 +63,6 @@ export class DescriptionService {
         return description;
     }
 
-    private getMappedGames(categories: Category[], games: CompletedGames[] | GamesWithNewAchievements[]): CompletedGames[] | GamesWithNewAchievements[] {
-        const oneHundredPercentIconName: string = categories.find((category: Category) => category.type === CategoryType.ONE_HUNDRED_PERCENT).iconName;
-
-        return games.map((game: CompletedGames | GamesWithNewAchievements) => ({ ...game, oneHundredPercentIconName }));
-    }
-
     private getMappedCategories(categories: Category[], completedGames: CompletedGames[], gamesWithNewAchievements: GamesWithNewAchievements[]): CategoryWithAmount[] {
         const categoriesWithAmount: CategoryWithAmount[] = categories
             .filter((category: Category) => category.type !== CategoryType.ONE_HUNDRED_PERCENT)
@@ -77,6 +83,21 @@ export class DescriptionService {
                     });
 
                 return categoryFound;
-            });
+            })
+            .sort((a: CategoryWithAmount, b: CategoryWithAmount) => this.categoriesSortOrder.indexOf(a.type) - this.categoriesSortOrder.indexOf(b.type));
+    }
+
+    private getMappedGames(categories: Category[], games: CompletedGames[] | GamesWithNewAchievements[]): CompletedGames[] | GamesWithNewAchievements[] {
+        const oneHundredPercentIconName: string = categories.find((category: Category) => category.type === CategoryType.ONE_HUNDRED_PERCENT).iconName;
+
+        return games
+            .map((game: CompletedGames | GamesWithNewAchievements) => {
+                const mappedGame = { ...game, oneHundredPercentIconName };
+
+                mappedGame.categories.sort((a: CategoryWithAmount, b: CategoryWithAmount) => this.categoriesSortOrder.indexOf(a.type) - this.categoriesSortOrder.indexOf(b.type));
+
+                return mappedGame;
+            })
+            .sort((a: CompletedGames | GamesWithNewAchievements, b: CompletedGames | GamesWithNewAchievements) => a.name.localeCompare(b.name));
     }
 }
