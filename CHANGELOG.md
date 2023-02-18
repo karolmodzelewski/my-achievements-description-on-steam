@@ -2,6 +2,12 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.18.0 - 18.02.2022 [FE]
+
+- Add view states to components
+- Add reload description method after game is added
+- Fix POST endpoint calls
+
 ## 0.17.3 - 18.02.2022 [FE]
 
 - Add missing id parameters to mock data

@@ -15,7 +15,7 @@ import { CategoriesResponseBody } from './../../interfaces/categories-response-b
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent extends Destroyable implements OnInit {
-    public viewState: ViewState = ViewState.LOADING;
+    public viewState: ViewState;
     public ViewState: typeof ViewState = ViewState;
     public categories$: Observable<CategoriesResponseBody>;
     public description$: Observable<DescriptionResponseBody>;
@@ -28,7 +28,27 @@ export class MainPageComponent extends Destroyable implements OnInit {
         this.initCategoriesAndDescriptionData();
     }
 
+    public reloadDescription(): void {
+        this.httpClient.get<DescriptionResponseBody>('description')
+            .pipe(
+                catchError(() => {
+                    // TODO: Add snackbar
+
+                    return EMPTY;
+                }),
+                map((description: DescriptionResponseBody) => {
+                    this.description$ = of(description);
+                }),
+                takeUntil(this.destroyed$)
+            )
+            .subscribe(() => {
+                // TODO Add snackbar
+            });
+    }
+
     private initCategoriesAndDescriptionData(): void {
+        this.viewState = ViewState.LOADING;
+
         zip(this.httpClient.get<CategoriesResponseBody>('categories'), this.httpClient.get<DescriptionResponseBody>('description'))
             .pipe(
                 catchError(() => {

@@ -23,7 +23,7 @@
 
     <button
         (click)="saveCategories()"
-        [disabled]="form.invalid"
+        [disabled]="form.invalid || viewState === ViewState.LOADING"
         class="save-categories-button button"
         color="primary"
         mat-stroked-button

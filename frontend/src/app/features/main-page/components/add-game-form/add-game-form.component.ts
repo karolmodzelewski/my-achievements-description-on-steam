@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ViewportScroller } from '@angular/common';
 
-import { filter, takeUntil } from 'rxjs';
+import { catchError, EMPTY, filter, take, takeUntil } from 'rxjs';
 
 import { AddGameRequestBody } from '../../../../interfaces/add-game-request-body.interface';
 import { CategoryType } from '../../../../enums/category-type.enum';
@@ -14,6 +14,7 @@ import { Game } from './../../../../interfaces/game.interface';
 import { EditGameService } from './../../services/edit-game.service';
 import { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
 import { AddGameFormGroup } from './enums/add-game-form-group.enum';
+import { ViewState } from './../../../../enums/view-state.enum';
 
 @Component({
     selector: 'mados-add-game-form',
@@ -25,11 +26,16 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     @Input()
     public description: DescriptionResponseBody;
 
+    @Output()
+    public reloadDescription: EventEmitter<void> = new EventEmitter<void>();
+
     public headingText: string = 'Add game';
     public form: FormGroup;
     public AddGameFormControl: typeof AddGameFormControl = AddGameFormControl;
     public AddGameFormGroup: typeof AddGameFormGroup = AddGameFormGroup;
     public CategoryType: typeof CategoryType = CategoryType;
+    public ViewState: typeof ViewState = ViewState;
+    public viewState: ViewState;
     public headingId: string = 'heading';
 
     private get gameCategoriesFormGroup(): FormGroup {
@@ -50,14 +56,29 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         this.handleGameEdition();
     }
 
+    // TODO: Add snackbars
     public addGame(): void {
         if (this.form.invalid) {
             return;
         }
 
+        this.viewState = ViewState.LOADING;
+
         const requestBody: AddGameRequestBody = this.prepareAddGameDataForRequest();
 
-        this.httpClient.post<AddGameRequestBody>('add-game', requestBody);
+        this.httpClient.post<AddGameRequestBody>('add-game', requestBody)
+            .pipe(
+                take(1),
+                catchError(() => {
+                    this.viewState = ViewState.ERROR;
+
+                    return EMPTY;
+                })
+            ).subscribe(() => {
+                this.viewState = ViewState.SUCCESS;
+                this.form.reset();
+                this.reloadDescription.emit();
+            });
     }
 
     public resetInputField(control: FormControl | any): void {
@@ -92,6 +113,7 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         this.editGameService.editingGameName$.pipe(filter(Boolean), takeUntil(this.destroyed$)).subscribe((gameName: string) => this.updateFormWhenEditingGame(gameName));
     }
 
+    // TODO: Fix game edit
     private updateFormWhenEditingGame(gameName: string): void {
         this.form.reset();
 
@@ -104,6 +126,7 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         this.viewportScroller.scrollToAnchor(this.headingId);
     }
 
+    // TODO: Fix game edit
     private updateFormCategoriesWhenEditingGame(game: Game): void {
         game.categories?.forEach((gameCategory: GameCategory) => {
             if (gameCategory.type === CategoryType.LONG_GAME || gameCategory.type === CategoryType.VERY_LONG_GAME || gameCategory.type === CategoryType.ULTRA_LONG_GAME) {
