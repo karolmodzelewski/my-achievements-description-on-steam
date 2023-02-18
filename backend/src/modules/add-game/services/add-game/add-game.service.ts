@@ -25,6 +25,7 @@ export class AddGameService {
         private readonly categoriesRepository: Repository<Category>
     ) {}
 
+    // TODO: Fix add game. Change array of games to separate game entity
     public upsertGame(addGameDto: AddGameDto): Observable<InsertResult> {
         this.logger.log(`Upserting game ${JSON.stringify(addGameDto)} to database`);
 

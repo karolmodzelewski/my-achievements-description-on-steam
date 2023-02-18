@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.18.1 - 18.02.2022 [BE]
+
+- Fix POST categories endpoint
+
 ## 0.18.0 - 18.02.2022 [FE]
 
 - Add view states to components

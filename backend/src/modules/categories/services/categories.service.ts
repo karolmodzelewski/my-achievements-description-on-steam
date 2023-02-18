@@ -27,9 +27,9 @@ export class CategoriesService {
         );
     }
 
-    public upsertCategories(categoriesDto: CategoriesDto): Observable<InsertResult> {
+    public upsertCategories(categoriesDto: CategoryDto[]): Observable<InsertResult> {
         this.logger.log(`Upserting categories to database`);
 
-        return from(this.categoriesRepository.upsert(categoriesDto.categories, ['type']));
+        return from(this.categoriesRepository.upsert(categoriesDto, ['type']));
     }
 }
