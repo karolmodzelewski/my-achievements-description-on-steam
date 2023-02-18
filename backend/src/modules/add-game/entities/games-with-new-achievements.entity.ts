@@ -5,7 +5,7 @@ import { Category } from '../interface/category.interface';
 @Entity()
 export class GamesWithNewAchievements {
     @PrimaryGeneratedColumn()
-    public id: string;
+    public id: number;
 
     @Column({ unique: true })
     public name: string;

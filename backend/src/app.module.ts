@@ -7,6 +7,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { validationSchemaConfig } from './configs/validation-schema.config';
 import { AddGameModule } from './modules/add-game/add-game.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { DescriptionModule } from './modules/description/description.module';
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
         }),
         CategoriesModule,
         AddGameModule,
+        DescriptionModule,
     ],
 })
 export class AppModule {}
