@@ -5,12 +5,16 @@
             <ng-container *ngFor="let category of categories">{{ category.iconName }} </ng-container>
         </ng-container>
     </p>
-    <div>
+    <div *ngIf="shouldShowEdition">
         <mat-icon
-            *ngIf="shouldShowEdition"
             (click)="editGame()"
             fontIcon="edit"
-            class="icon-edit"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            (click)="deleteGame()"
+            fontIcon="delete"
+            class="icon"
         ></mat-icon>
     </div>
 </div>

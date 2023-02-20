@@ -1,0 +1,13 @@
+.snackbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.message {
+    margin: 0;
+}
+
+.icon-clear {
+    cursor: pointer;
+}

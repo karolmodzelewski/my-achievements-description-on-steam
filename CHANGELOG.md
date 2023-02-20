@@ -2,6 +2,30 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.21.0 - 20.02.2022 [FE]
+
+- Add option to delete specific game
+- Add infobar when there is no data
+- Change 'add-game' endpoint name to 'game'
+- Fix setting initial categories when there is no data
+- Small refactor
+
+## 0.20.0 - 20.02.2022 [FE]
+
+- Add snackbars
+
+## 0.19.2 - 20.02.2022 [FE]
+
+- Fix description copied data
+- Fix reloading data after API call
+- Fix missing hasNewAchievements property in Game interface
+- Fix game edit
+
+## 0.19.1 - 20.02.2022 [FE]
+
+- Adjust frontend to backend changes
+- Fix description, when there is no completed games or games with new achievements
+
 ## 0.19.0 - 20.02.2022 [BE]
 
 - Refactor categories and games

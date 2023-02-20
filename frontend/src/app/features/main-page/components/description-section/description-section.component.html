@@ -10,34 +10,40 @@
             [amount]="category?.amount"
         ></mados-category>
     </div>
-    <div class="margin-top">
-        <p>{{ sectionSeparator }}</p>
-        <p>COMPLETED ({{ description.completedGames.length }}):</p>
-        <p>{{ sectionSeparator }}</p>
-    </div>
-    <div class="margin-top">
-        <mados-game
-            *ngFor="let game of description?.completedGames"
-            [oneHundredPercentIconName]="game.oneHundredPercentIconName"
-            [name]="game.name"
-            [categories]="game?.categories"
-            [shouldShowEdition]="shouldShowEdition"
-        ></mados-game>
-    </div>
-    <div class="margin-top">
-        <p>{{ sectionSeparator }}</p>
-        <p>NEW ACHIEVEMENTS ({{ description.gamesWithNewAchievements.length }}):</p>
-        <p>{{ sectionSeparator }}</p>
-    </div>
-    <div class="margin-top">
-        <mados-game
-            *ngFor="let game of description?.gamesWithNewAchievements"
-            [oneHundredPercentIconName]="game.oneHundredPercentIconName"
-            [name]="game.name"
-            [categories]="game?.categories"
-            [shouldShowEdition]="shouldShowEdition"
-        ></mados-game>
-    </div>
+    <ng-container *ngIf="description.completedGames?.length">
+        <div class="margin-top">
+            <p>{{ sectionSeparator }}</p>
+            <p>COMPLETED ({{ description.completedGames.length }}):</p>
+            <p>{{ sectionSeparator }}</p>
+        </div>
+        <div *ngIf="description.completedGames?.length" class="margin-top">
+            <mados-game
+                *ngFor="let game of description.completedGames"
+                (reloadDescription)="deleteGame()"
+                [oneHundredPercentIconName]="game.oneHundredPercentIconName"
+                [name]="game.name"
+                [categories]="game?.categories"
+                [shouldShowEdition]="shouldShowEdition"
+            ></mados-game>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="description.gamesWithNewAchievements?.length">
+        <div class="margin-top">
+            <p>{{ sectionSeparator }}</p>
+            <p>NEW ACHIEVEMENTS ({{ description.gamesWithNewAchievements.length }}):</p>
+            <p>{{ sectionSeparator }}</p>
+        </div>
+        <div class="margin-top">
+            <mados-game
+                *ngFor="let game of description.gamesWithNewAchievements"
+                (reloadDescription)="deleteGame()"
+                [oneHundredPercentIconName]="game.oneHundredPercentIconName"
+                [name]="game.name"
+                [categories]="game?.categories"
+                [shouldShowEdition]="shouldShowEdition"
+            ></mados-game>
+        </div>
+    </ng-container>
     <div class="icons-container">
         <mat-icon
             *ngIf="!shouldShowEdition"
