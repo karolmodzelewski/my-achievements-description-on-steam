@@ -67,7 +67,7 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
 
         const requestBody: AddGameRequestBody = this.prepareAddGameDataForRequest();
 
-        this.httpClient.post<AddGameRequestBody>('add-game', requestBody)
+        this.httpClient.post<AddGameRequestBody>('game', requestBody)
             .pipe(
                 take(1),
                 catchError(() => {

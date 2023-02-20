@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { Game } from './../../../../interfaces/game.interface';
@@ -20,6 +20,9 @@ export class DescriptionSectionComponent {
         this.prepareDescriptionToCopy();
     };
 
+    @Output()
+    public reloadDescription: EventEmitter<void> = new EventEmitter<void>();
+
     public description: DescriptionResponseBody;
     public descriptionToCopy: string;
     public sectionSeparator: string = '_______________________________';
@@ -39,6 +42,10 @@ export class DescriptionSectionComponent {
         setTimeout(() => {
             tooltip.hide();
         }, 2000);
+    }
+
+    public deleteGame(): void {
+        this.reloadDescription.emit();
     }
 
     private prepareDescriptionToCopy(): void {

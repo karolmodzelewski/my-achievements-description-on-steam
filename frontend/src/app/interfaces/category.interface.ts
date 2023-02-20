@@ -5,5 +5,5 @@ export interface Category {
     type: CategoryType;
     iconName: string;
     description: string | null;
-    amount?: number | null;
+    amount?: number;
 }

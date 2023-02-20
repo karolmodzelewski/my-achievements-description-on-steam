@@ -19,6 +19,7 @@ export class MainPageComponent extends Destroyable implements OnInit {
     public ViewState: typeof ViewState = ViewState;
     public categories$: Observable<Category[]>;
     public description$: Observable<DescriptionResponseBody>;
+    public infobarMessage: string = 'To add a game and see the description, please fulfill all categories';
 
     constructor(private httpClient: HttpClient) {
         super();

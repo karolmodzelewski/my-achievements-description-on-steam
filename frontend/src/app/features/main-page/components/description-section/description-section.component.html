@@ -19,6 +19,7 @@
         <div *ngIf="description.completedGames?.length" class="margin-top">
             <mados-game
                 *ngFor="let game of description.completedGames"
+                (reloadDescription)="deleteGame()"
                 [oneHundredPercentIconName]="game.oneHundredPercentIconName"
                 [name]="game.name"
                 [categories]="game?.categories"
@@ -35,6 +36,7 @@
         <div class="margin-top">
             <mados-game
                 *ngFor="let game of description.gamesWithNewAchievements"
+                (reloadDescription)="deleteGame()"
                 [oneHundredPercentIconName]="game.oneHundredPercentIconName"
                 [name]="game.name"
                 [categories]="game?.categories"

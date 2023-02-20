@@ -32,6 +32,20 @@ export class AddCategoriesFormComponent implements OnInit {
     public shouldShowCategories: boolean;
     public headingId: string = 'heading';
 
+    private initialCategories: CategoryType[] = [
+        CategoryType.LONG_GAME,
+        CategoryType.VERY_LONG_GAME,
+        CategoryType.ULTRA_LONG_GAME,
+        CategoryType.HARD_GAME,
+        CategoryType.VERY_HARD_GAME,
+        CategoryType.ULTRA_HARD_GAME,
+        CategoryType.LOVED_GAME,
+        CategoryType.BAD_GAME,
+        CategoryType.DOESNT_COUNT,
+        CategoryType.BUGGED_GAME,
+        CategoryType.ONE_HUNDRED_PERCENT
+    ];
+
     constructor(
         private httpClient: HttpClient,
         private viewportScroller: ViewportScroller,
@@ -100,12 +114,14 @@ export class AddCategoriesFormComponent implements OnInit {
     }
 
     private buildForm(): void {
-        this.categories?.forEach((category: Category) => this.form?.addControl(category.type, this.buildCategoryFormGroup(category)));
+        if (this.categories.length) {
+            this.categories?.forEach((category: Category) => this.form?.addControl(category.type, this.buildCategoryFormGroup(category.iconName, category.description, category.type)));
+        } else {
+            this.initialCategories.forEach((categoryType: CategoryType) => this.form?.addControl(categoryType, this.buildCategoryFormGroup(null, null, categoryType)));
+        }
     }
 
-    private buildCategoryFormGroup(category: Category): FormGroup {
-        const { iconName, description, type } = category;
-
+    private buildCategoryFormGroup(iconName: string | null, description: string | null, type: CategoryType): FormGroup {
         return type === CategoryType.ONE_HUNDRED_PERCENT
             ? new FormGroup({ iconName: new FormControl<string | null>(iconName, Validators.required) })
             : new FormGroup({

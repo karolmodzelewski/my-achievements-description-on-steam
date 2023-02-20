@@ -28,6 +28,7 @@ import { ExpansionButtonTextComponent } from './components/add-categories-form/c
 import { EditGameService } from './services/edit-game.service';
 import { SnackbarComponent } from '../../components/snackbar/snackbar.component';
 import { SnackbarService } from './../../components/snackbar/snackbar.service';
+import { InfobarComponent } from '../../components/infobar/infobar.component';
 
 @NgModule({
     declarations: [
@@ -59,6 +60,7 @@ import { SnackbarService } from './../../components/snackbar/snackbar.service';
         MatCheckboxModule,
         MatSnackBarModule,
         SnackbarComponent,
+        InfobarComponent,
     ],
     providers: [EditGameService, SnackbarService],
 })

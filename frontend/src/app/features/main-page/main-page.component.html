@@ -5,12 +5,22 @@
         (reloadDescription)="getDescriptionData()"
         [categories]="(categories$ | async)!"
     ></mados-add-categories-form>
-    <mados-add-game-form
-        (reloadDescription)="getDescriptionData()"
-        [description]="(description$ | async)!"
-    ></mados-add-game-form>
-    <mados-description-section [descriptionData]="(description$ | async)!"></mados-description-section>
+    <ng-container *ngIf="(description$ | async)?.categories?.length">
+        <mados-add-game-form
+            (reloadDescription)="getDescriptionData()"
+            [description]="(description$ | async)!"
+        ></mados-add-game-form>
+        <mados-description-section
+            (reloadDescription)="getDescriptionData()"
+            [descriptionData]="(description$ | async)!"
+        ></mados-description-section>
+    </ng-container>
+    <mados-infobar
+        *ngIf="!(description$ | async)?.categories?.length"
+        [message]="infobarMessage"
+        class="margin-top"
+    ></mados-infobar>
 </ng-container>
 
-<mados-loading-state *ngIf="viewState === ViewState.LOADING" class="view-state-component"></mados-loading-state>
-<mados-error-state *ngIf="viewState === ViewState.ERROR" class="view-state-component"></mados-error-state>
+<mados-loading-state *ngIf="viewState === ViewState.LOADING" class="margin-top"></mados-loading-state>
+<mados-error-state *ngIf="viewState === ViewState.ERROR" class="margin-top"></mados-error-state>
