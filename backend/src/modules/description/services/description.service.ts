@@ -47,6 +47,16 @@ export class DescriptionService {
     private getMappedDescription(data: [Category[], Game[]]): Description {
         const [categories, games] = data;
 
+        let description: Description = {
+            categories: [],
+            completedGames: [],
+            gamesWithNewAchievements: [],
+        };
+
+        if (!categories.length) {
+            return description;
+        }
+
         const completedGames: Game[] = games.filter((game: Game) => !game.hasNewAchievements);
         const gamesWithNewAchievements: Game[] = games.filter((game: Game) => game.hasNewAchievements);
 
@@ -54,13 +64,11 @@ export class DescriptionService {
         const mappedCompletedGames: MappedGame[] = this.getMappedGames(categories, completedGames);
         const mappedGamesWithNewAchievements: MappedGame[] = this.getMappedGames(categories, gamesWithNewAchievements);
 
-        const description: Description = {
+        description = {
             categories: mappedCategories,
             completedGames: mappedCompletedGames,
             gamesWithNewAchievements: mappedGamesWithNewAchievements,
         };
-
-        this.logger.log(`Mapped description: ${JSON.stringify(description)}`);
 
         return description;
     }

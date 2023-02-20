@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.22.0 - 20.02.2022 [BE]
+
+- Change 'Add-game' module name to 'Game'
+- Add endpoint to delete specific game
+
 ## 0.21.0 - 20.02.2022 [FE]
 
 - Add option to delete specific game
