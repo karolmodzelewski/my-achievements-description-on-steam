@@ -7,7 +7,7 @@ import { EMPTY, Observable, of, zip } from 'rxjs';
 import { DescriptionResponseBody } from './../../interfaces/description-response-body.interface';
 import { ViewState } from '../../enums/view-state.enum';
 import { Destroyable } from '../../utils/destroyable.util';
-import { CategoriesResponseBody } from './../../interfaces/categories-response-body.interface';
+import { Category } from './../../interfaces/category.interface';
 
 @Component({
     selector: 'mados-main-page',
@@ -17,7 +17,7 @@ import { CategoriesResponseBody } from './../../interfaces/categories-response-b
 export class MainPageComponent extends Destroyable implements OnInit {
     public viewState: ViewState;
     public ViewState: typeof ViewState = ViewState;
-    public categories$: Observable<CategoriesResponseBody>;
+    public categories$: Observable<Category[]>;
     public description$: Observable<DescriptionResponseBody>;
 
     constructor(private httpClient: HttpClient) {
@@ -49,14 +49,14 @@ export class MainPageComponent extends Destroyable implements OnInit {
     private initCategoriesAndDescriptionData(): void {
         this.viewState = ViewState.LOADING;
 
-        zip(this.httpClient.get<CategoriesResponseBody>('categories'), this.httpClient.get<DescriptionResponseBody>('description'))
+        zip(this.httpClient.get<Category[]>('categories'), this.httpClient.get<DescriptionResponseBody>('description'))
             .pipe(
                 catchError(() => {
                     this.viewState = ViewState.ERROR;
 
                     return EMPTY;
                 }),
-                map(([categories, description]: [CategoriesResponseBody, DescriptionResponseBody]) => {
+                map(([categories, description]: [Category[], DescriptionResponseBody]) => {
                     this.categories$ = of(categories);
                     this.description$ = of(description);
                 }),

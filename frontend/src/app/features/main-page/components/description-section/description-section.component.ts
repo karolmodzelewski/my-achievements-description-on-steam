@@ -48,13 +48,17 @@ export class DescriptionSectionComponent implements OnInit {
         descriptionToCopy += this.getCategoriesPartOfDescription(this.description?.categories);
 
         // Separator 1
-        descriptionToCopy += this.getSeparatorPartOfDescription('Completed', this.description?.completedGames?.length);
+        if (this.description.completedGames?.length) {
+            descriptionToCopy += this.getSeparatorPartOfDescription('Completed', this.description.completedGames?.length);
+        }
 
         // Completed games
         descriptionToCopy += this.getGamePartOfDescription(this.description?.completedGames);
 
         // Separator 2
-        descriptionToCopy += this.getSeparatorPartOfDescription('New achievements', this.description?.gamesWithNewAchievements?.length);
+        if (this.description.gamesWithNewAchievements?.length) {
+            descriptionToCopy += this.getSeparatorPartOfDescription('New achievements', this.description.gamesWithNewAchievements?.length);
+        }
 
         // Games with new achievements
         descriptionToCopy += this.getGamePartOfDescription(this.description?.gamesWithNewAchievements);

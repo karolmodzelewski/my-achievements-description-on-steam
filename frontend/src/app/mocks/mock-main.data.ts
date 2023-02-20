@@ -1,78 +1,76 @@
 import { DescriptionResponseBody } from '../interfaces/description-response-body.interface';
 import { CategoryType } from '../enums/category-type.enum';
-import { CategoriesResponseBody } from '../interfaces/categories-response-body.interface';
+import { Category } from '../interfaces/category.interface';
 
 export class MockMainData {
-    public categoriesResponseBody: CategoriesResponseBody = {
-        categories: [
-            {
-                id: 1,
-                type: CategoryType.LONG_GAME,
-                iconName: 'ːcleanhourglassː',
-                description: 'Long game (+25h)',
-            },
-            {
-                id: 2,
-                type: CategoryType.VERY_LONG_GAME,
-                iconName: 'ːcleanhourglassːːcleanhourglassː',
-                description: 'Very long game (+50h)',
-            },
-            {
-                id: 3,
-                type: CategoryType.ULTRA_LONG_GAME,
-                iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
-                description: 'Ultra long game (+100h)',
-            },
-            {
-                id: 4,
-                type: CategoryType.HARD_GAME,
-                iconName: 'ːcsgo_deadː',
-                description: 'Hard game to master',
-            },
-            {
-                id: 5,
-                type: CategoryType.VERY_HARD_GAME,
-                iconName: 'ːcsgo_deadːːcsgo_deadː',
-                description: 'Very hard game to master',
-            },
-            {
-                id: 6,
-                type: CategoryType.ULTRA_HARD_GAME,
-                iconName: 'ːcsgo_deadːːcsgo_deadːːcsgo_deadː',
-                description: 'Ultra hard game to master',
-            },
-            {
-                id: 7,
-                type: CategoryType.LOVED_GAME,
-                iconName: 'ːHeartPixː',
-                description: 'Game which I fall in love',
-            },
-            {
-                id: 8,
-                type: CategoryType.BAD_GAME,
-                iconName: 'ːcleandinoː',
-                description: 'This game sucks for various reasons',
-            },
-            {
-                id: 9,
-                type: CategoryType.DOESNT_COUNT,
-                iconName: 'ːQuestion_mː',
-                description: `Somehow it doesn't count`,
-            },
-            {
-                id: 10,
-                type: CategoryType.BUGGED_GAME,
-                iconName: 'ːpukeː',
-                description: 'Bugged game with broken achievements',
-            },
-            {
-                id: 11,
-                type: CategoryType.ONE_HUNDRED_PERCENT,
-                iconName: 'ː100ftː',
-                description: null,
-            },
-        ],
-    };
+    public categoriesResponseBody: Category[] = [
+        {
+            id: 1,
+            type: CategoryType.LONG_GAME,
+            iconName: 'ːcleanhourglassː',
+            description: 'Long game (+25h)',
+        },
+        {
+            id: 2,
+            type: CategoryType.VERY_LONG_GAME,
+            iconName: 'ːcleanhourglassːːcleanhourglassː',
+            description: 'Very long game (+50h)',
+        },
+        {
+            id: 3,
+            type: CategoryType.ULTRA_LONG_GAME,
+            iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
+            description: 'Ultra long game (+100h)',
+        },
+        {
+            id: 4,
+            type: CategoryType.HARD_GAME,
+            iconName: 'ːcsgo_deadː',
+            description: 'Hard game to master',
+        },
+        {
+            id: 5,
+            type: CategoryType.VERY_HARD_GAME,
+            iconName: 'ːcsgo_deadːːcsgo_deadː',
+            description: 'Very hard game to master',
+        },
+        {
+            id: 6,
+            type: CategoryType.ULTRA_HARD_GAME,
+            iconName: 'ːcsgo_deadːːcsgo_deadːːcsgo_deadː',
+            description: 'Ultra hard game to master',
+        },
+        {
+            id: 7,
+            type: CategoryType.LOVED_GAME,
+            iconName: 'ːHeartPixː',
+            description: 'Game which I fall in love',
+        },
+        {
+            id: 8,
+            type: CategoryType.BAD_GAME,
+            iconName: 'ːcleandinoː',
+            description: 'This game sucks for various reasons',
+        },
+        {
+            id: 9,
+            type: CategoryType.DOESNT_COUNT,
+            iconName: 'ːQuestion_mː',
+            description: `Somehow it doesn't count`,
+        },
+        {
+            id: 10,
+            type: CategoryType.BUGGED_GAME,
+            iconName: 'ːpukeː',
+            description: 'Bugged game with broken achievements',
+        },
+        {
+            id: 11,
+            type: CategoryType.ONE_HUNDRED_PERCENT,
+            iconName: 'ː100ftː',
+            description: null,
+        },
+    ];
 
     public descriptionResponseBody: DescriptionResponseBody = {
         categories: [

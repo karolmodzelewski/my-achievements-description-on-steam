@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.19.1 - 20.02.2022 [FE]
+
+- Adjust frontend to backend changes
+- Fix description, when there is no completed games or games with new achievements
+
 ## 0.19.0 - 20.02.2022 [BE]
 
 - Refactor categories and games

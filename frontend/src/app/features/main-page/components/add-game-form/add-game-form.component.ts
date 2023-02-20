@@ -89,8 +89,8 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     private prepareAddGameDataForRequest(): AddGameRequestBody {
         const requestBody: AddGameRequestBody = {
             name: this.form.get(AddGameFormControl.NAME)?.value,
-            newAchievements: this.form.get(AddGameFormControl.NEW_ACHIEVEMENTS)?.value,
-            gameCategories: [],
+            hasNewAchievements: this.form.get(AddGameFormControl.NEW_ACHIEVEMENTS)?.value,
+            categories: [],
         };
 
         for (const categoryType in this.gameCategoriesFormGroup?.value) {
@@ -98,10 +98,10 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
                 switch (categoryType) {
                     case AddGameFormControl.LENGTH:
                     case AddGameFormControl.DIFFICULTY:
-                        requestBody.gameCategories.push(this.gameCategoriesFormGroup.value[categoryType])
+                        requestBody.categories.push(this.gameCategoriesFormGroup.value[categoryType])
                         break;
                     default:
-                        requestBody.gameCategories.push(categoryType as CategoryType);
+                        requestBody.categories.push(categoryType as CategoryType);
                 }
             }
         }
