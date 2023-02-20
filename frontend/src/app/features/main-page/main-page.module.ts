@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { MainPageComponent } from './main-page.component';
 import { MainPageRoutingModule } from './main-page-routing.module';
@@ -25,6 +26,8 @@ import { LoadingStateComponent } from '../../components/loading-state/loading-st
 import { CategoryTypeTranslationHeadingComponent } from './components/category-type-translation/components/category-type-translation-heading/category-type-translation-heading.component';
 import { ExpansionButtonTextComponent } from './components/add-categories-form/components/expansion-button-text/expansion-button-text.component';
 import { EditGameService } from './services/edit-game.service';
+import { SnackbarComponent } from '../../components/snackbar/snackbar.component';
+import { SnackbarService } from './../../components/snackbar/snackbar.service';
 
 @NgModule({
     declarations: [
@@ -54,7 +57,9 @@ import { EditGameService } from './services/edit-game.service';
         LoadingStateComponent,
         MatSelectModule,
         MatCheckboxModule,
+        MatSnackBarModule,
+        SnackbarComponent,
     ],
-    providers: [EditGameService],
+    providers: [EditGameService, SnackbarService],
 })
 export class MainPageModule {}

@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.20.0 - 20.02.2022 [FE]
+
+- Add snackbars
+
 ## 0.19.2 - 20.02.2022 [FE]
 
 - Fix description copied data

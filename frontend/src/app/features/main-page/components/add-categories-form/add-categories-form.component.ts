@@ -9,6 +9,7 @@ import { catchError } from 'rxjs/operators';
 import { ViewState } from './../../../../enums/view-state.enum';
 import { CategoryType } from './../../../../enums/category-type.enum';
 import { Category } from './../../../../interfaces/category.interface';
+import { SnackbarService } from './../../../../components/snackbar/snackbar.service';
 
 @Component({
     selector: 'mados-add-categories-form',
@@ -31,7 +32,11 @@ export class AddCategoriesFormComponent implements OnInit {
     public shouldShowCategories: boolean;
     public headingId: string = 'heading';
 
-    constructor(private httpClient: HttpClient, private viewportScroller: ViewportScroller) {}
+    constructor(
+        private httpClient: HttpClient,
+        private viewportScroller: ViewportScroller,
+        private snackbarService: SnackbarService,
+    ) {}
 
     public ngOnInit(): void {
         this.buildForm();
@@ -39,7 +44,6 @@ export class AddCategoriesFormComponent implements OnInit {
 
     public iterateByOriginalOrder = (): number => 0;
 
-    // TODO: Add snackbars
     public saveCategories(): void {
         if (this.form.invalid) {
             return;
@@ -54,12 +58,14 @@ export class AddCategoriesFormComponent implements OnInit {
                 take(1),
                 catchError(() => {
                     this.viewState = ViewState.ERROR;
+                    this.snackbarService.openSnackbar('An error has occurred while saving categories', 'error');
 
                     return EMPTY;
                 })
             )
             .subscribe(() => {
                 this.viewState = ViewState.SUCCESS;
+                this.snackbarService.openSnackbar('Successfully saved categories', 'success');
                 this.reloadDescription.next();
             });
     }

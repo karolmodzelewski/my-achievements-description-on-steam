@@ -31,26 +31,18 @@ export class MainPageComponent extends Destroyable implements OnInit {
     public getDescriptionData(): void {
         this.httpClient.get<DescriptionResponseBody>('description')
             .pipe(
-                catchError(() => {
-                    // TODO: Add snackbar
-
-                    return EMPTY;
-                }),
                 map((description: DescriptionResponseBody) => {
                     this.description$ = of(description);
                 }),
                 takeUntil(this.destroyed$)
             )
-            .subscribe(() => {
-                // TODO Add snackbar
-            });
+            .subscribe();
     }
 
     private initCategoriesAndDescriptionData(): void {
         zip(this.httpClient.get<Category[]>('categories'), this.httpClient.get<DescriptionResponseBody>('description'))
             .pipe(
                 catchError(() => {
-                    // TODO: Add snackbar
                     this.viewState = ViewState.ERROR;
 
                     return EMPTY;
@@ -62,7 +54,6 @@ export class MainPageComponent extends Destroyable implements OnInit {
                 takeUntil(this.destroyed$)
             )
             .subscribe(() => {
-                // TODO Add snackbar
                 this.viewState = ViewState.SUCCESS;
             });
     }

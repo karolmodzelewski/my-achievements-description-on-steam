@@ -15,6 +15,7 @@ import { EditGameService } from './../../services/edit-game.service';
 import { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
 import { AddGameFormGroup } from './enums/add-game-form-group.enum';
 import { ViewState } from './../../../../enums/view-state.enum';
+import { SnackbarService } from './../../../../components/snackbar/snackbar.service';
 
 @Component({
     selector: 'mados-add-game-form',
@@ -46,7 +47,8 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         private httpClient: HttpClient,
         private editGameService: EditGameService,
         private viewportScroller: ViewportScroller,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private snackbarService: SnackbarService,
     ) {
         super();
     }
@@ -56,7 +58,6 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         this.handleGameEdition();
     }
 
-    // TODO: Add snackbars
     public addGame(): void {
         if (this.form.invalid) {
             return;
@@ -71,11 +72,13 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
                 take(1),
                 catchError(() => {
                     this.viewState = ViewState.ERROR;
+                    this.snackbarService.openSnackbar('An error has occurred while saving game', 'error');
 
                     return EMPTY;
                 })
             ).subscribe(() => {
                 this.viewState = ViewState.SUCCESS;
+                this.snackbarService.openSnackbar('Successfully saved game', 'success');
                 this.initForm();
                 this.reloadDescription.emit();
             });
