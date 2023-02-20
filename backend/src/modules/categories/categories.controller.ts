@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 
 import { InsertResult } from 'typeorm';
 
-import { CategoriesDto } from './dtos/categories.dto';
 import { CategoryDto } from './dtos/category.dto';
 import { CategoriesService } from './services/categories.service';
 
@@ -15,7 +14,7 @@ export class CategoriesController {
     constructor(private categoriesService: CategoriesService) {}
 
     @Get()
-    public getCategories(): Observable<CategoriesDto> {
+    public getCategories(): Observable<CategoryDto[]> {
         this.logger.log(`GET Request: Categories`);
 
         return this.categoriesService.getCategories();

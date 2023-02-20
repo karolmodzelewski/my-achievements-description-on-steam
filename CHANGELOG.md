@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.19.0 - 20.02.2022 [BE]
+
+- Refactor categories and games
+- Simplify entities, delete needless code
+
 ## 0.18.1 - 18.02.2022 [BE]
 
 - Fix POST categories endpoint

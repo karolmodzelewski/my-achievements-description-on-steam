@@ -10,9 +10,9 @@ export class AddGameDto {
     @IsArray()
     @ArrayMinSize(0)
     @ArrayMaxSize(6)
-    public gameCategories: CategoryType[];
+    public categories: CategoryType[];
 
     @IsBoolean()
     @IsNotEmpty()
-    public newAchievements: boolean;
+    public hasNewAchievements: boolean;
 }

@@ -1,6 +1,6 @@
 import { CategoryType } from '../../../enums/category-type.enum';
 
-export interface Category {
+export interface GameCategory {
     type: CategoryType;
     iconName: string;
 }
