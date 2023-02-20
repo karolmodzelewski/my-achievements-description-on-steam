@@ -1,10 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
 import { InsertResult } from 'typeorm';
 
-import { CategoriesDto } from './dtos/categories.dto';
+import { CategoryDto } from './dtos/category.dto';
 import { CategoriesService } from './services/categories.service';
 
 @Controller('categories')
@@ -14,15 +14,14 @@ export class CategoriesController {
     constructor(private categoriesService: CategoriesService) {}
 
     @Get()
-    public getCategories(): Observable<CategoriesDto> {
+    public getCategories(): Observable<CategoryDto[]> {
         this.logger.log(`GET Request: Categories`);
 
         return this.categoriesService.getCategories();
     }
 
     @Post()
-    @HttpCode(HttpStatus.NO_CONTENT)
-    public upsertCategories(@Body() categoriesDto: CategoriesDto): Observable<InsertResult> {
+    public upsertCategories(@Body() categoriesDto: CategoryDto[]): Observable<InsertResult> {
         this.logger.log(`POST Request: Upsert '${JSON.stringify(categoriesDto)}' categories`);
 
         return this.categoriesService.upsertCategories(categoriesDto);
