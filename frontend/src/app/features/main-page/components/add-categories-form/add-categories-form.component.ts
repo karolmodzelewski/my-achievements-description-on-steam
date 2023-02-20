@@ -1,6 +1,6 @@
 import { ViewportScroller } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { EMPTY, take } from 'rxjs';
@@ -19,6 +19,9 @@ import { Category } from './../../../../interfaces/category.interface';
 export class AddCategoriesFormComponent implements OnInit {
     @Input()
     public categories: Category[];
+
+    @Output()
+    public reloadDescription: EventEmitter<void> = new EventEmitter<void>();
 
     public headingText: string = 'Add categories';
     public form: FormGroup = new FormGroup({});
@@ -57,6 +60,7 @@ export class AddCategoriesFormComponent implements OnInit {
             )
             .subscribe(() => {
                 this.viewState = ViewState.SUCCESS;
+                this.reloadDescription.next();
             });
     }
 

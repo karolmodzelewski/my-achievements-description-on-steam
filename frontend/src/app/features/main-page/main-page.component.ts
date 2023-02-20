@@ -15,7 +15,7 @@ import { Category } from './../../interfaces/category.interface';
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent extends Destroyable implements OnInit {
-    public viewState: ViewState;
+    public viewState: ViewState = ViewState.LOADING;
     public ViewState: typeof ViewState = ViewState;
     public categories$: Observable<Category[]>;
     public description$: Observable<DescriptionResponseBody>;
@@ -28,7 +28,7 @@ export class MainPageComponent extends Destroyable implements OnInit {
         this.initCategoriesAndDescriptionData();
     }
 
-    public reloadDescription(): void {
+    public getDescriptionData(): void {
         this.httpClient.get<DescriptionResponseBody>('description')
             .pipe(
                 catchError(() => {
@@ -47,11 +47,10 @@ export class MainPageComponent extends Destroyable implements OnInit {
     }
 
     private initCategoriesAndDescriptionData(): void {
-        this.viewState = ViewState.LOADING;
-
         zip(this.httpClient.get<Category[]>('categories'), this.httpClient.get<DescriptionResponseBody>('description'))
             .pipe(
                 catchError(() => {
+                    // TODO: Add snackbar
                     this.viewState = ViewState.ERROR;
 
                     return EMPTY;
@@ -62,6 +61,9 @@ export class MainPageComponent extends Destroyable implements OnInit {
                 }),
                 takeUntil(this.destroyed$)
             )
-            .subscribe(() => (this.viewState = ViewState.SUCCESS));
+            .subscribe(() => {
+                // TODO Add snackbar
+                this.viewState = ViewState.SUCCESS;
+            });
     }
 }

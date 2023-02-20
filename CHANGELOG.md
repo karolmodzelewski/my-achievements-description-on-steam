@@ -2,6 +2,13 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.19.2 - 20.02.2022 [FE]
+
+- Fix description copied data
+- Fix reloading data after API call
+- Fix missing hasNewAchievements property in Game interface
+- Fix game edit
+
 ## 0.19.1 - 20.02.2022 [FE]
 
 - Adjust frontend to backend changes

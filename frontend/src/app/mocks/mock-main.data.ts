@@ -150,11 +150,13 @@ export class MockMainData {
                 id: 1,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'DeathComing',
+                hasNewAchievements: false,
             },
             {
                 id: 2,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'FINAL FANTASY X / X-2 HD Remaster',
+                hasNewAchievements: false,
                 categories: [
                     {
                         type: CategoryType.LOVED_GAME,
@@ -174,6 +176,7 @@ export class MockMainData {
                 id: 3,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Pixel Puzzles Traditional Jigsaws',
+                hasNewAchievements: false,
                 categories: [
                     {
                         type: CategoryType.BAD_GAME,
@@ -189,6 +192,7 @@ export class MockMainData {
                 id: 4,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Sniper Elite 4',
+                hasNewAchievements: false,
                 categories: [
                     {
                         type: CategoryType.VERY_LONG_GAME,
@@ -200,6 +204,7 @@ export class MockMainData {
                 id: 5,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Stardew Valley',
+                hasNewAchievements: false,
                 categories: [
                     {
                         type: CategoryType.LOVED_GAME,
@@ -219,6 +224,7 @@ export class MockMainData {
                 id: 6,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Warframe',
+                hasNewAchievements: false,
                 categories: [
                     {
                         type: CategoryType.LOVED_GAME,
@@ -236,6 +242,7 @@ export class MockMainData {
                 id: 1,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Cuphead',
+                hasNewAchievements: true,
                 categories: [
                     {
                         type: CategoryType.LONG_GAME,
@@ -251,6 +258,7 @@ export class MockMainData {
                 id: 2,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Graveyard Keeper',
+                hasNewAchievements: true,
                 categories: [
                     {
                         type: CategoryType.LOVED_GAME,
@@ -266,11 +274,13 @@ export class MockMainData {
                 id: 3,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'House Flipper',
+                hasNewAchievements: true,
             },
             {
                 id: 4,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'The Binding of Isaac: Rebirth',
+                hasNewAchievements: true,
                 categories: [
                     {
                         type: CategoryType.LOVED_GAME,

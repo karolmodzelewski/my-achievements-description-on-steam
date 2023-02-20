@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { Game } from './../../../../interfaces/game.interface';
@@ -13,19 +13,19 @@ import { GameCategory } from '../../../../interfaces/game-category.interface';
     styleUrls: ['./description-section.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DescriptionSectionComponent implements OnInit {
+export class DescriptionSectionComponent {
     @Input()
-    public description: DescriptionResponseBody;
+    public set descriptionData(description: DescriptionResponseBody) {
+        this.description = description;
+        this.prepareDescriptionToCopy();
+    };
 
+    public description: DescriptionResponseBody;
     public descriptionToCopy: string;
     public sectionSeparator: string = '_______________________________';
     public tooltipText: string = 'Copied!';
     public headingText: string = 'Description';
     public shouldShowEdition: boolean;
-
-    public ngOnInit(): void {
-        this.prepareDescriptionToCopy();
-    }
 
     public handleEditionMode(): void {
         this.shouldShowEdition = !this.shouldShowEdition;
