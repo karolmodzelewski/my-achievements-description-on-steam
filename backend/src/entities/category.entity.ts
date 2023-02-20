@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-import { CategoryType } from '../../../enums/category-type.enum';
+import { CategoryType } from '../enums/category-type.enum';
 
 @Entity()
 export class Category {

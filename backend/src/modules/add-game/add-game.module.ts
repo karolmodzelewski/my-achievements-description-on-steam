@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Category } from '../categories/entities/category.entity';
 import { AddGameController } from './add-game.controller';
-import { CompletedGames } from './entities/completed-games.entity';
-import { GamesWithNewAchievements } from './entities/games-with-new-achievements.entity';
+import { Game } from '../../entities/game.entity';
 import { AddGameService } from './services/add-game/add-game.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([CompletedGames, GamesWithNewAchievements, Category])],
+    imports: [TypeOrmModule.forFeature([Game])],
     controllers: [AddGameController],
     providers: [AddGameService],
 })
