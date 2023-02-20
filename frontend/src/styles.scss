@@ -11,3 +11,16 @@ body {
     font-family: Roboto, 'Helvetica Neue', sans-serif;
     background: $color-light-purple;
 }
+
+.mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: none;
+    border-radius: 4px;
+
+    &.success {
+        background: $color-green;
+    }
+
+    &.error {
+        background: $color-red;
+    }
+}

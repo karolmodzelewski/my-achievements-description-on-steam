@@ -15,6 +15,7 @@ import { EditGameService } from './../../services/edit-game.service';
 import { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
 import { AddGameFormGroup } from './enums/add-game-form-group.enum';
 import { ViewState } from './../../../../enums/view-state.enum';
+import { SnackbarService } from './../../../../components/snackbar/snackbar.service';
 
 @Component({
     selector: 'mados-add-game-form',
@@ -46,7 +47,8 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         private httpClient: HttpClient,
         private editGameService: EditGameService,
         private viewportScroller: ViewportScroller,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private snackbarService: SnackbarService,
     ) {
         super();
     }
@@ -56,7 +58,6 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         this.handleGameEdition();
     }
 
-    // TODO: Add snackbars
     public addGame(): void {
         if (this.form.invalid) {
             return;
@@ -66,17 +67,19 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
 
         const requestBody: AddGameRequestBody = this.prepareAddGameDataForRequest();
 
-        this.httpClient.post<AddGameRequestBody>('add-game', requestBody)
+        this.httpClient.post<AddGameRequestBody>('game', requestBody)
             .pipe(
                 take(1),
                 catchError(() => {
                     this.viewState = ViewState.ERROR;
+                    this.snackbarService.openSnackbar('An error has occurred while saving game', 'error');
 
                     return EMPTY;
                 })
             ).subscribe(() => {
                 this.viewState = ViewState.SUCCESS;
-                this.form.reset();
+                this.snackbarService.openSnackbar('Successfully saved game', 'success');
+                this.initForm();
                 this.reloadDescription.emit();
             });
     }
@@ -89,8 +92,8 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     private prepareAddGameDataForRequest(): AddGameRequestBody {
         const requestBody: AddGameRequestBody = {
             name: this.form.get(AddGameFormControl.NAME)?.value,
-            newAchievements: this.form.get(AddGameFormControl.NEW_ACHIEVEMENTS)?.value,
-            gameCategories: [],
+            hasNewAchievements: this.form.get(AddGameFormControl.HAS_NEW_ACHIEVEMENTS)?.value,
+            categories: [],
         };
 
         for (const categoryType in this.gameCategoriesFormGroup?.value) {
@@ -98,10 +101,10 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
                 switch (categoryType) {
                     case AddGameFormControl.LENGTH:
                     case AddGameFormControl.DIFFICULTY:
-                        requestBody.gameCategories.push(this.gameCategoriesFormGroup.value[categoryType])
+                        requestBody.categories.push(this.gameCategoriesFormGroup.value[categoryType])
                         break;
                     default:
-                        requestBody.gameCategories.push(categoryType as CategoryType);
+                        requestBody.categories.push(categoryType as CategoryType);
                 }
             }
         }
@@ -113,7 +116,6 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         this.editGameService.editingGameName$.pipe(filter(Boolean), takeUntil(this.destroyed$)).subscribe((gameName: string) => this.updateFormWhenEditingGame(gameName));
     }
 
-    // TODO: Fix game edit
     private updateFormWhenEditingGame(gameName: string): void {
         this.form.reset();
 
@@ -121,36 +123,36 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
         const game: Game = this.findGameByName(completedGames, gameName) || this.findGameByName(gamesWithNewAchievements, gameName);
 
         this.form.get(AddGameFormControl.NAME)?.setValue(gameName);
+        this.form.get(AddGameFormControl.HAS_NEW_ACHIEVEMENTS)?.setValue(game.hasNewAchievements);
         this.updateFormCategoriesWhenEditingGame(game);
         this.form.updateValueAndValidity();
         this.viewportScroller.scrollToAnchor(this.headingId);
     }
 
-    // TODO: Fix game edit
     private updateFormCategoriesWhenEditingGame(game: Game): void {
         game.categories?.forEach((gameCategory: GameCategory) => {
             if (gameCategory.type === CategoryType.LONG_GAME || gameCategory.type === CategoryType.VERY_LONG_GAME || gameCategory.type === CategoryType.ULTRA_LONG_GAME) {
-                this.form.get(AddGameFormControl.LENGTH)?.setValue(gameCategory.type);
+                this.gameCategoriesFormGroup.get(AddGameFormControl.LENGTH)?.setValue(gameCategory.type);
             }
 
             if (gameCategory.type === CategoryType.HARD_GAME || gameCategory.type === CategoryType.VERY_HARD_GAME || gameCategory.type === CategoryType.ULTRA_HARD_GAME) {
-                this.form.get(AddGameFormControl.DIFFICULTY)?.setValue(gameCategory.type);
+                this.gameCategoriesFormGroup.get(AddGameFormControl.DIFFICULTY)?.setValue(gameCategory.type);
             }
 
             if (gameCategory.type === CategoryType.LOVED_GAME) {
-                this.form.get(AddGameFormControl.LOVED_GAME)?.setValue(true);
+                this.gameCategoriesFormGroup.get(AddGameFormControl.LOVED_GAME)?.setValue(true);
             }
 
             if (gameCategory.type === CategoryType.BAD_GAME) {
-                this.form.get(AddGameFormControl.BAD_GAME)?.setValue(true);
+                this.gameCategoriesFormGroup.get(AddGameFormControl.BAD_GAME)?.setValue(true);
             }
 
             if (gameCategory.type === CategoryType.DOESNT_COUNT) {
-                this.form.get(AddGameFormControl.DOESNT_COUNT)?.setValue(true);
+                this.gameCategoriesFormGroup.get(AddGameFormControl.DOESNT_COUNT)?.setValue(true);
             }
 
             if (gameCategory.type === CategoryType.BUGGED_GAME) {
-                this.form.get(AddGameFormControl.BUGGED_GAME)?.setValue(true);
+                this.gameCategoriesFormGroup.get(AddGameFormControl.BUGGED_GAME)?.setValue(true);
             }
         });
     }
@@ -162,7 +164,7 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     private initForm(): void {
         this.form = this.formBuilder.group({
             [AddGameFormControl.NAME]: ['', Validators.required],
-            [AddGameFormControl.NEW_ACHIEVEMENTS]: [false],
+            [AddGameFormControl.HAS_NEW_ACHIEVEMENTS]: [false],
             [AddGameFormGroup.GAME_CATEGORIES]: this.formBuilder.group({
                 [AddGameFormControl.LENGTH]: [null],
                 [AddGameFormControl.DIFFICULTY]: [null],
