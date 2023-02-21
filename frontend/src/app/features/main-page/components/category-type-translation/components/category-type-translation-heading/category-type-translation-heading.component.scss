@@ -1,0 +1,17 @@
+@use 'src/styles/colors' as *;
+
+.category-type,
+.icon-arrow-right {
+    color: $color-purple;
+}
+
+.category-type {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.icon-arrow-right {
+    margin-right: 5px;
+}

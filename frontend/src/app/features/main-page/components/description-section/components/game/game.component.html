@@ -1,0 +1,20 @@
+<div class="game-container">
+    <p class="game-data">
+        {{ oneHundredPercentIconName }} {{ name }}
+        <ng-container *ngIf="categories?.length">
+            <ng-container *ngFor="let category of categories">{{ category.iconName }} </ng-container>
+        </ng-container>
+    </p>
+    <div *ngIf="shouldShowEdition" class="icon-container">
+        <mat-icon
+            (click)="editGame()"
+            fontIcon="edit"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            (click)="deleteGame()"
+            fontIcon="delete"
+            class="icon"
+        ></mat-icon>
+    </div>
+</div>

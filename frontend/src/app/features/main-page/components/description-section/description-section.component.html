@@ -1,0 +1,71 @@
+<mados-section-heading [headingText]="headingText"></mados-section-heading>
+
+<section class="description">
+    <div>
+        <mados-category
+            *ngFor="let category of description?.categories"
+            [type]="category.type"
+            [iconName]="category.iconName"
+            [description]="category.description"
+            [amount]="category?.amount"
+        ></mados-category>
+    </div>
+    <ng-container *ngIf="description.completedGames?.length">
+        <div class="margin-top">
+            <p>{{ sectionSeparator }}</p>
+            <p>COMPLETED ({{ description.completedGames.length }}):</p>
+            <p>{{ sectionSeparator }}</p>
+        </div>
+        <div *ngIf="description.completedGames?.length" class="margin-top">
+            <mados-game
+                *ngFor="let game of description.completedGames"
+                (reloadDescription)="deleteGame()"
+                [oneHundredPercentIconName]="game.oneHundredPercentIconName"
+                [name]="game.name"
+                [categories]="game?.categories"
+                [shouldShowEdition]="shouldShowEdition"
+            ></mados-game>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="description.gamesWithNewAchievements?.length">
+        <div class="margin-top">
+            <p>{{ sectionSeparator }}</p>
+            <p>NEW ACHIEVEMENTS ({{ description.gamesWithNewAchievements.length }}):</p>
+            <p>{{ sectionSeparator }}</p>
+        </div>
+        <div class="margin-top">
+            <mados-game
+                *ngFor="let game of description.gamesWithNewAchievements"
+                (reloadDescription)="deleteGame()"
+                [oneHundredPercentIconName]="game.oneHundredPercentIconName"
+                [name]="game.name"
+                [categories]="game?.categories"
+                [shouldShowEdition]="shouldShowEdition"
+            ></mados-game>
+        </div>
+    </ng-container>
+    <div class="icons-container">
+        <mat-icon
+            *ngIf="!shouldShowEdition"
+            (click)="handleEditionMode()"
+            fontIcon="edit_off"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            *ngIf="shouldShowEdition"
+            (click)="handleEditionMode()"
+            fontIcon="edit"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            #tooltip="matTooltip"
+            (click)="handleTooltip($event, tooltip)"
+            (mouseenter)="$event.stopImmediatePropagation()"
+            (mouseleave)="$event.stopImmediatePropagation()"
+            [matTooltip]="tooltipText"
+            [cdkCopyToClipboard]="descriptionToCopy"
+            fontIcon="content_copy"
+            class="icon"
+        ></mat-icon>
+    </div>
+</section>

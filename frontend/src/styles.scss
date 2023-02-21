@@ -1,8 +1,26 @@
+@use 'src/styles/reset' as *;
+@use 'src/styles/colors' as *;
+
 html,
 body {
     height: 100%;
 }
+
 body {
     margin: 0;
     font-family: Roboto, 'Helvetica Neue', sans-serif;
+    background: $color-light-purple;
+}
+
+.mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: none;
+    border-radius: 4px;
+
+    &.success {
+        background: $color-green;
+    }
+
+    &.error {
+        background: $color-red;
+    }
 }

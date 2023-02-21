@@ -1,0 +1,25 @@
+.game-container, .icon-container {
+    display: flex;
+}
+
+.game-container {
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.game-data {
+    margin: 0;
+    word-break: break-all;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    margin-left: 5px;
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}

@@ -1,0 +1,12 @@
+@use 'src/styles/colors' as *;
+
+.heading {
+    font-size: 32px;
+    text-align: center;
+}
+
+.first-letter {
+    font-size: 42px;
+    color: $color-purple;
+    font-weight: 500;
+}
