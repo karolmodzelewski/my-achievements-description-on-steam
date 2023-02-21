@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.0.0 - 21.02.2022
+
+- Release 1.0.0 version
+
 ## 0.22.1 - 21.02.2022 [FE]
 
 - Fix resizing icons on description

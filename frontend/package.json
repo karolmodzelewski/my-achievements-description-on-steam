@@ -1,6 +1,7 @@
 {
     "name": "mados",
-    "version": "0.0.0",
+    "version": "1.0.0",
+    "author": "Karol Modzelewski",
     "scripts": {
         "ng": "ng",
         "start:dev": "ng serve --configuration development",
