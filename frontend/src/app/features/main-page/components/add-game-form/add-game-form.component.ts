@@ -37,7 +37,7 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
     public CategoryType: typeof CategoryType = CategoryType;
     public ViewState: typeof ViewState = ViewState;
     public viewState: ViewState;
-    public headingId: string = 'heading';
+    public headingId: string = 'addGameHeading';
 
     private get gameCategoriesFormGroup(): FormGroup {
         return this.form.get(AddGameFormGroup.GAME_CATEGORIES) as FormGroup;

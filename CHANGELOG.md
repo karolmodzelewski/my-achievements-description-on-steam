@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 0.22.1 - 21.02.2022 [FE]
+
+- Fix resizing icons on description
+- Fix viewport scroller on game edition
+
 ## 0.22.0 - 20.02.2022 [BE]
 
 - Change 'Add-game' module name to 'Game'

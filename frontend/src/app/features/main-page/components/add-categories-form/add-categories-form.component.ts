@@ -30,7 +30,7 @@ export class AddCategoriesFormComponent implements OnInit {
     public ViewState: typeof ViewState = ViewState;
     public viewState: ViewState;
     public shouldShowCategories: boolean;
-    public headingId: string = 'heading';
+    public headingId: string = 'addCategoriesHeading';
 
     private initialCategories: CategoryType[] = [
         CategoryType.LONG_GAME,
