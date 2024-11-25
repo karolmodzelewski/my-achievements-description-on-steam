@@ -154,6 +154,10 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
             if (gameCategory.type === CategoryType.BUGGED_GAME) {
                 this.gameCategoriesFormGroup.get(AddGameFormControl.BUGGED_GAME)?.setValue(true);
             }
+
+            if (gameCategory.type === CategoryType.ADULT_GAME) {
+                this.gameCategoriesFormGroup.get(AddGameFormControl.ADULT_GAME)?.setValue(true);
+            }
         });
     }
 
@@ -172,6 +176,7 @@ export class AddGameFormComponent extends Destroyable implements OnInit {
                 [AddGameFormControl.BAD_GAME]: [false],
                 [AddGameFormControl.DOESNT_COUNT]: [false],
                 [AddGameFormControl.BUGGED_GAME]: [false],
+                [AddGameFormControl.ADULT_GAME]: [false],
             }),
         });
     }

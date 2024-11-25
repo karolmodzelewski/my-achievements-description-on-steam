@@ -21,6 +21,7 @@ export class DescriptionService {
         CategoryType.BAD_GAME,
         CategoryType.DOESNT_COUNT,
         CategoryType.BUGGED_GAME,
+        CategoryType.ADULT_GAME,
         CategoryType.LONG_GAME,
         CategoryType.VERY_LONG_GAME,
         CategoryType.ULTRA_LONG_GAME,

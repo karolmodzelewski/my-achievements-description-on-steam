@@ -34,8 +34,8 @@ Frontend:
 
 Backend:
 
-- `npm run start:dev` -  runs on `localhost:3000` with `development` configuration
-- `npm run start:prod` -  runs on `localhost:3000` with `production` configuration
+- `npm run start:dev` -  runs on `localhost:3001` with `development` configuration
+- `npm run start:prod` -  runs on `localhost:3001` with `production` configuration
 
 ### Helpful commands:
 

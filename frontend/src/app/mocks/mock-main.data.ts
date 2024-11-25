@@ -44,7 +44,7 @@ export class MockMainData {
             id: 7,
             type: CategoryType.LOVED_GAME,
             iconName: 'ːHeartPixː',
-            description: 'Game which I fall in love',
+            description: 'The game I fell in love with',
         },
         {
             id: 8,
@@ -66,6 +66,12 @@ export class MockMainData {
         },
         {
             id: 11,
+            type: CategoryType.ADULT_GAME,
+            iconName: ':badNk:',
+            description: '( ͡° ͜ʖ ͡°)',
+        },
+        {
+            id: 12,
             type: CategoryType.ONE_HUNDRED_PERCENT,
             iconName: 'ː100ftː',
             description: null,
@@ -78,7 +84,7 @@ export class MockMainData {
                 id: 1,
                 type: CategoryType.LOVED_GAME,
                 iconName: 'ːHeartPixː',
-                description: 'Game which I fall in love',
+                description: 'The game I fell in love with',
                 amount: 31,
             },
             {
@@ -101,6 +107,13 @@ export class MockMainData {
                 iconName: 'ːpukeː',
                 description: 'Bugged game with broken achievements',
                 amount: 2,
+            },
+            {
+                id: 5,
+                type: CategoryType.ADULT_GAME,
+                iconName: 'ːbadNkː',
+                description: '( ͡° ͜ʖ ͡°)',
+                amount: 20,
             },
             {
                 id: 5,
@@ -149,11 +162,27 @@ export class MockMainData {
             {
                 id: 1,
                 oneHundredPercentIconName: 'ː100ftː',
+                name: 'Anime Boobies',
+                hasNewAchievements: false,
+                categories: [
+                    {
+                        type: CategoryType.LOVED_GAME,
+                        iconName: 'ːHeartPixː',
+                    },
+                    {
+                        type: CategoryType.ADULT_GAME,
+                        iconName: ':badNk:',
+                    },
+                ],
+            },
+            {
+                id: 2,
+                oneHundredPercentIconName: 'ː100ftː',
                 name: 'DeathComing',
                 hasNewAchievements: false,
             },
             {
-                id: 2,
+                id: 3,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'FINAL FANTASY X / X-2 HD Remaster',
                 hasNewAchievements: false,
@@ -173,7 +202,27 @@ export class MockMainData {
                 ],
             },
             {
-                id: 3,
+                id: 4,
+                oneHundredPercentIconName: 'ː100ftː',
+                name: 'Hentai Neko Girls',
+                hasNewAchievements: false,
+                categories: [
+                    {
+                        type: CategoryType.LOVED_GAME,
+                        iconName: 'ːHeartPixː',
+                    },
+                    {
+                        type: CategoryType.ULTRA_LONG_GAME,
+                        iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
+                    },
+                    {
+                        type: CategoryType.ADULT_GAME,
+                        iconName: 'ːbadNkː',
+                    },
+                ],
+            },
+            {
+                id: 5,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Pixel Puzzles Traditional Jigsaws',
                 hasNewAchievements: false,
@@ -189,7 +238,7 @@ export class MockMainData {
                 ],
             },
             {
-                id: 4,
+                id: 6,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Sniper Elite 4',
                 hasNewAchievements: false,
@@ -201,7 +250,7 @@ export class MockMainData {
                 ],
             },
             {
-                id: 5,
+                id: 7,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Stardew Valley',
                 hasNewAchievements: false,
@@ -221,7 +270,7 @@ export class MockMainData {
                 ],
             },
             {
-                id: 6,
+                id: 8,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'Warframe',
                 hasNewAchievements: false,
@@ -273,11 +322,27 @@ export class MockMainData {
             {
                 id: 3,
                 oneHundredPercentIconName: 'ː100ftː',
+                name: 'Hentai Furry',
+                hasNewAchievements: true,
+                categories: [
+                    {
+                        type: CategoryType.BAD_GAME,
+                        iconName: 'ːcleandinoː',
+                    },
+                    {
+                        type: CategoryType.ADULT_GAME,
+                        iconName: ':badNk:',
+                    },
+                ],
+            },
+            {
+                id: 4,
+                oneHundredPercentIconName: 'ː100ftː',
                 name: 'House Flipper',
                 hasNewAchievements: true,
             },
             {
-                id: 4,
+                id: 5,
                 oneHundredPercentIconName: 'ː100ftː',
                 name: 'The Binding of Isaac: Rebirth',
                 hasNewAchievements: true,
