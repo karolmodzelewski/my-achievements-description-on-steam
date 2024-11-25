@@ -62,6 +62,17 @@ export class DescriptionSectionComponent {
         // Completed games
         descriptionToCopy += this.getGamePartOfDescription(this.description?.completedGames);
 
+        const completedAdultGamesAmount: number = this.countAdultGames(this.description?.completedGames);
+
+        if (completedAdultGamesAmount) {
+            descriptionToCopy += this.getAdultGamesAmountPartOfDescription(completedAdultGamesAmount);
+        }
+
+        // Separator when adult games and games with new achievements exists
+        if (completedAdultGamesAmount && this.description.gamesWithNewAchievements?.length) {
+            descriptionToCopy += '\n';
+        }
+
         // Separator 2
         if (this.description.gamesWithNewAchievements?.length) {
             descriptionToCopy += this.getSeparatorPartOfDescription('New achievements', this.description.gamesWithNewAchievements?.length);
@@ -69,6 +80,12 @@ export class DescriptionSectionComponent {
 
         // Games with new achievements
         descriptionToCopy += this.getGamePartOfDescription(this.description?.gamesWithNewAchievements);
+
+        const adultGamesWithNewAchievementsAmount: number = this.countAdultGames(this.description?.gamesWithNewAchievements);
+
+        if (adultGamesWithNewAchievementsAmount) {
+            descriptionToCopy += this.getAdultGamesAmountPartOfDescription(adultGamesWithNewAchievementsAmount);
+        }
 
         this.descriptionToCopy = descriptionToCopy;
     }
@@ -101,15 +118,43 @@ export class DescriptionSectionComponent {
         let gamesToCopy: string = '';
 
         games?.forEach((game: Game) => {
+            const isAdultGame: boolean = this.checkIfGameIsAnAdultGame(game);
+
+            if (isAdultGame) {
+                return;
+            }
+
             gamesToCopy += `${game?.oneHundredPercentIconName} ${game?.name} `;
 
             game?.categories?.forEach((gameCategory: GameCategory) => {
                 gamesToCopy += `${gameCategory.iconName}`;
             });
 
+            gamesToCopy = gamesToCopy.trim();
+
             gamesToCopy += '\n';
         });
 
         return gamesToCopy;
+    }
+
+    private getAdultGamesAmountPartOfDescription(adultGamesAmount: number): string {
+        let adultGamesAmountToCopy: string = '\n';
+
+        adultGamesAmountToCopy += `... and (${adultGamesAmount}) ${this.getAdultGameIconName()} games`
+
+        return adultGamesAmountToCopy;
+    }
+
+    private checkIfGameIsAnAdultGame(game: Game): boolean {
+        return !!game.categories?.some((category: GameCategory) => category.type === CategoryType.ADULT_GAME);
+    }
+
+    private countAdultGames(games: Game[]): number {
+        return games.filter((game: Game) => this.checkIfGameIsAnAdultGame(game)).length;
+    }
+
+    private getAdultGameIconName(): string {
+        return this.description.categories.find((category: Category) => category.type === CategoryType.ADULT_GAME)?.iconName ?? '';
     }
 }

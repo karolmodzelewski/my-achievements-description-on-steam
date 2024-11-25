@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 async function bootstrap(): Promise<void> {
     const logger: Logger = new Logger();
     const app: INestApplication = await NestFactory.create(AppModule);
-    const port: number = 3000;
+    const port: number = 3001;
 
     app.setGlobalPrefix('api');
     app.useGlobalPipes(

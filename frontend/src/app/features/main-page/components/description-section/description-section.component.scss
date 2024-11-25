@@ -27,7 +27,9 @@
 }
 
 .icons-container {
-    position: absolute;
+    display: flex;
+    justify-content: flex-end;
+    position: sticky;
     top: 15px;
     right: 15px;
 }
@@ -46,4 +48,8 @@
     &:nth-of-type(n + 1) {
         margin-left: 10px;
     }
+}
+
+.categories {
+    margin-top: -20px;
 }

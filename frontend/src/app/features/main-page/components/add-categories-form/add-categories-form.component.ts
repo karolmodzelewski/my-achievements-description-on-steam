@@ -43,6 +43,7 @@ export class AddCategoriesFormComponent implements OnInit {
         CategoryType.BAD_GAME,
         CategoryType.DOESNT_COUNT,
         CategoryType.BUGGED_GAME,
+        CategoryType.ADULT_GAME,
         CategoryType.ONE_HUNDRED_PERCENT
     ];
 

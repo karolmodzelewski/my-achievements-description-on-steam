@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarRef, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 
-import { SnackbarData } from './../../interfaces/snackbar-data.interface';
+import { SnackbarData } from './interfaces/snackbar-data.interface';
 
 @Component({
   selector: 'mados-snackbar',

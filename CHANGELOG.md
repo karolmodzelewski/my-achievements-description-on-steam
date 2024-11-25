@@ -2,6 +2,15 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.1.0 - 25.11.2024
+
+- Update description
+- Add ADULT_GAME category
+- Change port to 3001
+- Remove whitespaces after description is copied
+- Change icons buttons positioning to be sticky instead of position absolute
+- Minor improvements
+
 ## 1.0.0 - 21.02.2022
 
 - Release 1.0.0 version

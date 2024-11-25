@@ -1,3 +1,5 @@
+@use 'src/styles/colors' as *;
+
 .game-container, .icon-container {
     display: flex;
 }
@@ -10,6 +12,11 @@
 .game-data {
     margin: 0;
     word-break: break-all;
+}
+
+.adult-game {
+    color: $color-gray-61;
+    font-style: italic;
 }
 
 .icon {

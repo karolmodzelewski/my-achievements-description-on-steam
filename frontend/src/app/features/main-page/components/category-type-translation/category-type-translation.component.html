@@ -40,6 +40,10 @@
         headingText="Bugged game:"
     ></mados-category-type-translation-heading>
     <mados-category-type-translation-heading
+        *ngSwitchCase="CategoryType.ADULT_GAME"
+        headingText="Adult game:"
+    ></mados-category-type-translation-heading>
+    <mados-category-type-translation-heading
         *ngSwitchCase="CategoryType.ONE_HUNDRED_PERCENT"
         headingText="100%:"
     ></mados-category-type-translation-heading>

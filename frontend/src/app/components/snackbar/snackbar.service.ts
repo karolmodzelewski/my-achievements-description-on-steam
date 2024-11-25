@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { SnackbarComponent } from './snackbar.component';
-import { SnackbarData } from './../../interfaces/snackbar-data.interface';
+import { SnackbarData } from './interfaces/snackbar-data.interface';
 
 @Injectable()
 export class SnackbarService {

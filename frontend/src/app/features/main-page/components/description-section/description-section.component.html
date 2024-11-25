@@ -1,7 +1,31 @@
 <mados-section-heading [headingText]="headingText"></mados-section-heading>
 
 <section class="description">
-    <div>
+    <div class="icons-container">
+        <mat-icon
+            *ngIf="!shouldShowEdition"
+            (click)="handleEditionMode()"
+            fontIcon="edit_off"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            *ngIf="shouldShowEdition"
+            (click)="handleEditionMode()"
+            fontIcon="edit"
+            class="icon"
+        ></mat-icon>
+        <mat-icon
+            #tooltip="matTooltip"
+            (click)="handleTooltip($event, tooltip)"
+            (mouseenter)="$event.stopImmediatePropagation()"
+            (mouseleave)="$event.stopImmediatePropagation()"
+            [matTooltip]="tooltipText"
+            [cdkCopyToClipboard]="descriptionToCopy"
+            fontIcon="content_copy"
+            class="icon"
+        ></mat-icon>
+    </div>
+    <div class="categories">
         <mados-category
             *ngFor="let category of description?.categories"
             [type]="category.type"
@@ -44,28 +68,4 @@
             ></mados-game>
         </div>
     </ng-container>
-    <div class="icons-container">
-        <mat-icon
-            *ngIf="!shouldShowEdition"
-            (click)="handleEditionMode()"
-            fontIcon="edit_off"
-            class="icon"
-        ></mat-icon>
-        <mat-icon
-            *ngIf="shouldShowEdition"
-            (click)="handleEditionMode()"
-            fontIcon="edit"
-            class="icon"
-        ></mat-icon>
-        <mat-icon
-            #tooltip="matTooltip"
-            (click)="handleTooltip($event, tooltip)"
-            (mouseenter)="$event.stopImmediatePropagation()"
-            (mouseleave)="$event.stopImmediatePropagation()"
-            [matTooltip]="tooltipText"
-            [cdkCopyToClipboard]="descriptionToCopy"
-            fontIcon="content_copy"
-            class="icon"
-        ></mat-icon>
-    </div>
 </section>
