@@ -1,33 +1,39 @@
+import { Injectable } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { Subject } from 'rxjs';
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { Destroyable } from './destroyable.util';
+
+@Injectable()
+class TestDestroyable extends Destroyable {}
 
 describe('Destroyable', () => {
     let destroyable: Destroyable;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [Destroyable],
+            providers: [TestDestroyable],
         });
 
-        destroyable = TestBed.inject(Destroyable);
+        destroyable = TestBed.inject(TestDestroyable);
     });
 
     it('Should create a destroyable', () => {
-        expect(destroyable).withContext('Destroyable should be created').toBeTruthy();
+        expect(destroyable, 'Destroyable should be created').toBeTruthy();
     });
 
     it('Should complete a Subject', () => {
         destroyable.destroyed$ = new Subject<void>();
 
-        spyOn(destroyable.destroyed$, 'next');
-        spyOn(destroyable.destroyed$, 'complete');
+        const nextSpy = vi.spyOn(destroyable.destroyed$, 'next').mockReturnValue(undefined);
+        const completeSpy = vi.spyOn(destroyable.destroyed$, 'complete').mockReturnValue(undefined);
 
         destroyable.ngOnDestroy();
 
-        expect(destroyable.destroyed$.next).toHaveBeenCalled();
-        expect(destroyable.destroyed$.complete).toHaveBeenCalled();
+        expect(nextSpy).toHaveBeenCalled();
+        expect(completeSpy).toHaveBeenCalled();
     });
 });

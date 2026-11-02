@@ -1,53 +1,46 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import type { InputSignal, OutputEmitterRef, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 import { catchError, EMPTY, take } from 'rxjs';
 
-import { GameCategory } from '../../../../../../interfaces/game-category.interface';
-import { EditGameService } from '../../../../services/edit-game.service';
-import { SnackbarService } from './../../../../../../components/snackbar/snackbar.service';
-import { DeleteGameRequestBody } from './interfaces/delete-game-request-body.interface';
+import type { DeleteGameRequestBody } from './interfaces/delete-game-request-body.interface';
+import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
 import { CategoryType } from '../../../../../../enums/category-type.enum';
+import type { GameCategory } from '../../../../../../interfaces/game-category.interface';
+import { EditGameService } from '../../../../services/edit-game.service';
 
 @Component({
     selector: 'mados-game',
     templateUrl: './game.component.html',
-    styleUrls: ['./game.component.scss'],
+    styleUrl: './game.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatIconModule],
 })
-export class GameComponent implements OnInit {
-    @Input()
-    public oneHundredPercentIconName: string;
-    @Input()
-    public name: string;
-    @Input()
-    public categories: GameCategory[] | undefined;
-    @Input()
-    public shouldShowEdition: boolean;
+export class GameComponent {
+    private readonly editGameService: EditGameService = inject(EditGameService);
+    private readonly httpClient: HttpClient = inject(HttpClient);
+    private readonly snackbarService: SnackbarService = inject(SnackbarService);
 
-    @Output()
-    public reloadDescription: EventEmitter<void> = new EventEmitter<void>();
+    public readonly oneHundredPercentIconName: InputSignal<string> = input.required<string>();
+    public readonly name: InputSignal<string> = input.required<string>();
+    public readonly categories: InputSignal<GameCategory[] | undefined> = input<GameCategory[]>();
+    public readonly shouldShowEdition: InputSignal<boolean> = input.required<boolean>();
 
-    public isAdultGame: boolean;
+    public readonly reloadDescription: OutputEmitterRef<void> = output();
 
-    constructor(
-        private editGameService: EditGameService,
-        private httpClient: HttpClient,
-        private snackbarService: SnackbarService,
-    ) {}
-
-    public ngOnInit(): void {
-        this.checkIfGameIsAnAdultGame();
-    }
+    public readonly isAdultGame: Signal<boolean> = computed(() => this.categories()?.some((category: GameCategory) => category.type === CategoryType.ADULT_GAME) === true);
 
     public editGame(): void {
-        this.editGameService.editingGameName$.next(this.name);
+        this.editGameService.editingGameName$.next(this.name());
     }
 
     public deleteGame(): void {
-        const requestBody: DeleteGameRequestBody = { name: this.name };
+        const requestBody: DeleteGameRequestBody = { name: this.name() };
 
-        this.httpClient.delete('game', { body: requestBody })
+        this.httpClient
+            .delete('game', { body: requestBody })
             .pipe(
                 take(1),
                 catchError(() => {
@@ -55,13 +48,10 @@ export class GameComponent implements OnInit {
 
                     return EMPTY;
                 })
-            ).subscribe(() => {
+            )
+            .subscribe(() => {
                 this.snackbarService.openSnackbar('Successfully deleted game', 'success');
                 this.reloadDescription.emit();
             });
-    }
-
-    private checkIfGameIsAnAdultGame(): void {
-        this.isAdultGame = !!this.categories?.some((category: GameCategory) => category.type === CategoryType.ADULT_GAME);
     }
 }

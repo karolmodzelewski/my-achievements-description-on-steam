@@ -1,52 +1,54 @@
-<mados-section-heading [headingText]="headingText" [id]="headingId" class="section-heading"></mados-section-heading>
+<mados-section-heading [headingText]="headingText" [id]="headingId" class="section-heading" />
 
-<div *ngIf="shouldShowCategories" class="categories">
-    <form [formGroup]="form" class="form">
-        <div *ngFor="let control of form?.controls | keyvalue: iterateByOriginalOrder" [formGroupName]="control.key" class="category-form-group">
-            <mados-category-type-translation [key]="control.key"></mados-category-type-translation>
+@if (shouldShowCategories()) {
+    <div class="categories">
+        <form [formGroup]="form" class="form">
+            @for (control of form.controls | keyvalue: iterateByOriginalOrder; track control.key) {
+                <div [formGroupName]="control.key" class="category-form-group">
+                    <mados-category-type-translation [key]="control.key" />
 
-            <mat-form-field>
-                <mat-label>Icon name:</mat-label>
-                <input formControlName="iconName" type="text" matInput />
-                <mat-icon (click)="resetInputField(control?.value?.get('iconName'))" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
-                <mat-error *ngIf="control?.value?.get('iconName')?.errors?.['required']">Icon name is required</mat-error>
-            </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Icon name:</mat-label>
+                        <input formControlName="iconName" type="text" matInput />
+                        <mat-icon (click)="resetInputField(control.value.controls.iconName)" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
 
-            <mat-form-field *ngIf="control.key !== CategoryType.ONE_HUNDRED_PERCENT" class="description">
-                <mat-label>Description:</mat-label>
-                <input formControlName="description" type="text" matInput />
-                <mat-icon (click)="resetInputField(control?.value?.get('description'))" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
-                <mat-error *ngIf="control?.value?.get('description')?.errors?.['required']">Description is required</mat-error>
-            </mat-form-field>
-        </div>
-    </form>
+                        @if (control.value.controls.iconName.hasError('required')) {
+                            <mat-error>Icon name is required</mat-error>
+                        }
+                    </mat-form-field>
 
-    <button
-        (click)="saveCategories()"
-        [disabled]="form.invalid || viewState === ViewState.LOADING"
-        class="save-categories-button button"
-        color="primary"
-        mat-stroked-button
-    >
-        Save categories
-    </button>
-</div>
+                    @if (control.value.controls.description; as descriptionControl) {
+                        <mat-form-field class="description">
+                            <mat-label>Description:</mat-label>
+                            <input formControlName="description" type="text" matInput />
+                            <mat-icon (click)="resetInputField(descriptionControl)" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
 
-<button
-    (click)="handleCategoriesVisibility()"
-    class="expansion-button button"
-    color="primary"
-    mat-raised-button
->
-    <mados-expansion-button-text
-        *ngIf="!shouldShowCategories"
-        iconName="expand_more"
-        buttonText="Expand"
-    ></mados-expansion-button-text>
-    <mados-expansion-button-text
-        *ngIf="shouldShowCategories"
-        iconName="expand_less"
-        buttonText="Collapse"
-    ></mados-expansion-button-text>
+                            @if (descriptionControl.hasError('required')) {
+                                <mat-error>Description is required</mat-error>
+                            }
+                        </mat-form-field>
+                    }
+                </div>
+            }
+        </form>
+
+        <button
+            (click)="saveCategories()"
+            [disabled]="form.invalid || viewState() === ViewState.LOADING"
+            class="save-categories-button button"
+            color="primary"
+            mat-stroked-button
+            type="button"
+        >
+            Save categories
+        </button>
+    </div>
+}
+
+<button (click)="handleCategoriesVisibility()" class="expansion-button button" color="primary" mat-raised-button type="button">
+    @if (shouldShowCategories()) {
+        <mados-expansion-button-text iconName="expand_less" buttonText="Collapse" />
+    } @else {
+        <mados-expansion-button-text iconName="expand_more" buttonText="Expand" />
+    }
 </button>
-

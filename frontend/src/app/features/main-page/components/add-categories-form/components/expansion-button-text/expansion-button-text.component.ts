@@ -1,14 +1,15 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import type { InputSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'mados-expansion-button-text',
     templateUrl: './expansion-button-text.component.html',
-    styleUrls: ['./expansion-button-text.component.scss'],
+    styleUrl: './expansion-button-text.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatIconModule],
 })
 export class ExpansionButtonTextComponent {
-    @Input()
-    public buttonText: string;
-    @Input()
-    public iconName: string;
+    public readonly buttonText: InputSignal<string> = input.required<string>();
+    public readonly iconName: InputSignal<string> = input.required<string>();
 }

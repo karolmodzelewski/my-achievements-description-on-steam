@@ -55,12 +55,11 @@ Backend:
 
 Frontend:
 
-- Angular 15
-- Angular Material 15
+- Angular 22
+- Angular Material 22
 - RxJS 7
-- TypeScript 4
-- Karma 6
-- Jasmine 5
+- TypeScript 6
+- Vitest 5
 - ESLint
 - Husky
 - Prettier
@@ -68,9 +67,9 @@ Frontend:
 
 Backend:
 
-- NestJS 9
+- NestJS 12
 - RxJS 7
-- TypeScript 4
+- TypeScript 6
 - PostgreSQL
 - TypeORM
 - Joi

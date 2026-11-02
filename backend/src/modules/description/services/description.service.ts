@@ -5,7 +5,7 @@ import { map, Observable, take, tap, zip } from 'rxjs';
 
 import { Repository } from 'typeorm';
 
-import { Description } from './../interfaces/description.interface';
+import { Description } from '../interfaces/description.interface';
 import { Category } from '../../../entities/category.entity';
 import { Game } from '../../../entities/game.entity';
 import { CategoryType } from '../../../enums/category-type.enum';
@@ -16,7 +16,7 @@ import { GameCategory } from '../interfaces/game-category.interface';
 @Injectable()
 export class DescriptionService {
     private readonly logger: Logger = new Logger(DescriptionService.name, { timestamp: true });
-    private categoriesSortOrder: CategoryType[] = [
+    private readonly categoriesSortOrder: CategoryType[] = [
         CategoryType.LOVED_GAME,
         CategoryType.BAD_GAME,
         CategoryType.DOESNT_COUNT,
@@ -77,16 +77,16 @@ export class DescriptionService {
     private getMappedCategories(categories: Category[], games: Game[]): CategoryWithAmount[] {
         const categoriesWithAmount: CategoryWithAmount[] = categories
             .filter((category: Category) => category.type !== CategoryType.ONE_HUNDRED_PERCENT)
-            .map((category: Category) => ({ ...category, amount: 0 }));
+            .map((category: Category) => ({ id: category.id, type: category.type, iconName: category.iconName, description: category.description, amount: 0 }));
 
-        return Object.keys(CategoryType)
-            .filter((categoryType: string) => categoryType !== CategoryType.ONE_HUNDRED_PERCENT)
-            .map((categoryType: string) => {
-                let categoryFound: CategoryWithAmount = categoriesWithAmount.find((category: CategoryWithAmount) => category.type === categoryType);
+        return Object.values(CategoryType)
+            .filter((categoryType: CategoryType) => categoryType !== CategoryType.ONE_HUNDRED_PERCENT)
+            .map((categoryType: CategoryType) => {
+                let categoryFound: CategoryWithAmount = categoriesWithAmount.find((category: CategoryWithAmount) => category.type === categoryType)!;
 
                 games
                     .flatMap((game: Game) => game.categories)
-                    .forEach((category) => {
+                    .forEach((category: CategoryType) => {
                         if (category === categoryType) {
                             categoryFound = { ...categoryFound, amount: (categoryFound.amount += 1) };
                         }
@@ -98,11 +98,17 @@ export class DescriptionService {
     }
 
     private getMappedGames(categories: Category[], games: Game[]): MappedGame[] {
-        const oneHundredPercentIconName: string = categories.find((category: Category) => category.type === CategoryType.ONE_HUNDRED_PERCENT).iconName;
+        const oneHundredPercentIconName: string = categories.find((category: Category) => category.type === CategoryType.ONE_HUNDRED_PERCENT)!.iconName;
 
         const mappedGames: MappedGame[] = games
             .map((game: Game) => {
-                const mappedGame: MappedGame = { ...game, categories: this.getMappedGameCategories(game.categories, categories), oneHundredPercentIconName };
+                const mappedGame: MappedGame = {
+                    id: game.id,
+                    name: game.name,
+                    hasNewAchievements: game.hasNewAchievements,
+                    categories: this.getMappedGameCategories(game.categories, categories),
+                    oneHundredPercentIconName,
+                };
 
                 return mappedGame;
             })
@@ -113,7 +119,7 @@ export class DescriptionService {
 
     private getMappedGameCategories(gameCategories: CategoryType[], categories: Category[]): GameCategory[] {
         return gameCategories
-            .map((categoryType: CategoryType) => ({ type: categoryType, iconName: categories.find((category: Category) => category.type === categoryType).iconName }))
+            .map((categoryType: CategoryType) => ({ type: categoryType, iconName: categories.find((category: Category) => category.type === categoryType)!.iconName }))
             .sort((a: GameCategory, b: GameCategory) => this.categoriesSortOrder.indexOf(a.type) - this.categoriesSortOrder.indexOf(b.type));
     }
 }

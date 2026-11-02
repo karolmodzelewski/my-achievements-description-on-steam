@@ -11,7 +11,7 @@ import { CategoriesService } from './services/categories.service';
 export class CategoriesController {
     private readonly logger: Logger = new Logger(CategoriesController.name, { timestamp: true });
 
-    constructor(private categoriesService: CategoriesService) {}
+    constructor(private readonly categoriesService: CategoriesService) {}
 
     @Get()
     public getCategories(): Observable<CategoryDto[]> {

@@ -1,23 +1,22 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBarRef, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 
-import { SnackbarData } from './interfaces/snackbar-data.interface';
+import type { SnackbarData } from './interfaces/snackbar-data.interface';
 
 @Component({
-  selector: 'mados-snackbar',
-  templateUrl: './snackbar.component.html',
-  styleUrls: ['./snackbar.component.scss'],
-  standalone: true,
-  imports: [MatIconModule],
+    selector: 'mados-snackbar',
+    templateUrl: './snackbar.component.html',
+    styleUrl: './snackbar.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatIconModule],
 })
 export class SnackbarComponent implements OnInit {
-    public snackbarMessage: string;
+    private readonly data: SnackbarData = inject<SnackbarData>(MAT_SNACK_BAR_DATA);
+    private readonly matSnackBarRef: MatSnackBarRef<SnackbarComponent> = inject<MatSnackBarRef<SnackbarComponent>>(MatSnackBarRef);
 
-    constructor(
-        @Inject(MAT_SNACK_BAR_DATA) private data: SnackbarData,
-        private matSnackBarRef: MatSnackBarRef<SnackbarComponent>,
-    ) { }
+    public snackbarMessage: string;
 
     public ngOnInit(): void {
         this.snackbarMessage = this.data.snackbarMessage;

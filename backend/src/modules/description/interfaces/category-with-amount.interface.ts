@@ -1,6 +1,7 @@
-import { CategoryType } from './../../../enums/category-type.enum';
+import type { CategoryType } from '../../../enums/category-type.enum';
 
 export interface CategoryWithAmount {
+    id: number;
     type: CategoryType;
     iconName: string;
     description: string;

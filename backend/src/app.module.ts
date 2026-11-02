@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { DataSource } from 'typeorm';
+import type { DataSourceOptions } from 'typeorm';
 
 import { validationSchemaConfig } from './configs/validation-schema.config';
 import { GameModule } from './modules/game/game.module';
@@ -18,7 +19,7 @@ import { DescriptionModule } from './modules/description/description.module';
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
+            useFactory: (configService: ConfigService) => ({
                 type: 'postgres',
                 host: configService.get('DB_HOST'),
                 port: configService.get('DB_PORT'),
@@ -28,7 +29,7 @@ import { DescriptionModule } from './modules/description/description.module';
                 autoLoadEntities: true,
                 synchronize: true,
             }),
-            dataSourceFactory: async (options: DataSourceOptions) => await new DataSource(options).initialize(),
+            dataSourceFactory: async (options: DataSourceOptions) => new DataSource(options).initialize(),
         }),
         CategoriesModule,
         GameModule,

@@ -12,7 +12,7 @@ import { DeleteGameDto } from './dtos/delete-game.dto';
 export class GameController {
     private readonly logger: Logger = new Logger(GameController.name, { timestamp: true });
 
-    constructor(private gameService: GameService) {}
+    constructor(private readonly gameService: GameService) {}
 
     @Post()
     @HttpCode(HttpStatus.NO_CONTENT)

@@ -9,7 +9,7 @@ import { DescriptionService } from './services/description.service';
 export class DescriptionController {
     private readonly logger: Logger = new Logger(DescriptionController.name, { timestamp: true });
 
-    constructor(private descriptionService: DescriptionService) {}
+    constructor(private readonly descriptionService: DescriptionService) {}
 
     @Get()
     public getDescription(): Observable<Description> {

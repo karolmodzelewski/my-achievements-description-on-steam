@@ -1,4 +1,7 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { DescriptionSectionComponent } from './description-section.component';
 
@@ -6,17 +9,19 @@ describe('DescriptionSectionComponent', () => {
     let component: DescriptionSectionComponent;
     let fixture: ComponentFixture<DescriptionSectionComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [DescriptionSectionComponent],
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [DescriptionSectionComponent],
         }).compileComponents();
 
         fixture = TestBed.createComponent(DescriptionSectionComponent);
         component = fixture.componentInstance;
+        fixture.componentRef.setInput('descriptionData', { categories: [], completedGames: [], gamesWithNewAchievements: [] });
+
         fixture.detectChanges();
-    }));
+    });
 
     it('Should create a component', () => {
-        expect(component).withContext('Component should be created').toBeTruthy();
+        expect(component, 'Component should be created').toBeTruthy();
     });
 });

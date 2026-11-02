@@ -1,19 +1,23 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
-            declarations: [AppComponent],
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [AppComponent],
+            providers: [provideRouter([])],
         }).compileComponents();
-    }));
+    });
 
     it('should create the app', () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        const app = fixture.componentInstance;
+        const fixture: ComponentFixture<AppComponent> = TestBed.createComponent(AppComponent);
+        const app: AppComponent = fixture.componentInstance;
+
         expect(app).toBeTruthy();
     });
 });

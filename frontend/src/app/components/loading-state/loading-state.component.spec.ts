@@ -1,4 +1,7 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { LoadingStateComponent } from './loading-state.component';
 
@@ -6,8 +9,8 @@ describe('LoadingStateComponent', () => {
     let component: LoadingStateComponent;
     let fixture: ComponentFixture<LoadingStateComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
             imports: [LoadingStateComponent],
         }).compileComponents();
 
@@ -15,9 +18,9 @@ describe('LoadingStateComponent', () => {
         component = fixture.componentInstance;
 
         fixture.detectChanges();
-    }));
+    });
 
     it('should create', () => {
-        expect(component).toBeTruthy();
+        expect(component, 'Component should be created').toBeTruthy();
     });
 });

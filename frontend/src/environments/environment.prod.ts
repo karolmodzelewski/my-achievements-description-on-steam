@@ -1,5 +1,5 @@
-import { Environment } from './interfaces/environment.interface';
+import type { Environment } from './interfaces/environment.interface';
 
 export const environment: Environment = {
     production: true,
-}
+};

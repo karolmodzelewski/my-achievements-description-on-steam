@@ -1,6 +1,7 @@
 @use 'src/styles/colors' as *;
 
-.game-container, .icon-container {
+.game-container,
+.icon-container {
     display: flex;
 }
 

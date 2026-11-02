@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { ValidationSchemaConfig } from './interfaces/validation-schema-config.interface';
+import type { ValidationSchemaConfig } from './interfaces/validation-schema-config.interface';
 
 export const validationSchemaConfig: Joi.ObjectSchema<ValidationSchemaConfig> = Joi.object({
     STAGE: Joi.string().required(),
