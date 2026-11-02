@@ -1,19 +1,18 @@
+import type { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 
-import { delay, dematerialize, materialize, Observable, of } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { delay, dematerialize, materialize, of } from 'rxjs';
 
 import { MockMainData } from './mock-main.data';
 import { HttpRequestMethod } from '../enums/http-request-method.enum';
 
 @Injectable()
 export class MockMainInterceptor extends MockMainData implements HttpInterceptor {
-    constructor() {
-        super();
-    }
-
     public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-        const { url, method } = request;
+        const { url } = request;
+        const method: HttpRequestMethod = request.method as HttpRequestMethod;
 
         switch (true) {
             case url.endsWith('categories') && method === HttpRequestMethod.GET:
@@ -29,8 +28,8 @@ export class MockMainInterceptor extends MockMainData implements HttpInterceptor
         }
     }
 
-    private mockSuccess(body: any = null, delayTime: number = 500): Observable<HttpEvent<unknown>> {
-        const httpResponse: HttpResponse<any> = new HttpResponse({ status: 200, body });
+    private mockSuccess(body: unknown = null, delayTime: number = 500): Observable<HttpEvent<unknown>> {
+        const httpResponse: HttpResponse<unknown> = new HttpResponse({ status: 200, body });
 
         return of(httpResponse).pipe(materialize(), delay(delayTime), dematerialize());
     }

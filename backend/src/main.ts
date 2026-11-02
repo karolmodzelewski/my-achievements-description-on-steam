@@ -1,4 +1,5 @@
-import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
+import type { INestApplication } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
@@ -20,4 +21,4 @@ async function bootstrap(): Promise<void> {
     logger.log(`Starts listening on port: ${port}`);
 }
 
-bootstrap();
+void bootstrap();

@@ -1,4 +1,4 @@
-import { GameCategory } from './game-category.interface';
+import type { GameCategory } from './game-category.interface';
 
 export interface Game {
     id: number;

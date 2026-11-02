@@ -2,6 +2,14 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.2.0 - 02.11.2026
+
+- Update frontend to Angular 22 and backend to NestJS 12, bump all dependencies to the newest versions
+- Switch frontend to standalone components, signals and zoneless change detection
+- Replace Karma and Jasmine with Vitest
+- Migrate ESLint configs to flat configs with stricter rules and fix all related issues
+- Fix unit tests
+
 ## 1.1.0 - 25.11.2024
 
 - Update description
@@ -167,7 +175,7 @@ Both frontend and backend changes and the final version of the application will 
 ## 0.3.0 - 28.01.2022 [FE]
 
 - Create 'Add categories' view and logic
-- Add ignore *html rule to prettier
+- Add ignore \*html rule to prettier
 - Improve colors and margins in app
 - Add states standalone components
 - Delete categories endpoint and its data from mocks

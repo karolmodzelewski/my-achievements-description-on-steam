@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import type Joi from 'joi';
 
 export interface ValidationSchemaConfig {
     STAGE: Joi.SchemaLike;

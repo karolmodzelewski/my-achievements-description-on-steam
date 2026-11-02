@@ -1,6 +1,6 @@
-import { DescriptionResponseBody } from '../interfaces/description-response-body.interface';
+import type { DescriptionResponseBody } from '../interfaces/description-response-body.interface';
 import { CategoryType } from '../enums/category-type.enum';
-import { Category } from '../interfaces/category.interface';
+import type { Category } from '../interfaces/category.interface';
 
 export class MockMainData {
     public categoriesResponseBody: Category[] = [

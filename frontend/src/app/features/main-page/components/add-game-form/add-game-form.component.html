@@ -1,12 +1,15 @@
-<mados-section-heading [headingText]="headingText" [id]="headingId"></mados-section-heading>
+<mados-section-heading [headingText]="headingText" [id]="headingId" />
 
-<form [formGroup]="form" class="form">
+<form [formGroup]="form()" class="form">
     <div class="form-fields-container">
         <mat-form-field class="game-name-form-field">
             <mat-label>Game name:</mat-label>
             <input [formControlName]="AddGameFormControl.NAME" type="text" matInput />
-            <mat-icon (click)="resetInputField(form.get(AddGameFormControl.NAME))" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
-            <mat-error *ngIf="form.get(AddGameFormControl.NAME)?.errors?.['required']">Game name is required</mat-error>
+            <mat-icon (click)="resetInputField(form().controls[AddGameFormControl.NAME])" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
+
+            @if (form().controls[AddGameFormControl.NAME].hasError('required')) {
+                <mat-error>Game name is required</mat-error>
+            }
         </mat-form-field>
 
         <ng-container [formGroupName]="AddGameFormGroup.GAME_CATEGORIES">
@@ -66,13 +69,7 @@
         </div>
     </div>
 
-    <button
-        (click)="addGame()"
-        [disabled]="form.invalid || viewState === ViewState.LOADING"
-        class="add-game-button"
-        color="primary"
-        mat-stroked-button
-    >
+    <button (click)="addGame()" [disabled]="form().invalid || viewState() === ViewState.LOADING" class="add-game-button" color="primary" mat-stroked-button type="submit">
         Add game
     </button>
 </form>

@@ -1,71 +1,64 @@
-<mados-section-heading [headingText]="headingText"></mados-section-heading>
+<mados-section-heading [headingText]="headingText" />
 
 <section class="description">
     <div class="icons-container">
-        <mat-icon
-            *ngIf="!shouldShowEdition"
-            (click)="handleEditionMode()"
-            fontIcon="edit_off"
-            class="icon"
-        ></mat-icon>
-        <mat-icon
-            *ngIf="shouldShowEdition"
-            (click)="handleEditionMode()"
-            fontIcon="edit"
-            class="icon"
-        ></mat-icon>
+        @if (shouldShowEdition()) {
+            <mat-icon (click)="handleEditionMode()" fontIcon="edit" class="icon"></mat-icon>
+        } @else {
+            <mat-icon (click)="handleEditionMode()" fontIcon="edit_off" class="icon"></mat-icon>
+        }
         <mat-icon
             #tooltip="matTooltip"
             (click)="handleTooltip($event, tooltip)"
             (mouseenter)="$event.stopImmediatePropagation()"
             (mouseleave)="$event.stopImmediatePropagation()"
             [matTooltip]="tooltipText"
-            [cdkCopyToClipboard]="descriptionToCopy"
+            [cdkCopyToClipboard]="descriptionToCopy()"
             fontIcon="content_copy"
             class="icon"
         ></mat-icon>
     </div>
     <div class="categories">
-        <mados-category
-            *ngFor="let category of description?.categories"
-            [type]="category.type"
-            [iconName]="category.iconName"
-            [description]="category.description"
-            [amount]="category?.amount"
-        ></mados-category>
+        @for (category of descriptionData().categories; track category.type) {
+            <mados-category [type]="category.type" [iconName]="category.iconName" [description]="category.description" [amount]="category.amount" />
+        }
     </div>
-    <ng-container *ngIf="description.completedGames?.length">
+
+    @if (descriptionData().completedGames.length) {
         <div class="margin-top">
             <p>{{ sectionSeparator }}</p>
-            <p>COMPLETED ({{ description.completedGames.length }}):</p>
-            <p>{{ sectionSeparator }}</p>
-        </div>
-        <div *ngIf="description.completedGames?.length" class="margin-top">
-            <mados-game
-                *ngFor="let game of description.completedGames"
-                (reloadDescription)="deleteGame()"
-                [oneHundredPercentIconName]="game.oneHundredPercentIconName"
-                [name]="game.name"
-                [categories]="game?.categories"
-                [shouldShowEdition]="shouldShowEdition"
-            ></mados-game>
-        </div>
-    </ng-container>
-    <ng-container *ngIf="description.gamesWithNewAchievements?.length">
-        <div class="margin-top">
-            <p>{{ sectionSeparator }}</p>
-            <p>NEW ACHIEVEMENTS ({{ description.gamesWithNewAchievements.length }}):</p>
+            <p>COMPLETED ({{ descriptionData().completedGames.length }}):</p>
             <p>{{ sectionSeparator }}</p>
         </div>
         <div class="margin-top">
-            <mados-game
-                *ngFor="let game of description.gamesWithNewAchievements"
-                (reloadDescription)="deleteGame()"
-                [oneHundredPercentIconName]="game.oneHundredPercentIconName"
-                [name]="game.name"
-                [categories]="game?.categories"
-                [shouldShowEdition]="shouldShowEdition"
-            ></mados-game>
+            @for (game of descriptionData().completedGames; track game.name) {
+                <mados-game
+                    (reloadDescription)="deleteGame()"
+                    [oneHundredPercentIconName]="game.oneHundredPercentIconName"
+                    [name]="game.name"
+                    [categories]="game.categories"
+                    [shouldShowEdition]="shouldShowEdition()"
+                />
+            }
         </div>
-    </ng-container>
+    }
+
+    @if (descriptionData().gamesWithNewAchievements.length) {
+        <div class="margin-top">
+            <p>{{ sectionSeparator }}</p>
+            <p>NEW ACHIEVEMENTS ({{ descriptionData().gamesWithNewAchievements.length }}):</p>
+            <p>{{ sectionSeparator }}</p>
+        </div>
+        <div class="margin-top">
+            @for (game of descriptionData().gamesWithNewAchievements; track game.name) {
+                <mados-game
+                    (reloadDescription)="deleteGame()"
+                    [oneHundredPercentIconName]="game.oneHundredPercentIconName"
+                    [name]="game.name"
+                    [categories]="game.categories"
+                    [shouldShowEdition]="shouldShowEdition()"
+                />
+            }
+        </div>
+    }
 </section>

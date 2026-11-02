@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
     selector: 'mados-wrapper',
     templateUrl: './wrapper.component.html',
-    styleUrls: ['./wrapper.component.scss'],
-    standalone: true,
+    styleUrl: './wrapper.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WrapperComponent {}
