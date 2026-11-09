@@ -8,6 +8,7 @@ import { categoriesResponseBody, descriptionResponseBody } from './mock-main.dat
 import { HttpRequestMethod } from '../enums/http-request-method.enum';
 
 const gameWithIdUrlPattern = /game\/\d+$/;
+const gameGroupWithIdUrlPattern = /game\/\d+\/group\/\d+$/;
 
 const mockSuccess = (body: unknown = null, delayTime = 500): Observable<HttpEvent<unknown>> => of(new HttpResponse({ status: 200, body })).pipe(delay(delayTime));
 
@@ -24,6 +25,7 @@ export const mockMainInterceptor: HttpInterceptorFn = (request, next) => {
         case url.endsWith('game') && method === HttpRequestMethod.POST:
         case gameWithIdUrlPattern.test(url) && method === HttpRequestMethod.PUT:
         case gameWithIdUrlPattern.test(url) && method === HttpRequestMethod.DELETE:
+        case gameGroupWithIdUrlPattern.test(url) && method === HttpRequestMethod.DELETE:
             return mockSuccess();
         default:
             return next(request);

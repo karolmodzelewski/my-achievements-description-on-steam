@@ -34,4 +34,12 @@ export class GameController {
 
         return this.gameService.deleteGame(id);
     }
+
+    @Delete(':id/group/:groupId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    public deleteGroup(@Param('id', ParseIntPipe) id: number, @Param('groupId', ParseIntPipe) groupId: number): Observable<void> {
+        this.logger.log(`DELETE Request: Delete group with id '${groupId}' of game with id '${id}'`);
+
+        return this.gameService.deleteGroup(id, groupId);
+    }
 }

@@ -8,8 +8,10 @@ import { catchError, EMPTY, take, tap } from 'rxjs';
 import { SnackbarType } from '../../../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
 import { CategoryType } from '../../../../../../enums/category-type.enum';
-import type { Game } from '../../../../../../interfaces/game.interface';
+import type { DescriptionEntry } from '../../../../../../interfaces/description-entry.interface';
+import type { GameGroup } from '../../../../../../interfaces/game-group.interface';
 import { EditGameService } from '../../../../services/edit-game.service';
+import { getEntryLine, getEntryName } from '../../../../utils/description-text.util';
 
 @Component({
     selector: 'mados-game',
@@ -22,34 +24,53 @@ export class GameComponent {
     private readonly httpClient = inject(HttpClient);
     private readonly snackbarService = inject(SnackbarService);
 
-    public readonly game = input.required<Game>();
+    public readonly entry = input.required<DescriptionEntry>();
     public readonly shouldShowEdition = input.required<boolean>();
 
     public readonly reloadDescription = output();
 
-    public readonly isAdultGame = computed<boolean>(() => this.game().categories?.some((category) => category.type === CategoryType.ADULT_GAME) === true);
+    public readonly entryLine = computed<string>(() => getEntryLine(this.entry()));
+    public readonly entryName = computed<string>(() => getEntryName(this.entry()));
+    public readonly isAdultGame = computed<boolean>(() => this.entry().game.categories?.some((category) => category.type === CategoryType.ADULT_GAME) === true);
 
     public editGame(): void {
-        this.editGameService.startEditing(this.game());
+        this.editGameService.startEditing(this.entry().game);
     }
 
-    public deleteGame(): void {
-        const { id } = this.game();
+    public deleteEntry(): void {
+        const { group } = this.entry();
+
+        if (group) {
+            this.deleteGroup(group);
+
+            return;
+        }
+
+        this.sendDeleteRequest(`game/${this.entry().game.id}`, 'game');
+    }
+
+    public deleteGroup({ id }: GameGroup): void {
+        this.sendDeleteRequest(`game/${this.entry().game.id}/group/${id}`, 'group');
+    }
+
+    private sendDeleteRequest(url: string, deletedItemName: string): void {
+        const gameId = this.entry().game.id;
 
         this.httpClient
-            .delete<void>(`game/${id}`)
+            .delete<void>(url)
             .pipe(
                 take(1),
                 tap(() => {
-                    if (this.editGameService.editedGame()?.id === id) {
+                    // Edited game would be outdated after deleting it or one of its groups
+                    if (this.editGameService.editedGame()?.id === gameId) {
                         this.editGameService.stopEditing();
                     }
 
-                    this.snackbarService.openSnackbar('Successfully deleted game', SnackbarType.SUCCESS);
+                    this.snackbarService.openSnackbar(`Successfully deleted ${deletedItemName}`, SnackbarType.SUCCESS);
                     this.reloadDescription.emit();
                 }),
                 catchError(() => {
-                    this.snackbarService.openSnackbar('An error has occurred while deleting game', SnackbarType.ERROR);
+                    this.snackbarService.openSnackbar(`An error has occurred while deleting ${deletedItemName}`, SnackbarType.ERROR);
 
                     return EMPTY;
                 })

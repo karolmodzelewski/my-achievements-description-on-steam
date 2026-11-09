@@ -43,16 +43,74 @@
         <mat-checkbox [formField]="gameForm.doesntCount" color="primary">It doesn't count</mat-checkbox>
         <mat-checkbox [formField]="gameForm.buggedGame" color="primary">Bugged game</mat-checkbox>
         <mat-checkbox [formField]="gameForm.adultGame" color="primary">Adult game</mat-checkbox>
-        <mat-checkbox [formField]="gameForm.hasNewAchievements" color="primary">New achievements</mat-checkbox>
     </div>
 
-    <div class="buttons-container">
-        @if (isEditing()) {
-            <button (click)="resetForm()" class="form-button" color="primary" type="button" mat-stroked-button>Cancel editing</button>
-        }
+    <fieldset class="groups">
+        <legend class="groups-legend">Groups</legend>
 
+        @let addBaseGameGroupAriaLabel = `Add group below ${baseGameGroupName}`;
+        @let removeBaseGameGroupAriaLabel = `Remove ${baseGameGroupName}`;
+
+        <div class="group-row">
+            <mat-form-field class="group-name-form-field">
+                <mat-label>Group name:</mat-label>
+                <input [value]="baseGameGroupName" matInput type="text" disabled />
+            </mat-form-field>
+
+            <mat-checkbox [formField]="gameForm.hasNewAchievements" class="group-checkbox" color="primary">New achievements</mat-checkbox>
+
+            <div class="group-buttons">
+                <button (click)="addGroup(0)" [attr.aria-label]="addBaseGameGroupAriaLabel" class="icon-group" type="button" matIconButton>
+                    <mat-icon fontIcon="add"></mat-icon>
+                </button>
+                <button [attr.aria-label]="removeBaseGameGroupAriaLabel" class="icon-group" type="button" matIconButton disabled>
+                    <mat-icon fontIcon="remove"></mat-icon>
+                </button>
+            </div>
+        </div>
+
+        @for (groupField of gameForm.groups; track groupField) {
+            @let clearGroupNameAriaLabel = `Clear group ${$index + 1} name`;
+            @let addGroupAriaLabel = `Add group below group ${$index + 1}`;
+            @let removeGroupAriaLabel = `Remove group ${$index + 1}`;
+
+            <div class="group-row">
+                <mat-form-field class="group-name-form-field">
+                    <mat-label>Group name:</mat-label>
+                    <input [formField]="groupField.name" matInput type="text" />
+
+                    @if (groupField.name().value()) {
+                        <button (click)="clearField(groupField.name)" [attr.aria-label]="clearGroupNameAriaLabel" class="icon-clear" type="button" matIconButton matIconSuffix>
+                            <mat-icon fontIcon="clear"></mat-icon>
+                        </button>
+                    }
+
+                    @if (groupField.name().getError('required')) {
+                        <mat-error>Group name is required</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-checkbox [formField]="groupField.hasNewAchievements" class="group-checkbox" color="primary">New achievements</mat-checkbox>
+
+                <div class="group-buttons">
+                    <button (click)="addGroup($index + 1)" [attr.aria-label]="addGroupAriaLabel" class="icon-group" type="button" matIconButton>
+                        <mat-icon fontIcon="add"></mat-icon>
+                    </button>
+                    <button (click)="removeGroup($index)" [attr.aria-label]="removeGroupAriaLabel" class="icon-group" type="button" matIconButton>
+                        <mat-icon fontIcon="remove"></mat-icon>
+                    </button>
+                </div>
+            </div>
+        }
+    </fieldset>
+
+    <div class="buttons-container">
         <button [disabled]="gameForm().invalid() || gameForm().submitting()" class="form-button" color="primary" type="submit" mat-stroked-button>
             {{ isEditing() ? 'Edit game' : 'Add game' }}
         </button>
+
+        @if (isEditing()) {
+            <button (click)="resetForm()" class="form-button" color="primary" type="button" mat-stroked-button>Cancel editing</button>
+        }
     </div>
 </form>

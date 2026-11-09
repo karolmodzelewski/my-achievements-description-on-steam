@@ -23,14 +23,18 @@
     margin-top: 30px;
 }
 
+// Mirrors the empty line before the adult games summary in the copied description
+.adult-games-text {
+    margin-top: 24px;
+}
+
 .icons-container {
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
     height: 0;
     position: sticky;
-    top: 15px;
-    right: 15px;
+    top: 0;
 }
 
 .icon-button {

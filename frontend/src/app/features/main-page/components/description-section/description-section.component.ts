@@ -9,9 +9,15 @@ import { SnackbarType } from '../../../../components/snackbar/enums/snackbar-typ
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
 import { CategoryType } from '../../../../enums/category-type.enum';
 import type { Category } from '../../../../interfaces/category.interface';
+import type { DescriptionEntry } from '../../../../interfaces/description-entry.interface';
 import type { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
+import type { DescriptionSection } from '../../../../interfaces/description-section.interface';
 import type { Game } from '../../../../interfaces/game.interface';
+import { getEntryLine, getSectionHeading } from '../../utils/description-text.util';
 import { SectionHeadingComponent } from '../section-heading/section-heading.component';
+
+const COMPLETED_SECTION_TITLE = 'Completed';
+const NEW_ACHIEVEMENTS_SECTION_TITLE = 'New achievements';
 
 @Component({
     selector: 'mados-description-section',
@@ -26,6 +32,10 @@ export class DescriptionSectionComponent {
 
     public readonly reloadDescription = output();
 
+    public readonly completedHeading = computed<string>(() => getSectionHeading(COMPLETED_SECTION_TITLE, this.descriptionData().completed));
+    public readonly newAchievementsHeading = computed<string>(() => getSectionHeading(NEW_ACHIEVEMENTS_SECTION_TITLE, this.descriptionData().newAchievements));
+    public readonly completedAdultGamesText = computed<string>(() => this.getAdultGamesText(this.descriptionData().completed.entries));
+    public readonly newAchievementsAdultGamesText = computed<string>(() => this.getAdultGamesText(this.descriptionData().newAchievements.entries));
     public readonly descriptionToCopy = computed<string>(() => this.prepareDescriptionToCopy(this.descriptionData()));
     public readonly shouldShowEdition = signal<boolean>(false);
     public readonly sectionSeparator = '_______________________________';
@@ -46,44 +56,18 @@ export class DescriptionSectionComponent {
         this.snackbarService.openSnackbar('An error has occurred while copying description', SnackbarType.ERROR);
     }
 
-    private prepareDescriptionToCopy(description: DescriptionResponseBody): string {
+    private prepareDescriptionToCopy({ categories, completed, newAchievements }: DescriptionResponseBody): string {
         let descriptionToCopy = '';
 
-        // Categories
-        descriptionToCopy += this.getCategoriesPartOfDescription(description.categories);
-
-        // Separator 1
-        if (description.completedGames.length > 0) {
-            descriptionToCopy += this.getSeparatorPartOfDescription('Completed', description.completedGames.length);
-        }
-
-        // Completed games
-        descriptionToCopy += this.getGamePartOfDescription(description.completedGames);
-
-        const completedAdultGamesAmount = this.countAdultGames(description.completedGames);
-
-        if (completedAdultGamesAmount > 0) {
-            descriptionToCopy += this.getAdultGamesAmountPartOfDescription(completedAdultGamesAmount, description.categories);
-        }
+        descriptionToCopy += this.getCategoriesPartOfDescription(categories);
+        descriptionToCopy += this.getSectionPartOfDescription(this.completedHeading(), completed, this.completedAdultGamesText());
 
         // Separator when adult games and games with new achievements exists
-        if (completedAdultGamesAmount > 0 && description.gamesWithNewAchievements.length > 0) {
+        if (this.completedAdultGamesText() && newAchievements.amount > 0) {
             descriptionToCopy += '\n';
         }
 
-        // Separator 2
-        if (description.gamesWithNewAchievements.length > 0) {
-            descriptionToCopy += this.getSeparatorPartOfDescription('New achievements', description.gamesWithNewAchievements.length);
-        }
-
-        // Games with new achievements
-        descriptionToCopy += this.getGamePartOfDescription(description.gamesWithNewAchievements);
-
-        const adultGamesWithNewAchievementsAmount = this.countAdultGames(description.gamesWithNewAchievements);
-
-        if (adultGamesWithNewAchievementsAmount > 0) {
-            descriptionToCopy += this.getAdultGamesAmountPartOfDescription(adultGamesWithNewAchievementsAmount, description.categories);
-        }
+        descriptionToCopy += this.getSectionPartOfDescription(this.newAchievementsHeading(), newAchievements, this.newAchievementsAdultGamesText());
 
         return descriptionToCopy.trim();
     }
@@ -102,52 +86,54 @@ export class DescriptionSectionComponent {
         return categoriesToCopy;
     }
 
-    private getSeparatorPartOfDescription(separatorText: string, amount: number): string {
+    private getSectionPartOfDescription(heading: string, section: DescriptionSection, adultGamesText: string): string {
+        if (!section.amount) {
+            return '';
+        }
+
+        let sectionToCopy = '';
+
+        sectionToCopy += this.getSeparatorPartOfDescription(heading);
+        sectionToCopy += this.getEntriesPartOfDescription(section.entries);
+
+        if (adultGamesText) {
+            sectionToCopy += `\n${adultGamesText}`;
+        }
+
+        return sectionToCopy;
+    }
+
+    private getSeparatorPartOfDescription(heading: string): string {
         let separatorToCopy = '';
 
         separatorToCopy += `\n${this.sectionSeparator}\n\n`;
-        separatorToCopy += `${separatorText.toUpperCase()} (${amount}):\n`;
+        separatorToCopy += `${heading}\n`;
         separatorToCopy += `${this.sectionSeparator}\n\n`;
 
         return separatorToCopy;
     }
 
-    private getGamePartOfDescription(games: Game[]): string {
-        let gamesToCopy = '';
-
-        games.forEach((game) => {
-            if (this.checkIfGameIsAnAdultGame(game)) {
-                return;
-            }
-
-            gamesToCopy += `${game.oneHundredPercentIconName} ${game.name} `;
-
-            game.categories?.forEach((gameCategory) => {
-                gamesToCopy += gameCategory.iconName;
-            });
-
-            gamesToCopy = gamesToCopy.trim();
-
-            gamesToCopy += '\n';
-        });
-
-        return gamesToCopy;
+    // Adult games and listed groups are hidden information, so they are never copied
+    private getEntriesPartOfDescription(entries: DescriptionEntry[]): string {
+        return entries
+            .filter(({ game }) => !this.checkIfGameIsAnAdultGame(game))
+            .map((entry) => `${getEntryLine(entry)}\n`)
+            .join('');
     }
 
-    private getAdultGamesAmountPartOfDescription(adultGamesAmount: number, categories: Category[]): string {
-        let adultGamesAmountToCopy = '\n';
+    // Presented in the application and copied, so adult games are summarised without revealing their names
+    private getAdultGamesText(entries: DescriptionEntry[]): string {
+        const adultGamesAmount = this.countAdultGames(entries);
 
-        adultGamesAmountToCopy += `... and (${adultGamesAmount}) ${this.getAdultGameIconName(categories)} games`;
-
-        return adultGamesAmountToCopy;
+        return adultGamesAmount > 0 ? `... and (${adultGamesAmount}) ${this.getAdultGameIconName(this.descriptionData().categories)} games` : '';
     }
 
     private checkIfGameIsAnAdultGame(game: Game): boolean {
         return game.categories?.some((category) => category.type === CategoryType.ADULT_GAME) === true;
     }
 
-    private countAdultGames(games: Game[]): number {
-        return games.filter((game) => this.checkIfGameIsAnAdultGame(game)).length;
+    private countAdultGames(entries: DescriptionEntry[]): number {
+        return entries.filter(({ game }) => this.checkIfGameIsAnAdultGame(game)).length;
     }
 
     private getAdultGameIconName(categories: Category[]): string {

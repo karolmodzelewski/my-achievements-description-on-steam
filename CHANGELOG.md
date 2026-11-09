@@ -2,6 +2,15 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.4.0 - 09.11.2026
+
+- Add Steam achievement groups (DLCs): Base Game and DLC groups in the Manage game section, each with its own New achievements checkbox
+- Count every completed group as a finished game and split COMPLETED and NEW ACHIEVEMENTS headings into GAMES and GROUPS amounts, calculated on backend
+- Present completed groups below their game as hidden information, never copied, and groups with new achievements as separate entries
+- Rename adult game styling to generic hidden information
+- Show the adult games summary (... and (N) games) in the application description, not only in the copied one
+- Swap Cancel editing and Edit game buttons
+
 ## 1.3.0 - 09.11.2026
 
 - Add AAA pattern and data-testId selectors to unit tests, remove broken e2e test

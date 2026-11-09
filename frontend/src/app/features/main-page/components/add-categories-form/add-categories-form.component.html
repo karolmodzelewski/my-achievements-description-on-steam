@@ -3,7 +3,7 @@
 @if (shouldShowCategories()) {
     <form [formRoot]="categoriesForm" [id]="categoriesFormId" class="categories">
         <div class="form-fields-container">
-            @for (categoryField of categoriesForm; track $index) {
+            @for (categoryField of categoriesForm; track categoryField.type().value()) {
                 <div class="category-form-group">
                     <mados-category-type-translation [key]="categoryField.type().value()" />
 
