@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { WrapperComponent } from '../wrapper.component';
 
 @Component({
-    template: '<mados-wrapper>Test</mados-wrapper>',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: '<mados-wrapper data-testId="wrapperHost">Test</mados-wrapper>',
     imports: [WrapperComponent],
 })
 export class WrapperFixtureComponent {}

@@ -1,4 +1,3 @@
-import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
 import { GameController } from './game.controller';
@@ -8,15 +7,16 @@ describe('GameController', () => {
     let controller: GameController;
 
     beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
+        const module = await Test.createTestingModule({
             controllers: [GameController],
             providers: [{ provide: GameService, useValue: {} }],
         }).compile();
 
-        controller = module.get<GameController>(GameController);
+        controller = module.get(GameController);
     });
 
     it('should be defined', () => {
+        // Assert
         expect(controller).toBeDefined();
     });
 });

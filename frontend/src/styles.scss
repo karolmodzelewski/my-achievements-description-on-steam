@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @use 'src/styles/reset' as *;
 @use 'src/styles/colors' as *;
 
@@ -13,14 +14,19 @@ body {
 }
 
 .mat-mdc-snack-bar-container {
-    --mat-snackbar-container-color: none;
-    border-radius: 4px;
-
     &.success {
-        background: $color-green;
+        @include mat.snack-bar-overrides(
+            (
+                container-color: $color-green,
+            )
+        );
     }
 
     &.error {
-        background: $color-red;
+        @include mat.snack-bar-overrides(
+            (
+                container-color: $color-red,
+            )
+        );
     }
 }

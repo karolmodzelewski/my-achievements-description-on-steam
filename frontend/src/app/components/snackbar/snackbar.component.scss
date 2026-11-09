@@ -1,13 +1,25 @@
+@use 'src/styles/icon-button' as *;
+
 .snackbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
 }
 
 .message {
     margin: 0;
 }
 
-.icon-clear {
-    cursor: pointer;
+.close-button {
+    @include icon-button(
+        24px,
+        40px,
+        (
+            state-layer-color: currentColor,
+            ripple-color: color-mix(in srgb, currentColor 12%, transparent),
+        )
+    );
+
+    margin: -8px;
 }

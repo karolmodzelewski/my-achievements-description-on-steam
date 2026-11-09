@@ -1,75 +1,58 @@
 <mados-section-heading [headingText]="headingText" [id]="headingId" />
 
-<form [formGroup]="form()" class="form">
+<form [formRoot]="gameForm" class="form">
     <div class="form-fields-container">
         <mat-form-field class="game-name-form-field">
             <mat-label>Game name:</mat-label>
-            <input [formControlName]="AddGameFormControl.NAME" type="text" matInput />
-            <mat-icon (click)="resetInputField(form().controls[AddGameFormControl.NAME])" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
+            <input [formField]="gameForm.name" matInput type="text" />
+            @if (gameForm.name().value()) {
+                <button (click)="clearField(gameForm.name)" aria-label="Clear game name" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <mat-icon fontIcon="clear"></mat-icon>
+                </button>
+            }
 
-            @if (form().controls[AddGameFormControl.NAME].hasError('required')) {
+            @if (gameForm.name().getError('required')) {
                 <mat-error>Game name is required</mat-error>
             }
         </mat-form-field>
 
-        <ng-container [formGroupName]="AddGameFormGroup.GAME_CATEGORIES">
-            <mat-form-field class="length-form-field">
-                <mat-label>Length:</mat-label>
-                <mat-select [formControlName]="AddGameFormControl.LENGTH">
-                    <mat-option [value]="CategoryType.LONG_GAME">Long game</mat-option>
-                    <mat-option [value]="CategoryType.VERY_LONG_GAME">Very long game</mat-option>
-                    <mat-option [value]="CategoryType.ULTRA_LONG_GAME">Ultra long game</mat-option>
-                    <mat-option [value]="null">...</mat-option>
-                </mat-select>
-            </mat-form-field>
+        <mat-form-field class="length-form-field">
+            <mat-label>Length:</mat-label>
+            <mat-select [formField]="gameForm.length">
+                <mat-option [value]="CategoryType.LONG_GAME">Long game</mat-option>
+                <mat-option [value]="CategoryType.VERY_LONG_GAME">Very long game</mat-option>
+                <mat-option [value]="CategoryType.ULTRA_LONG_GAME">Ultra long game</mat-option>
+                <mat-option [value]="null">...</mat-option>
+            </mat-select>
+        </mat-form-field>
 
-            <mat-form-field class="difficulty-form-field">
-                <mat-label>Difficulty:</mat-label>
-                <mat-select [formControlName]="AddGameFormControl.DIFFICULTY">
-                    <mat-option [value]="CategoryType.HARD_GAME">Hard game</mat-option>
-                    <mat-option [value]="CategoryType.VERY_HARD_GAME">Very hard game</mat-option>
-                    <mat-option [value]="CategoryType.ULTRA_HARD_GAME">Ultra hard game</mat-option>
-                    <mat-option [value]="null">...</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </ng-container>
+        <mat-form-field class="difficulty-form-field">
+            <mat-label>Difficulty:</mat-label>
+            <mat-select [formField]="gameForm.difficulty">
+                <mat-option [value]="CategoryType.HARD_GAME">Hard game</mat-option>
+                <mat-option [value]="CategoryType.VERY_HARD_GAME">Very hard game</mat-option>
+                <mat-option [value]="CategoryType.ULTRA_HARD_GAME">Ultra hard game</mat-option>
+                <mat-option [value]="null">...</mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
 
     <div class="checkboxes-container">
-        <ng-container [formGroupName]="AddGameFormGroup.GAME_CATEGORIES">
-            <div>
-                <mat-label>Loved game:</mat-label>
-                <mat-checkbox [formControlName]="AddGameFormControl.LOVED_GAME" color="primary"></mat-checkbox>
-            </div>
-
-            <div>
-                <mat-label>Bad game:</mat-label>
-                <mat-checkbox [formControlName]="AddGameFormControl.BAD_GAME" color="primary"></mat-checkbox>
-            </div>
-
-            <div>
-                <mat-label>It doesn't count:</mat-label>
-                <mat-checkbox [formControlName]="AddGameFormControl.DOESNT_COUNT" color="primary"></mat-checkbox>
-            </div>
-
-            <div>
-                <mat-label>Bugged game:</mat-label>
-                <mat-checkbox [formControlName]="AddGameFormControl.BUGGED_GAME" color="primary"></mat-checkbox>
-            </div>
-
-            <div>
-                <mat-label>Adult game:</mat-label>
-                <mat-checkbox [formControlName]="AddGameFormControl.ADULT_GAME" color="primary"></mat-checkbox>
-            </div>
-        </ng-container>
-
-        <div>
-            <mat-label>New achievements:</mat-label>
-            <mat-checkbox [formControlName]="AddGameFormControl.HAS_NEW_ACHIEVEMENTS" color="primary"></mat-checkbox>
-        </div>
+        <mat-checkbox [formField]="gameForm.lovedGame" color="primary">Loved game</mat-checkbox>
+        <mat-checkbox [formField]="gameForm.badGame" color="primary">Bad game</mat-checkbox>
+        <mat-checkbox [formField]="gameForm.doesntCount" color="primary">It doesn't count</mat-checkbox>
+        <mat-checkbox [formField]="gameForm.buggedGame" color="primary">Bugged game</mat-checkbox>
+        <mat-checkbox [formField]="gameForm.adultGame" color="primary">Adult game</mat-checkbox>
+        <mat-checkbox [formField]="gameForm.hasNewAchievements" color="primary">New achievements</mat-checkbox>
     </div>
 
-    <button (click)="addGame()" [disabled]="form().invalid || viewState() === ViewState.LOADING" class="add-game-button" color="primary" mat-stroked-button type="submit">
-        Add game
-    </button>
+    <div class="buttons-container">
+        @if (isEditing()) {
+            <button (click)="resetForm()" class="form-button" color="primary" type="button" mat-stroked-button>Cancel editing</button>
+        }
+
+        <button [disabled]="gameForm().invalid() || gameForm().submitting()" class="form-button" color="primary" type="submit" mat-stroked-button>
+            {{ isEditing() ? 'Edit game' : 'Add game' }}
+        </button>
+    </div>
 </form>

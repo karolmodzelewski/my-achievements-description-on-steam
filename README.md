@@ -12,6 +12,7 @@
 	* [Download application](#download-application)
 	* [Run application](#run-application)
 	* [Helpful commands](#helpful-commands)
+	* [Playwright MCP](#playwright-mcp)
 - [Tools and technologies](#tools-and-technologies)
 
 ## Getting started
@@ -50,6 +51,16 @@ Backend:
 - `npm run lint` - lint application
 - `npm run lint:fix` - lint application and automatically fixes errors and warnings (if it's supported by specific rules)
 - `npm run format` - prettify application
+
+### Playwright MCP:
+
+Optional. Lets an AI agent (e.g. Claude Code) open the running application in a browser to check the UI: take screenshots, click elements and read console logs.
+
+1. Add the server once: `claude mcp add playwright -- npx @playwright/mcp@latest` (use `-s user` to make it available in all projects)
+2. Restart Claude Code / VS Code so the tools get loaded
+3. Run the frontend with `npm run start:dev` and ask the agent to check `localhost:4200`
+
+Screenshots, snapshots and logs are saved to `.playwright-mcp/`, which is ignored by git.
 
 ## Tools and technologies:
 

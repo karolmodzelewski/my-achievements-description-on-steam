@@ -1,31 +1,37 @@
-import { Body, Controller, Delete, HttpCode, HttpStatus, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Logger, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
-import { DeleteResult, InsertResult } from 'typeorm';
-
 import { GameService } from './services/game.service';
 import { GameDto } from './dtos/game.dto';
-import { DeleteGameDto } from './dtos/delete-game.dto';
 
 @Controller('game')
 export class GameController {
-    private readonly logger: Logger = new Logger(GameController.name, { timestamp: true });
+    private readonly logger = new Logger(GameController.name, { timestamp: true });
 
     constructor(private readonly gameService: GameService) {}
 
     @Post()
     @HttpCode(HttpStatus.NO_CONTENT)
-    public upsertGame(@Body() gameDto: GameDto): Observable<InsertResult> {
-        this.logger.log(`POST Request: Upsert '${JSON.stringify(gameDto)}' game`);
+    public createGame(@Body() gameDto: GameDto): Observable<void> {
+        this.logger.log(`POST Request: Create '${JSON.stringify(gameDto)}' game`);
 
-        return this.gameService.upsertGame(gameDto);
+        return this.gameService.createGame(gameDto);
     }
 
-    @Delete()
-    public deleteGame(@Body() deleteGameDto: DeleteGameDto): Observable<DeleteResult> {
-        this.logger.log(`DELETE Request: Delete '${JSON.stringify(deleteGameDto)}' game`);
+    @Put(':id')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    public updateGame(@Param('id', ParseIntPipe) id: number, @Body() gameDto: GameDto): Observable<void> {
+        this.logger.log(`PUT Request: Update game with id '${id}' to '${JSON.stringify(gameDto)}'`);
 
-        return this.gameService.deleteGame(deleteGameDto);
+        return this.gameService.updateGame(id, gameDto);
+    }
+
+    @Delete(':id')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    public deleteGame(@Param('id', ParseIntPipe) id: number): Observable<void> {
+        this.logger.log(`DELETE Request: Delete game with id '${id}'`);
+
+        return this.gameService.deleteGame(id);
     }
 }

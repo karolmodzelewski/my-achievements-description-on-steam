@@ -1,51 +1,62 @@
 <mados-section-heading [headingText]="headingText" [id]="headingId" class="section-heading" />
 
 @if (shouldShowCategories()) {
-    <div class="categories">
-        <form [formGroup]="form" class="form">
-            @for (control of form.controls | keyvalue: iterateByOriginalOrder; track control.key) {
-                <div [formGroupName]="control.key" class="category-form-group">
-                    <mados-category-type-translation [key]="control.key" />
+    <form [formRoot]="categoriesForm" [id]="categoriesFormId" class="categories">
+        <div class="form-fields-container">
+            @for (categoryField of categoriesForm; track $index) {
+                <div class="category-form-group">
+                    <mados-category-type-translation [key]="categoryField.type().value()" />
 
                     <mat-form-field>
                         <mat-label>Icon name:</mat-label>
-                        <input formControlName="iconName" type="text" matInput />
-                        <mat-icon (click)="resetInputField(control.value.controls.iconName)" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
+                        <input [formField]="categoryField.iconName" matInput type="text" />
+                        <button (click)="clearField(categoryField.iconName)" aria-label="Clear icon name" class="icon-clear" type="button" matIconButton matIconSuffix>
+                            <mat-icon fontIcon="clear"></mat-icon>
+                        </button>
 
-                        @if (control.value.controls.iconName.hasError('required')) {
+                        @if (categoryField.iconName().getError('required')) {
                             <mat-error>Icon name is required</mat-error>
                         }
                     </mat-form-field>
 
-                    @if (control.value.controls.description; as descriptionControl) {
+                    @if (categoryField.type().value() !== CategoryType.ONE_HUNDRED_PERCENT) {
                         <mat-form-field class="description">
                             <mat-label>Description:</mat-label>
-                            <input formControlName="description" type="text" matInput />
-                            <mat-icon (click)="resetInputField(descriptionControl)" class="icon-clear" fontIcon="clear" matIconSuffix></mat-icon>
+                            <input [formField]="categoryField.description" matInput type="text" />
+                            <button (click)="clearField(categoryField.description)" aria-label="Clear description" class="icon-clear" type="button" matIconButton matIconSuffix>
+                                <mat-icon fontIcon="clear"></mat-icon>
+                            </button>
 
-                            @if (descriptionControl.hasError('required')) {
+                            @if (categoryField.description().getError('required')) {
                                 <mat-error>Description is required</mat-error>
                             }
                         </mat-form-field>
                     }
                 </div>
             }
-        </form>
+        </div>
 
         <button
-            (click)="saveCategories()"
-            [disabled]="form.invalid || viewState() === ViewState.LOADING"
+            [disabled]="categoriesForm().invalid() || categoriesForm().submitting()"
             class="save-categories-button button"
             color="primary"
             mat-stroked-button
-            type="button"
+            type="submit"
         >
             Save categories
         </button>
-    </div>
+    </form>
 }
 
-<button (click)="handleCategoriesVisibility()" class="expansion-button button" color="primary" mat-raised-button type="button">
+<button
+    (click)="handleCategoriesVisibility()"
+    [attr.aria-controls]="shouldShowCategories() ? categoriesFormId : null"
+    [attr.aria-expanded]="shouldShowCategories()"
+    class="expansion-button button"
+    color="primary"
+    type="button"
+    mat-raised-button
+>
     @if (shouldShowCategories()) {
         <mados-expansion-button-text iconName="expand_less" buttonText="Collapse" />
     } @else {

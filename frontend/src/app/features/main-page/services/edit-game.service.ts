@@ -1,8 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
+import type { Game } from '../../../interfaces/game.interface';
 
 @Injectable()
 export class EditGameService {
-    public editingGameName$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    private readonly editedGameState = signal<Game | null>(null, { equal: () => false });
+
+    public readonly editedGame = this.editedGameState.asReadonly();
+
+    public startEditing(game: Game): void {
+        this.editedGameState.set(game);
+    }
+
+    public stopEditing(): void {
+        this.editedGameState.set(null);
+    }
 }

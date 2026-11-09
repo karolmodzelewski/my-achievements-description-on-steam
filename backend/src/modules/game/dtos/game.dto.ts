@@ -1,4 +1,4 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { ArrayUnique, IsArray, IsBoolean, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 import { CategoryType } from '../../../enums/category-type.enum';
 
@@ -8,11 +8,10 @@ export class GameDto {
     public name: string;
 
     @IsArray()
-    @ArrayMinSize(0)
-    @ArrayMaxSize(6)
+    @ArrayUnique()
+    @IsEnum(CategoryType, { each: true })
     public categories: CategoryType[];
 
     @IsBoolean()
-    @IsNotEmpty()
     public hasNewAchievements: boolean;
 }

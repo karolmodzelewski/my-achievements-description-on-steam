@@ -21,12 +21,12 @@ describe('AddGameFormComponent', () => {
 
         fixture = TestBed.createComponent(AddGameFormComponent);
         component = fixture.componentInstance;
-        fixture.componentRef.setInput('description', { categories: [], completedGames: [], gamesWithNewAchievements: [] });
 
         fixture.detectChanges();
     });
 
     it('Should create a component', () => {
+        // Assert
         expect(component, 'Component should be created').toBeTruthy();
     });
 });

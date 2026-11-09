@@ -1,4 +1,3 @@
-import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
@@ -15,9 +14,11 @@ describe('AppComponent', () => {
     });
 
     it('should create the app', () => {
-        const fixture: ComponentFixture<AppComponent> = TestBed.createComponent(AppComponent);
-        const app: AppComponent = fixture.componentInstance;
+        // Act
+        const fixture = TestBed.createComponent(AppComponent);
+        const app = fixture.componentInstance;
 
+        // Assert
         expect(app).toBeTruthy();
     });
 });

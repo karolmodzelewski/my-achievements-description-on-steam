@@ -7,7 +7,7 @@ import { DescriptionService } from './services/description.service';
 
 @Controller('description')
 export class DescriptionController {
-    private readonly logger: Logger = new Logger(DescriptionController.name, { timestamp: true });
+    private readonly logger = new Logger(DescriptionController.name, { timestamp: true });
 
     constructor(private readonly descriptionService: DescriptionService) {}
 

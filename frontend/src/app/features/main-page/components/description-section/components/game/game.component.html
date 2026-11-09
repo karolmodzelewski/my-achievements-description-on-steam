@@ -1,16 +1,20 @@
 <div class="game-container">
     <p [class.adult-game]="isAdultGame()" class="game-data">
-        {{ oneHundredPercentIconName() }} {{ name() }}
+        {{ game().oneHundredPercentIconName }} {{ game().name }}
 
-        @for (category of categories(); track category.type) {
+        @for (category of game().categories; track category.type) {
             {{ category.iconName }}
         }
     </p>
 
     @if (shouldShowEdition()) {
         <div class="icon-container">
-            <mat-icon (click)="editGame()" fontIcon="edit" class="icon"></mat-icon>
-            <mat-icon (click)="deleteGame()" fontIcon="delete" class="icon"></mat-icon>
+            <button (click)="editGame()" [attr.aria-label]="`Edit ${game().name}`" class="icon-button" matIconButton type="button">
+                <mat-icon fontIcon="edit"></mat-icon>
+            </button>
+            <button (click)="deleteGame()" [attr.aria-label]="`Delete ${game().name}`" class="icon-button" matIconButton type="button">
+                <mat-icon fontIcon="delete"></mat-icon>
+            </button>
         </div>
     }
 </div>

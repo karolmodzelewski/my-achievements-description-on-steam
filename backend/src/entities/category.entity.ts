@@ -13,6 +13,6 @@ export class Category {
     @Column()
     public iconName: string;
 
-    @Column({ nullable: true })
-    public description: string;
+    @Column({ type: 'varchar', nullable: true })
+    public description: string | null;
 }

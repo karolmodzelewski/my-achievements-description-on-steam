@@ -1,0 +1,27 @@
+@use 'sass:map';
+@use 'sass:math';
+@use '@angular/material' as mat;
+
+// Sizes a matIconButton's icon and its hover/click circle and centres the icon, regardless of the line-height inherited from _reset.scss
+@mixin icon-button($icon-size, $state-layer-size: $icon-size, $overrides: ()) {
+    @include mat.icon-button-overrides(
+        map.merge(
+            (
+                state-layer-size: $state-layer-size,
+                icon-size: $icon-size,
+            ),
+            $overrides
+        )
+    );
+
+    display: inline-flex;
+    padding: math.div($state-layer-size - $icon-size, 2);
+    align-items: center;
+    justify-content: center;
+
+    .mat-icon {
+        width: $icon-size;
+        height: $icon-size;
+        font-size: $icon-size;
+    }
+}

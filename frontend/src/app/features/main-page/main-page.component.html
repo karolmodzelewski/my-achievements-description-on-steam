@@ -1,21 +1,16 @@
 <mados-header />
 
-@if (viewState() === ViewState.SUCCESS) {
-    <mados-add-categories-form (reloadDescription)="getDescriptionData()" [categories]="categories()" />
-    @if (description(); as currentDescription) {
-        @if (currentDescription.categories.length) {
-            <mados-add-game-form (reloadDescription)="getDescriptionData()" [description]="currentDescription" />
-            <mados-description-section (reloadDescription)="getDescriptionData()" [descriptionData]="currentDescription" />
-        } @else {
-            <mados-infobar [message]="infobarMessage" class="margin-top" />
-        }
-    }
-}
-
-@if (viewState() === ViewState.LOADING) {
-    <mados-loading-state class="margin-top" />
-}
-
-@if (viewState() === ViewState.ERROR) {
+@if (hasError()) {
     <mados-error-state class="margin-top" />
+} @else if (data(); as pageData) {
+    <mados-add-categories-form (reloadDescription)="reloadDescription()" [categories]="pageData.categories" />
+
+    @if (pageData.description.categories.length) {
+        <mados-add-game-form (reloadDescription)="reloadDescription()" />
+        <mados-description-section (reloadDescription)="reloadDescription()" [descriptionData]="pageData.description" />
+    } @else {
+        <mados-infobar [message]="infobarMessage" class="margin-top" />
+    }
+} @else {
+    <mados-loading-state class="margin-top" />
 }

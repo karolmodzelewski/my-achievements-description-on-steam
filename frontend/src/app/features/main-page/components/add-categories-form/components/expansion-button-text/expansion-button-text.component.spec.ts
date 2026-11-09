@@ -23,6 +23,7 @@ describe('ExpansionButtonTextComponent', () => {
     });
 
     it('Should create a component', () => {
+        // Assert
         expect(component, 'Component should be created').toBeTruthy();
     });
 });

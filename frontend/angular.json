@@ -71,7 +71,9 @@
                     "builder": "@angular/build:dev-server",
                     "configurations": {
                         "production": {
-                            "buildTarget": "mados:build:production"
+                            "buildTarget": "mados:build:production",
+                            "hmr": false,
+                            "prebundle": false
                         },
                         "development": {
                             "buildTarget": "mados:build:development"

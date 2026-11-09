@@ -21,6 +21,7 @@ describe('ErrorStateComponent', () => {
     });
 
     it('should create', () => {
+        // Assert
         expect(component, 'Component should be created').toBeTruthy();
     });
 });
