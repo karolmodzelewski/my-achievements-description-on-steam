@@ -5,6 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 
 import { CategoryComponent } from './components/category/category.component';
 import { GameComponent } from './components/game/game.component';
+import { CategoryBlock } from './enums/category-block.enum';
 import { SnackbarType } from '../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
 import { CategoryType } from '../../../../enums/category-type.enum';
@@ -72,11 +73,15 @@ export class DescriptionSectionComponent {
         return descriptionToCopy.trim();
     }
 
+    // Empty categories are hidden information, so they are never copied
     private getCategoriesPartOfDescription(categories: Category[]): string {
         let categoriesToCopy = '';
 
-        categories.forEach((category) => {
-            if (category.type === CategoryType.LONG_GAME || category.type === CategoryType.HARD_GAME) {
+        const visibleCategories = categories.filter((category) => category.amount !== 0);
+
+        visibleCategories.forEach((category, index) => {
+            // Separates blocks by the first visible category, as the first category of a block may be hidden
+            if (index > 0 && this.getCategoryBlock(visibleCategories[index - 1].type) !== this.getCategoryBlock(category.type)) {
                 categoriesToCopy += '\n';
             }
 
@@ -84,6 +89,18 @@ export class DescriptionSectionComponent {
         });
 
         return categoriesToCopy;
+    }
+
+    private getCategoryBlock(type: CategoryType): CategoryBlock {
+        if (type === CategoryType.LONG_GAME || type === CategoryType.VERY_LONG_GAME || type === CategoryType.ULTRA_LONG_GAME) {
+            return CategoryBlock.LENGTH;
+        }
+
+        if (type === CategoryType.HARD_GAME || type === CategoryType.VERY_HARD_GAME || type === CategoryType.ULTRA_HARD_GAME) {
+            return CategoryBlock.DIFFICULTY;
+        }
+
+        return CategoryBlock.GENERAL;
     }
 
     private getSectionPartOfDescription(heading: string, section: DescriptionSection, adultGamesText: string): string {

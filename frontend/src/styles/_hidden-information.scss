@@ -1,0 +1,6 @@
+@use 'src/styles/colors' as *;
+
+@mixin hidden-information {
+    color: $color-gray-61;
+    font-style: italic;
+}

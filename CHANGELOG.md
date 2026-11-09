@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.5.0 - 09.11.2026
+
+- Hide categories with 0 games: presented as hidden information in the application and never copied
+
 ## 1.4.0 - 09.11.2026
 
 - Add Steam achievement groups (DLCs): Base Game and DLC groups in the Manage game section, each with its own New achievements checkbox
