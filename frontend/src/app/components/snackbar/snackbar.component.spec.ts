@@ -12,7 +12,7 @@ describe('SnackbarComponent', () => {
     let fixture: ComponentFixture<SnackbarComponent>;
 
     beforeEach(async () => {
-        const data: SnackbarData = { snackbarMessage: 'Snackbar message' };
+        const data = { snackbarMessage: 'Snackbar message' } satisfies SnackbarData;
 
         await TestBed.configureTestingModule({
             imports: [SnackbarComponent],
@@ -29,6 +29,7 @@ describe('SnackbarComponent', () => {
     });
 
     it('should create', () => {
+        // Assert
         expect(component).toBeTruthy();
     });
 });

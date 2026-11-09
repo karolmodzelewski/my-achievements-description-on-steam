@@ -1,4 +1,6 @@
 <div class="snackbar">
     <p class="message">{{ snackbarMessage }}</p>
-    <mat-icon (click)="closeSnackbar()" class="icon-clear" fontIcon="clear"></mat-icon>
+    <button (click)="closeSnackbar()" aria-label="Close notification" class="close-button" type="button" matIconButton>
+        <mat-icon fontIcon="clear"></mat-icon>
+    </button>
 </div>

@@ -26,22 +26,28 @@ describe('InfobarComponent', () => {
     });
 
     it('Should create a component', () => {
+        // Assert
         expect(component, 'Component should be created').toBeTruthy();
     });
 
     it(`Should render 1 'mat-icon' component`, () => {
-        const components: DebugElement[] = debugElement.queryAll(By.css('mat-icon'));
+        // Assert
+        const components = debugElement.queryAll(By.css('[data-testId="infobarIcon"]'));
 
         expect(components.length, `Should be only 1 'mat-icon' component`).toEqual(1);
     });
 
     it(`Should render paragraph with given message`, () => {
-        const message: string = 'Some test message';
+        // Arrange
+        const message = 'Some test message';
 
         fixture.componentRef.setInput('message', message);
+
+        // Act
         fixture.detectChanges();
 
-        const paragraphs: DebugElement[] = debugElement.queryAll(By.css('p.message'));
+        // Assert
+        const paragraphs = debugElement.queryAll(By.css('[data-testId="infobarMessage"]'));
 
         expect(paragraphs.length, `Should be only 1 'message' paragraph`).toEqual(1);
         expect((paragraphs[0].nativeElement as HTMLElement).textContent, `Should contain given 'message' text`).toEqual(message);

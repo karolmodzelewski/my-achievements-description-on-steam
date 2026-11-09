@@ -26,21 +26,26 @@ describe('WrapperComponent', () => {
     });
 
     it('Should create a component', () => {
+        // Assert
         expect(component, 'Component should be created').toBeTruthy();
     });
 
     it('Should have wrapper container', () => {
-        const wrapper: DebugElement = debugElement.query(By.css('.wrapper'));
+        // Assert
+        const wrapper = debugElement.query(By.css('[data-testId="wrapper"]'));
 
         expect(wrapper, 'There should be a wrapper container').toBeTruthy();
     });
 
     it('Should show ng-content content', () => {
-        const componentFixture: ComponentFixture<WrapperFixtureComponent> = TestBed.createComponent(WrapperFixtureComponent);
+        // Arrange
+        const componentFixture = TestBed.createComponent(WrapperFixtureComponent);
 
+        // Act
         componentFixture.detectChanges();
 
-        const wrapperFixtureComponent: DebugElement = componentFixture.debugElement.query(By.css('mados-wrapper'));
+        // Assert
+        const wrapperFixtureComponent = componentFixture.debugElement.query(By.css('[data-testId="wrapperHost"]'));
 
         expect((wrapperFixtureComponent.nativeElement as HTMLElement).textContent, `Should show a text from 'TestComponent' inside a mados-wrapper`).toEqual('Test');
     });

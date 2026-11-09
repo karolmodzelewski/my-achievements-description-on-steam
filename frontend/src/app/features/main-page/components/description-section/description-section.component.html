@@ -1,28 +1,32 @@
-<mados-section-heading [headingText]="headingText" />
+<mados-section-heading [headingText]="headingText" [id]="headingId" />
 
-<section class="description">
+<section [attr.aria-labelledby]="headingId" class="description">
     <div class="icons-container">
-        @if (shouldShowEdition()) {
-            <mat-icon (click)="handleEditionMode()" fontIcon="edit" class="icon"></mat-icon>
-        } @else {
-            <mat-icon (click)="handleEditionMode()" fontIcon="edit_off" class="icon"></mat-icon>
-        }
-        <mat-icon
-            #tooltip="matTooltip"
-            (click)="handleTooltip($event, tooltip)"
-            (mouseenter)="$event.stopImmediatePropagation()"
-            (mouseleave)="$event.stopImmediatePropagation()"
-            [matTooltip]="tooltipText"
+        <button
+            (click)="handleEditionMode()"
+            [attr.aria-pressed]="shouldShowEdition()"
+            aria-label="Edit mode"
+            class="icon-button"
+            type="button"
+            matIconButton
+        >
+            <mat-icon [fontIcon]="shouldShowEdition() ? 'edit' : 'edit_off'"></mat-icon>
+        </button>
+        <button
+            (cdkCopyToClipboardCopied)="handleDescriptionCopied($event)"
             [cdkCopyToClipboard]="descriptionToCopy()"
-            fontIcon="content_copy"
-            class="icon"
-        ></mat-icon>
+            aria-label="Copy description"
+            class="icon-button"
+            matIconButton
+            type="button"
+        >
+            <mat-icon fontIcon="content_copy"></mat-icon>
+        </button>
     </div>
-    <div class="categories">
-        @for (category of descriptionData().categories; track category.type) {
-            <mados-category [type]="category.type" [iconName]="category.iconName" [description]="category.description" [amount]="category.amount" />
-        }
-    </div>
+
+    @for (category of descriptionData().categories; track category.type) {
+        <mados-category [type]="category.type" [iconName]="category.iconName" [description]="category.description" [amount]="category.amount" />
+    }
 
     @if (descriptionData().completedGames.length) {
         <div class="margin-top">
@@ -31,14 +35,8 @@
             <p>{{ sectionSeparator }}</p>
         </div>
         <div class="margin-top">
-            @for (game of descriptionData().completedGames; track game.name) {
-                <mados-game
-                    (reloadDescription)="deleteGame()"
-                    [oneHundredPercentIconName]="game.oneHundredPercentIconName"
-                    [name]="game.name"
-                    [categories]="game.categories"
-                    [shouldShowEdition]="shouldShowEdition()"
-                />
+            @for (game of descriptionData().completedGames; track game.id) {
+                <mados-game (reloadDescription)="reloadDescription.emit()" [game]="game" [shouldShowEdition]="shouldShowEdition()" />
             }
         </div>
     }
@@ -50,14 +48,8 @@
             <p>{{ sectionSeparator }}</p>
         </div>
         <div class="margin-top">
-            @for (game of descriptionData().gamesWithNewAchievements; track game.name) {
-                <mados-game
-                    (reloadDescription)="deleteGame()"
-                    [oneHundredPercentIconName]="game.oneHundredPercentIconName"
-                    [name]="game.name"
-                    [categories]="game.categories"
-                    [shouldShowEdition]="shouldShowEdition()"
-                />
+            @for (game of descriptionData().gamesWithNewAchievements; track game.id) {
+                <mados-game (reloadDescription)="reloadDescription.emit()" [game]="game" [shouldShowEdition]="shouldShowEdition()" />
             }
         </div>
     }

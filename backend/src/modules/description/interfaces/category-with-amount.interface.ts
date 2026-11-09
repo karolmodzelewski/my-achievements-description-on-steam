@@ -4,6 +4,6 @@ export interface CategoryWithAmount {
     id: number;
     type: CategoryType;
     iconName: string;
-    description: string;
+    description: string | null;
     amount: number;
 }

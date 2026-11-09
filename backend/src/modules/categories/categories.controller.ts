@@ -1,27 +1,27 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Logger, ParseArrayPipe, Post } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
-import { InsertResult } from 'typeorm';
-
 import { CategoryDto } from './dtos/category.dto';
+import { Category } from '../../entities/category.entity';
 import { CategoriesService } from './services/categories.service';
 
 @Controller('categories')
 export class CategoriesController {
-    private readonly logger: Logger = new Logger(CategoriesController.name, { timestamp: true });
+    private readonly logger = new Logger(CategoriesController.name, { timestamp: true });
 
     constructor(private readonly categoriesService: CategoriesService) {}
 
     @Get()
-    public getCategories(): Observable<CategoryDto[]> {
+    public getCategories(): Observable<Category[]> {
         this.logger.log(`GET Request: Categories`);
 
         return this.categoriesService.getCategories();
     }
 
     @Post()
-    public upsertCategories(@Body() categoriesDto: CategoryDto[]): Observable<InsertResult> {
+    @HttpCode(HttpStatus.NO_CONTENT)
+    public upsertCategories(@Body(new ParseArrayPipe({ items: CategoryDto, whitelist: true, forbidNonWhitelisted: true })) categoriesDto: CategoryDto[]): Observable<void> {
         this.logger.log(`POST Request: Upsert '${JSON.stringify(categoriesDto)}' categories`);
 
         return this.categoriesService.upsertCategories(categoriesDto);

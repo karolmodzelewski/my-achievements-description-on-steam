@@ -72,7 +72,7 @@ export default [
         rules: {
             '@typescript-eslint/explicit-function-return-type': 'off',
             '@typescript-eslint/explicit-module-boundary-types': 'error',
-            '@typescript-eslint/no-inferrable-types': 'off',
+            '@typescript-eslint/no-inferrable-types': 'error',
             '@typescript-eslint/adjacent-overload-signatures': 'off',
             '@typescript-eslint/await-thenable': 'error',
             '@typescript-eslint/no-deprecated': 'error',

@@ -1,15 +1,15 @@
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import type { InputSignal, OutputEmitterRef, Signal, WritableSignal } from '@angular/core';
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 import { CategoryComponent } from './components/category/category.component';
 import { GameComponent } from './components/game/game.component';
+import { SnackbarType } from '../../../../components/snackbar/enums/snackbar-type.enum';
+import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
 import { CategoryType } from '../../../../enums/category-type.enum';
 import type { Category } from '../../../../interfaces/category.interface';
 import type { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
-import type { GameCategory } from '../../../../interfaces/game-category.interface';
 import type { Game } from '../../../../interfaces/game.interface';
 import { SectionHeadingComponent } from '../section-heading/section-heading.component';
 
@@ -17,40 +17,37 @@ import { SectionHeadingComponent } from '../section-heading/section-heading.comp
     selector: 'mados-description-section',
     templateUrl: './description-section.component.html',
     styleUrl: './description-section.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [SectionHeadingComponent, MatIconModule, MatTooltip, CdkCopyToClipboard, CategoryComponent, GameComponent],
+    imports: [SectionHeadingComponent, MatIconButton, MatIcon, CdkCopyToClipboard, CategoryComponent, GameComponent],
 })
 export class DescriptionSectionComponent {
-    public readonly descriptionData: InputSignal<DescriptionResponseBody> = input.required<DescriptionResponseBody>();
+    private readonly snackbarService = inject(SnackbarService);
 
-    public readonly reloadDescription: OutputEmitterRef<void> = output();
+    public readonly descriptionData = input.required<DescriptionResponseBody>();
 
-    public readonly descriptionToCopy: Signal<string> = computed(() => this.prepareDescriptionToCopy(this.descriptionData()));
-    public readonly shouldShowEdition: WritableSignal<boolean> = signal<boolean>(false);
-    public readonly sectionSeparator: string = '_______________________________';
-    public readonly tooltipText: string = 'Copied!';
-    public readonly headingText: string = 'Description';
+    public readonly reloadDescription = output();
+
+    public readonly descriptionToCopy = computed<string>(() => this.prepareDescriptionToCopy(this.descriptionData()));
+    public readonly shouldShowEdition = signal<boolean>(false);
+    public readonly sectionSeparator = '_______________________________';
+    public readonly headingText = 'Description';
+    public readonly headingId = 'descriptionHeading';
 
     public handleEditionMode(): void {
-        this.shouldShowEdition.update((shouldShowEdition: boolean) => !shouldShowEdition);
+        this.shouldShowEdition.update((shouldShowEdition) => !shouldShowEdition);
     }
 
-    public handleTooltip(event: Event, tooltip: MatTooltip): void {
-        event.stopImmediatePropagation();
+    public handleDescriptionCopied(isCopied: boolean): void {
+        if (isCopied) {
+            this.snackbarService.openSnackbar('Description copied to clipboard', SnackbarType.SUCCESS);
 
-        tooltip.show();
+            return;
+        }
 
-        setTimeout(() => {
-            tooltip.hide();
-        }, 2000);
-    }
-
-    public deleteGame(): void {
-        this.reloadDescription.emit();
+        this.snackbarService.openSnackbar('An error has occurred while copying description', SnackbarType.ERROR);
     }
 
     private prepareDescriptionToCopy(description: DescriptionResponseBody): string {
-        let descriptionToCopy: string = '';
+        let descriptionToCopy = '';
 
         // Categories
         descriptionToCopy += this.getCategoriesPartOfDescription(description.categories);
@@ -63,7 +60,7 @@ export class DescriptionSectionComponent {
         // Completed games
         descriptionToCopy += this.getGamePartOfDescription(description.completedGames);
 
-        const completedAdultGamesAmount: number = this.countAdultGames(description.completedGames);
+        const completedAdultGamesAmount = this.countAdultGames(description.completedGames);
 
         if (completedAdultGamesAmount > 0) {
             descriptionToCopy += this.getAdultGamesAmountPartOfDescription(completedAdultGamesAmount, description.categories);
@@ -82,31 +79,31 @@ export class DescriptionSectionComponent {
         // Games with new achievements
         descriptionToCopy += this.getGamePartOfDescription(description.gamesWithNewAchievements);
 
-        const adultGamesWithNewAchievementsAmount: number = this.countAdultGames(description.gamesWithNewAchievements);
+        const adultGamesWithNewAchievementsAmount = this.countAdultGames(description.gamesWithNewAchievements);
 
         if (adultGamesWithNewAchievementsAmount > 0) {
             descriptionToCopy += this.getAdultGamesAmountPartOfDescription(adultGamesWithNewAchievementsAmount, description.categories);
         }
 
-        return descriptionToCopy;
+        return descriptionToCopy.trim();
     }
 
     private getCategoriesPartOfDescription(categories: Category[]): string {
-        let categoriesToCopy: string = '';
+        let categoriesToCopy = '';
 
-        categories.forEach((category: Category) => {
+        categories.forEach((category) => {
             if (category.type === CategoryType.LONG_GAME || category.type === CategoryType.HARD_GAME) {
                 categoriesToCopy += '\n';
             }
 
-            categoriesToCopy += `${category.iconName} ${String(category.description)} (${String(category.amount)})\n`;
+            categoriesToCopy += `${category.iconName} ${category.description ?? ''} (${category.amount ?? 0})\n`;
         });
 
         return categoriesToCopy;
     }
 
     private getSeparatorPartOfDescription(separatorText: string, amount: number): string {
-        let separatorToCopy: string = '';
+        let separatorToCopy = '';
 
         separatorToCopy += `\n${this.sectionSeparator}\n\n`;
         separatorToCopy += `${separatorText.toUpperCase()} (${amount}):\n`;
@@ -116,18 +113,16 @@ export class DescriptionSectionComponent {
     }
 
     private getGamePartOfDescription(games: Game[]): string {
-        let gamesToCopy: string = '';
+        let gamesToCopy = '';
 
-        games.forEach((game: Game) => {
-            const isAdultGame: boolean = this.checkIfGameIsAnAdultGame(game);
-
-            if (isAdultGame) {
+        games.forEach((game) => {
+            if (this.checkIfGameIsAnAdultGame(game)) {
                 return;
             }
 
             gamesToCopy += `${game.oneHundredPercentIconName} ${game.name} `;
 
-            game.categories?.forEach((gameCategory: GameCategory) => {
+            game.categories?.forEach((gameCategory) => {
                 gamesToCopy += gameCategory.iconName;
             });
 
@@ -140,7 +135,7 @@ export class DescriptionSectionComponent {
     }
 
     private getAdultGamesAmountPartOfDescription(adultGamesAmount: number, categories: Category[]): string {
-        let adultGamesAmountToCopy: string = '\n';
+        let adultGamesAmountToCopy = '\n';
 
         adultGamesAmountToCopy += `... and (${adultGamesAmount}) ${this.getAdultGameIconName(categories)} games`;
 
@@ -148,14 +143,14 @@ export class DescriptionSectionComponent {
     }
 
     private checkIfGameIsAnAdultGame(game: Game): boolean {
-        return game.categories?.some((category: GameCategory) => category.type === CategoryType.ADULT_GAME) === true;
+        return game.categories?.some((category) => category.type === CategoryType.ADULT_GAME) === true;
     }
 
     private countAdultGames(games: Game[]): number {
-        return games.filter((game: Game) => this.checkIfGameIsAnAdultGame(game)).length;
+        return games.filter((game) => this.checkIfGameIsAnAdultGame(game)).length;
     }
 
     private getAdultGameIconName(categories: Category[]): string {
-        return categories.find((category: Category) => category.type === CategoryType.ADULT_GAME)?.iconName ?? '';
+        return categories.find((category) => category.type === CategoryType.ADULT_GAME)?.iconName ?? '';
     }
 }

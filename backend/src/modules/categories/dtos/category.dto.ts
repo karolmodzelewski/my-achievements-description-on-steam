@@ -4,7 +4,6 @@ import { CategoryType } from '../../../enums/category-type.enum';
 
 export class CategoryDto {
     @IsEnum(CategoryType)
-    @IsNotEmpty()
     public type: CategoryType;
 
     @IsString()
@@ -13,5 +12,5 @@ export class CategoryDto {
 
     @IsString()
     @IsOptional()
-    public description: string;
+    public description?: string;
 }

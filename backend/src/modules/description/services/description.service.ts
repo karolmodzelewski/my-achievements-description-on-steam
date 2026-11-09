@@ -15,8 +15,8 @@ import { GameCategory } from '../interfaces/game-category.interface';
 
 @Injectable()
 export class DescriptionService {
-    private readonly logger: Logger = new Logger(DescriptionService.name, { timestamp: true });
-    private readonly categoriesSortOrder: CategoryType[] = [
+    private readonly logger = new Logger(DescriptionService.name, { timestamp: true });
+    private readonly categoriesSortOrder = [
         CategoryType.LOVED_GAME,
         CategoryType.BAD_GAME,
         CategoryType.DOESNT_COUNT,
@@ -41,85 +41,69 @@ export class DescriptionService {
         return zip(this.categoriesRepository.find(), this.gameRepository.find()).pipe(
             take(1),
             tap(() => this.logger.log(`Get description`)),
-            map((data: [Category[], Game[]]) => this.getMappedDescription(data))
+            map(([categories, games]) => this.getMappedDescription(categories, games))
         );
     }
 
-    private getMappedDescription(data: [Category[], Game[]]): Description {
-        const [categories, games] = data;
-
-        let description: Description = {
-            categories: [],
-            completedGames: [],
-            gamesWithNewAchievements: [],
-        };
-
+    private getMappedDescription(categories: Category[], games: Game[]): Description {
         if (!categories.length) {
-            return description;
+            return {
+                categories: [],
+                completedGames: [],
+                gamesWithNewAchievements: [],
+            };
         }
 
-        const completedGames: Game[] = games.filter((game: Game) => !game.hasNewAchievements);
-        const gamesWithNewAchievements: Game[] = games.filter((game: Game) => game.hasNewAchievements);
+        const completedGames = games.filter((game) => !game.hasNewAchievements);
+        const gamesWithNewAchievements = games.filter((game) => game.hasNewAchievements);
 
-        const mappedCategories: CategoryWithAmount[] = this.getMappedCategories(categories, games);
-        const mappedCompletedGames: MappedGame[] = this.getMappedGames(categories, completedGames);
-        const mappedGamesWithNewAchievements: MappedGame[] = this.getMappedGames(categories, gamesWithNewAchievements);
-
-        description = {
-            categories: mappedCategories,
-            completedGames: mappedCompletedGames,
-            gamesWithNewAchievements: mappedGamesWithNewAchievements,
+        return {
+            categories: this.getMappedCategories(categories, games),
+            completedGames: this.getMappedGames(categories, completedGames),
+            gamesWithNewAchievements: this.getMappedGames(categories, gamesWithNewAchievements),
         };
-
-        return description;
     }
 
     private getMappedCategories(categories: Category[], games: Game[]): CategoryWithAmount[] {
-        const categoriesWithAmount: CategoryWithAmount[] = categories
-            .filter((category: Category) => category.type !== CategoryType.ONE_HUNDRED_PERCENT)
-            .map((category: Category) => ({ id: category.id, type: category.type, iconName: category.iconName, description: category.description, amount: 0 }));
+        const gamesCategoryTypes = games.flatMap((game) => game.categories);
 
-        return Object.values(CategoryType)
-            .filter((categoryType: CategoryType) => categoryType !== CategoryType.ONE_HUNDRED_PERCENT)
-            .map((categoryType: CategoryType) => {
-                let categoryFound: CategoryWithAmount = categoriesWithAmount.find((category: CategoryWithAmount) => category.type === categoryType)!;
-
-                games
-                    .flatMap((game: Game) => game.categories)
-                    .forEach((category: CategoryType) => {
-                        if (category === categoryType) {
-                            categoryFound = { ...categoryFound, amount: (categoryFound.amount += 1) };
-                        }
-                    });
-
-                return categoryFound;
-            })
-            .sort((a: CategoryWithAmount, b: CategoryWithAmount) => this.categoriesSortOrder.indexOf(a.type) - this.categoriesSortOrder.indexOf(b.type));
+        return categories
+            .filter((category) => category.type !== CategoryType.ONE_HUNDRED_PERCENT)
+            .map((category) => ({
+                id: category.id,
+                type: category.type,
+                iconName: category.iconName,
+                description: category.description,
+                amount: gamesCategoryTypes.filter((categoryType) => categoryType === category.type).length,
+            }))
+            .sort((a, b) => this.compareBySortOrder(a.type, b.type));
     }
 
     private getMappedGames(categories: Category[], games: Game[]): MappedGame[] {
-        const oneHundredPercentIconName: string = categories.find((category: Category) => category.type === CategoryType.ONE_HUNDRED_PERCENT)!.iconName;
+        const oneHundredPercentIconName = categories.find((category) => category.type === CategoryType.ONE_HUNDRED_PERCENT)?.iconName ?? '';
 
-        const mappedGames: MappedGame[] = games
-            .map((game: Game) => {
-                const mappedGame: MappedGame = {
-                    id: game.id,
-                    name: game.name,
-                    hasNewAchievements: game.hasNewAchievements,
-                    categories: this.getMappedGameCategories(game.categories, categories),
-                    oneHundredPercentIconName,
-                };
-
-                return mappedGame;
-            })
-            .sort((a: MappedGame, b: MappedGame) => a.name.localeCompare(b.name));
-
-        return mappedGames;
+        return games
+            .map((game) => ({
+                id: game.id,
+                name: game.name,
+                hasNewAchievements: game.hasNewAchievements,
+                categories: this.getMappedGameCategories(game.categories, categories),
+                oneHundredPercentIconName,
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    private getMappedGameCategories(gameCategories: CategoryType[], categories: Category[]): GameCategory[] {
-        return gameCategories
-            .map((categoryType: CategoryType) => ({ type: categoryType, iconName: categories.find((category: Category) => category.type === categoryType)!.iconName }))
-            .sort((a: GameCategory, b: GameCategory) => this.categoriesSortOrder.indexOf(a.type) - this.categoriesSortOrder.indexOf(b.type));
+    private getMappedGameCategories(gameCategoryTypes: CategoryType[], categories: Category[]): GameCategory[] {
+        return gameCategoryTypes
+            .flatMap((categoryType) => {
+                const category = categories.find(({ type }) => type === categoryType);
+
+                return category ? [{ type: categoryType, iconName: category.iconName }] : [];
+            })
+            .sort((a, b) => this.compareBySortOrder(a.type, b.type));
+    }
+
+    private compareBySortOrder(a: CategoryType, b: CategoryType): number {
+        return this.categoriesSortOrder.indexOf(a) - this.categoriesSortOrder.indexOf(b);
     }
 }

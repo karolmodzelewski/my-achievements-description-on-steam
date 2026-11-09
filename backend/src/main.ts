@@ -1,18 +1,19 @@
-import type { INestApplication } from '@nestjs/common';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
-    const logger: Logger = new Logger();
-    const app: INestApplication = await NestFactory.create(AppModule);
-    const port: number = 3001;
+    const logger = new Logger();
+    const app = await NestFactory.create(AppModule);
+    const port = 3001;
 
     app.setGlobalPrefix('api');
     app.useGlobalPipes(
         new ValidationPipe({
-            forbidUnknownValues: false,
+            whitelist: true,
+            forbidNonWhitelisted: true,
+            transform: true,
         })
     );
 

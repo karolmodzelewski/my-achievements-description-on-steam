@@ -1,4 +1,3 @@
-import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
 import { CategoriesController } from './categories.controller';
@@ -8,15 +7,16 @@ describe('CategoriesController', () => {
     let controller: CategoriesController;
 
     beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
+        const module = await Test.createTestingModule({
             controllers: [CategoriesController],
             providers: [{ provide: CategoriesService, useValue: {} }],
         }).compile();
 
-        controller = module.get<CategoriesController>(CategoriesController);
+        controller = module.get(CategoriesController);
     });
 
     it('should be defined', () => {
+        // Assert
         expect(controller).toBeDefined();
     });
 });

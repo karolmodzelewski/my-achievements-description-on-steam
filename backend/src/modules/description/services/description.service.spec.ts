@@ -1,4 +1,3 @@
-import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -10,14 +9,15 @@ describe('DescriptionService', () => {
     let service: DescriptionService;
 
     beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
+        const module = await Test.createTestingModule({
             providers: [DescriptionService, { provide: getRepositoryToken(Category), useValue: {} }, { provide: getRepositoryToken(Game), useValue: {} }],
         }).compile();
 
-        service = module.get<DescriptionService>(DescriptionService);
+        service = module.get(DescriptionService);
     });
 
     it('should be defined', () => {
+        // Assert
         expect(service).toBeDefined();
     });
 });

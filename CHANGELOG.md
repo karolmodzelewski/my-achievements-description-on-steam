@@ -2,6 +2,27 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.3.0 - 09.11.2026
+
+- Add AAA pattern and data-testId selectors to unit tests, remove broken e2e test
+- Add Cancel editing button and change the submit button text to 'Edit game' while editing
+- Bump dependencies to the newest compatible versions
+- Fix copied description ending with whitespaces
+- Fix description endpoint failing when a category is missing in the database
+- Fix duplicated game after renaming it during edition
+- Fix games with all categories selected being rejected and add validation of the categories request
+- Fix icon buttons sizes and description layout shifts
+- Fix new categories not being configurable when some categories are already saved
+- Fix production dev server warnings and lint-staged formatting all files
+- Fix snackbar colors
+- Improve accessibility: icon buttons with labels, labelled checkboxes, heading order, ARIA states
+- Rename 'Add game' section to 'Manage game'
+- Replace reactive forms with signal forms and load main page data with httpResource
+- Show game name clear button only when the name is provided
+- Update and delete games by id (PUT/DELETE /game/:id)
+- Use standalone Material imports, default OnPush change detection and type inference
+- Remove Destroyable util and switch to takeUntilDestroyed
+
 ## 1.2.0 - 02.11.2026
 
 - Update frontend to Angular 22 and backend to NestJS 12, bump all dependencies to the newest versions

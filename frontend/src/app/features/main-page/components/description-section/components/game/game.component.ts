@@ -1,57 +1,59 @@
 import { HttpClient } from '@angular/common/http';
-import type { InputSignal, OutputEmitterRef, Signal } from '@angular/core';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, computed, inject, input, output } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
-import { catchError, EMPTY, take } from 'rxjs';
+import { catchError, EMPTY, take, tap } from 'rxjs';
 
-import type { DeleteGameRequestBody } from './interfaces/delete-game-request-body.interface';
+import { SnackbarType } from '../../../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
 import { CategoryType } from '../../../../../../enums/category-type.enum';
-import type { GameCategory } from '../../../../../../interfaces/game-category.interface';
+import type { Game } from '../../../../../../interfaces/game.interface';
 import { EditGameService } from '../../../../services/edit-game.service';
 
 @Component({
     selector: 'mados-game',
     templateUrl: './game.component.html',
     styleUrl: './game.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatIconModule],
+    imports: [MatIconButton, MatIcon],
 })
 export class GameComponent {
-    private readonly editGameService: EditGameService = inject(EditGameService);
-    private readonly httpClient: HttpClient = inject(HttpClient);
-    private readonly snackbarService: SnackbarService = inject(SnackbarService);
+    private readonly editGameService = inject(EditGameService);
+    private readonly httpClient = inject(HttpClient);
+    private readonly snackbarService = inject(SnackbarService);
 
-    public readonly oneHundredPercentIconName: InputSignal<string> = input.required<string>();
-    public readonly name: InputSignal<string> = input.required<string>();
-    public readonly categories: InputSignal<GameCategory[] | undefined> = input<GameCategory[]>();
-    public readonly shouldShowEdition: InputSignal<boolean> = input.required<boolean>();
+    public readonly game = input.required<Game>();
+    public readonly shouldShowEdition = input.required<boolean>();
 
-    public readonly reloadDescription: OutputEmitterRef<void> = output();
+    public readonly reloadDescription = output();
 
-    public readonly isAdultGame: Signal<boolean> = computed(() => this.categories()?.some((category: GameCategory) => category.type === CategoryType.ADULT_GAME) === true);
+    public readonly isAdultGame = computed<boolean>(() => this.game().categories?.some((category) => category.type === CategoryType.ADULT_GAME) === true);
 
     public editGame(): void {
-        this.editGameService.editingGameName$.next(this.name());
+        this.editGameService.startEditing(this.game());
     }
 
     public deleteGame(): void {
-        const requestBody: DeleteGameRequestBody = { name: this.name() };
+        const { id } = this.game();
 
         this.httpClient
-            .delete('game', { body: requestBody })
+            .delete<void>(`game/${id}`)
             .pipe(
                 take(1),
+                tap(() => {
+                    if (this.editGameService.editedGame()?.id === id) {
+                        this.editGameService.stopEditing();
+                    }
+
+                    this.snackbarService.openSnackbar('Successfully deleted game', SnackbarType.SUCCESS);
+                    this.reloadDescription.emit();
+                }),
                 catchError(() => {
-                    this.snackbarService.openSnackbar('An error has occurred while deleting game', 'error');
+                    this.snackbarService.openSnackbar('An error has occurred while deleting game', SnackbarType.ERROR);
 
                     return EMPTY;
                 })
             )
-            .subscribe(() => {
-                this.snackbarService.openSnackbar('Successfully deleted game', 'success');
-                this.reloadDescription.emit();
-            });
+            .subscribe();
     }
 }

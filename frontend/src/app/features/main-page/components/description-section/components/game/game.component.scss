@@ -1,3 +1,4 @@
+@use 'src/styles/icon-button' as *;
 @use 'src/styles/colors' as *;
 
 .game-container,
@@ -20,14 +21,29 @@
     font-style: italic;
 }
 
-.icon {
-    width: 16px;
-    height: 16px;
-    font-size: 16px;
+.icon-container {
     margin-left: 5px;
-    cursor: pointer;
+}
 
-    &:hover {
+.icon-button {
+    @include icon-button(
+        16px,
+        24px,
+        (
+            state-layer-color: $color-dark-white,
+            ripple-color: rgba($color-dark-white, 0.12),
+            touch-target-display: none,
+        )
+    );
+
+    // Keeps the 24px circle from making the row taller than the 20px game title line
+    margin: -2px 0;
+
+    &:hover .mat-icon {
         transform: scale(1.05);
+    }
+
+    & + & {
+        margin-left: 5px;
     }
 }
