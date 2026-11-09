@@ -28,28 +28,36 @@
         <mados-category [type]="category.type" [iconName]="category.iconName" [description]="category.description" [amount]="category.amount" />
     }
 
-    @if (descriptionData().completedGames.length) {
+    @if (descriptionData().completed.amount) {
         <div class="margin-top">
             <p>{{ sectionSeparator }}</p>
-            <p>COMPLETED ({{ descriptionData().completedGames.length }}):</p>
+            <p>{{ completedHeading() }}</p>
             <p>{{ sectionSeparator }}</p>
         </div>
         <div class="margin-top">
-            @for (game of descriptionData().completedGames; track game.id) {
-                <mados-game (reloadDescription)="reloadDescription.emit()" [game]="game" [shouldShowEdition]="shouldShowEdition()" />
+            @for (entry of descriptionData().completed.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
+                <mados-game (reloadDescription)="reloadDescription.emit()" [entry]="entry" [shouldShowEdition]="shouldShowEdition()" />
+            }
+
+            @if (completedAdultGamesText()) {
+                <p class="adult-games-text">{{ completedAdultGamesText() }}</p>
             }
         </div>
     }
 
-    @if (descriptionData().gamesWithNewAchievements.length) {
+    @if (descriptionData().newAchievements.amount) {
         <div class="margin-top">
             <p>{{ sectionSeparator }}</p>
-            <p>NEW ACHIEVEMENTS ({{ descriptionData().gamesWithNewAchievements.length }}):</p>
+            <p>{{ newAchievementsHeading() }}</p>
             <p>{{ sectionSeparator }}</p>
         </div>
         <div class="margin-top">
-            @for (game of descriptionData().gamesWithNewAchievements; track game.id) {
-                <mados-game (reloadDescription)="reloadDescription.emit()" [game]="game" [shouldShowEdition]="shouldShowEdition()" />
+            @for (entry of descriptionData().newAchievements.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
+                <mados-game (reloadDescription)="reloadDescription.emit()" [entry]="entry" [shouldShowEdition]="shouldShowEdition()" />
+            }
+
+            @if (newAchievementsAdultGamesText()) {
+                <p class="adult-games-text">{{ newAchievementsAdultGamesText() }}</p>
             }
         </div>
     }

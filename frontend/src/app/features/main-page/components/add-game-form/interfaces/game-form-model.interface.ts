@@ -1,3 +1,4 @@
+import type { GameGroupFormModel } from './game-group-form-model.interface';
 import type { CategoryType } from '../../../../../enums/category-type.enum';
 
 export interface GameFormModel {
@@ -10,4 +11,5 @@ export interface GameFormModel {
     buggedGame: boolean;
     adultGame: boolean;
     hasNewAchievements: boolean;
+    groups: GameGroupFormModel[];
 }

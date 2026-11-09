@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { GameComponent } from './game.component';
 import { EditGameService } from '../../../../services/edit-game.service';
 import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
-import type { Game } from '../../../../../../interfaces/game.interface';
+import type { DescriptionEntry } from '../../../../../../interfaces/description-entry.interface';
 
 describe('GameComponent', () => {
     let component: GameComponent;
@@ -22,7 +22,11 @@ describe('GameComponent', () => {
 
         fixture = TestBed.createComponent(GameComponent);
         component = fixture.componentInstance;
-        fixture.componentRef.setInput('game', { id: 1, name: 'Game', oneHundredPercentIconName: 'icon', hasNewAchievements: false } satisfies Game);
+        fixture.componentRef.setInput('entry', {
+            game: { id: 1, name: 'Game', oneHundredPercentIconName: 'icon', hasNewAchievements: false, groups: [] },
+            group: null,
+            listedGroups: [],
+        } satisfies DescriptionEntry);
         fixture.componentRef.setInput('shouldShowEdition', false);
 
         fixture.detectChanges();

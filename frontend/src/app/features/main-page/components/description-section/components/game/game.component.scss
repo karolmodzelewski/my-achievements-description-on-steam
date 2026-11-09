@@ -1,6 +1,11 @@
 @use 'src/styles/icon-button' as *;
 @use 'src/styles/colors' as *;
 
+:host {
+    display: block;
+    margin-bottom: 12px;
+}
+
 .game-container,
 .icon-container {
     display: flex;
@@ -8,7 +13,11 @@
 
 .game-container {
     align-items: center;
-    margin-bottom: 12px;
+
+    // Keeps the listed groups visually attached to their game
+    & + & {
+        margin-top: 4px;
+    }
 }
 
 .game-data {
@@ -16,7 +25,8 @@
     word-break: break-all;
 }
 
-.adult-game {
+// Presented only in the application, never copied with the description
+.hidden-information {
     color: $color-gray-61;
     font-style: italic;
 }

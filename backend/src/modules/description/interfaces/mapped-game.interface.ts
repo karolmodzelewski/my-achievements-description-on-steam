@@ -1,4 +1,5 @@
 import type { GameCategory } from './game-category.interface';
+import type { MappedGroup } from './mapped-group.interface';
 
 export interface MappedGame {
     id: number;
@@ -6,4 +7,5 @@ export interface MappedGame {
     hasNewAchievements: boolean;
     categories: GameCategory[];
     oneHundredPercentIconName: string;
+    groups: MappedGroup[];
 }

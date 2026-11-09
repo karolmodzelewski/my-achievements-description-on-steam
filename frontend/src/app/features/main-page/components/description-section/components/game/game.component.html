@@ -1,20 +1,33 @@
 <div class="game-container">
-    <p [class.adult-game]="isAdultGame()" class="game-data">
-        {{ game().oneHundredPercentIconName }} {{ game().name }}
-
-        @for (category of game().categories; track category.type) {
-            {{ category.iconName }}
-        }
-    </p>
+    <p [class.hidden-information]="isAdultGame()" class="game-data">{{ entryLine() }}</p>
 
     @if (shouldShowEdition()) {
+        @let editEntryAriaLabel = `Edit ${entryName()}`;
+        @let deleteEntryAriaLabel = `Delete ${entryName()}`;
+
         <div class="icon-container">
-            <button (click)="editGame()" [attr.aria-label]="`Edit ${game().name}`" class="icon-button" matIconButton type="button">
+            <button (click)="editGame()" [attr.aria-label]="editEntryAriaLabel" class="icon-button" matIconButton type="button">
                 <mat-icon fontIcon="edit"></mat-icon>
             </button>
-            <button (click)="deleteGame()" [attr.aria-label]="`Delete ${game().name}`" class="icon-button" matIconButton type="button">
+            <button (click)="deleteEntry()" [attr.aria-label]="deleteEntryAriaLabel" class="icon-button" matIconButton type="button">
                 <mat-icon fontIcon="delete"></mat-icon>
             </button>
         </div>
     }
 </div>
+
+@for (group of entry().listedGroups; track group.id) {
+    <div class="game-container">
+        <p class="game-data hidden-information">- {{ group.name }}</p>
+
+        @if (shouldShowEdition()) {
+            @let deleteGroupAriaLabel = `Delete ${entry().game.name} - ${group.name}`;
+
+            <div class="icon-container">
+                <button (click)="deleteGroup(group)" [attr.aria-label]="deleteGroupAriaLabel" class="icon-button" matIconButton type="button">
+                    <mat-icon fontIcon="delete"></mat-icon>
+                </button>
+            </div>
+        }
+    </div>
+}

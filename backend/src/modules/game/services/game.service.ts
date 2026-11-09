@@ -3,12 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { catchError, from, map, Observable, throwError } from 'rxjs';
 
-import { QueryFailedError, Repository } from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 
 import { GameDto } from '../dtos/game.dto';
+import { GameGroupDto } from '../dtos/game-group.dto';
 import { Game } from '../../../entities/game.entity';
+import { GameGroup } from '../../../entities/game-group.entity';
 
 const POSTGRES_UNIQUE_VIOLATION_CODE = '23505';
+
+const getGameNotFoundMessage = (id: number): string => `Game with id '${id}' doesn't exist`;
 
 @Injectable()
 export class GameService {
@@ -16,36 +20,70 @@ export class GameService {
 
     constructor(
         @InjectRepository(Game)
-        private readonly gameRepository: Repository<Game>
+        private readonly gameRepository: Repository<Game>,
+        @InjectRepository(GameGroup)
+        private readonly gameGroupRepository: Repository<GameGroup>
     ) {}
 
     public createGame(gameDto: GameDto): Observable<void> {
         this.logger.log(`Creating game ${JSON.stringify(gameDto)} in database`);
 
-        return from(this.gameRepository.insert(gameDto)).pipe(
-            map(() => undefined),
-            catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name)))
-        );
+        const { groups, ...game } = gameDto;
+
+        return from(
+            this.gameRepository.manager.transaction(async (manager) => {
+                const { id } = await manager.save(manager.create(Game, game));
+
+                await this.insertGroups(manager, id, groups);
+            })
+        ).pipe(catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name))));
     }
 
     public updateGame(id: number, gameDto: GameDto): Observable<void> {
         this.logger.log(`Updating game with id '${id}' to ${JSON.stringify(gameDto)}`);
 
-        return from(this.gameRepository.update(id, gameDto)).pipe(
-            catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name))),
-            map(({ affected }) => this.throwIfGameNotFound(id, affected))
-        );
+        const { groups, ...game } = gameDto;
+
+        return from(
+            this.gameRepository.manager.transaction(async (manager) => {
+                const { affected } = await manager.update(Game, id, game);
+
+                this.throwIfNotFound(getGameNotFoundMessage(id), affected);
+
+                await manager.delete(GameGroup, { game: { id } });
+                await this.insertGroups(manager, id, groups);
+            })
+        ).pipe(catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name))));
     }
 
     public deleteGame(id: number): Observable<void> {
         this.logger.log(`Deleting game with id '${id}'`);
 
-        return from(this.gameRepository.delete(id)).pipe(map(({ affected }) => this.throwIfGameNotFound(id, affected)));
+        return from(this.gameRepository.delete(id)).pipe(map(({ affected }) => this.throwIfNotFound(getGameNotFoundMessage(id), affected)));
     }
 
-    private throwIfGameNotFound(id: number, affected: number | null | undefined): void {
+    public deleteGroup(gameId: number, groupId: number): Observable<void> {
+        this.logger.log(`Deleting group with id '${groupId}' of game with id '${gameId}'`);
+
+        return from(this.gameGroupRepository.delete({ id: groupId, game: { id: gameId } })).pipe(
+            map(({ affected }) => this.throwIfNotFound(`Group with id '${groupId}' of game with id '${gameId}' doesn't exist`, affected))
+        );
+    }
+
+    private async insertGroups(manager: EntityManager, gameId: number, groups: GameGroupDto[]): Promise<void> {
+        if (!groups.length) {
+            return;
+        }
+
+        await manager.insert(
+            GameGroup,
+            groups.map(({ name, hasNewAchievements }) => ({ name, hasNewAchievements, game: { id: gameId } }))
+        );
+    }
+
+    private throwIfNotFound(message: string, affected: number | null | undefined): void {
         if (affected === 0) {
-            throw new NotFoundException(`Game with id '${id}' doesn't exist`);
+            throw new NotFoundException(message);
         }
     }
 

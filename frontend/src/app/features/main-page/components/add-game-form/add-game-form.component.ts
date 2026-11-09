@@ -2,7 +2,7 @@ import { ViewportScroller } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, effect, inject, linkedSignal, output, untracked } from '@angular/core';
 import type { FieldTree } from '@angular/forms/signals';
-import { form, FormField, FormRoot, required } from '@angular/forms/signals';
+import { applyEach, form, FormField, FormRoot, required } from '@angular/forms/signals';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatOption } from '@angular/material/core';
@@ -14,6 +14,7 @@ import { MatSelect } from '@angular/material/select';
 import { catchError, firstValueFrom, of, tap } from 'rxjs';
 
 import type { GameFormModel } from './interfaces/game-form-model.interface';
+import type { GameGroupFormModel } from './interfaces/game-group-form-model.interface';
 import { SnackbarType } from '../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
 import { CategoryType } from '../../../../enums/category-type.enum';
@@ -41,6 +42,7 @@ export class AddGameFormComponent {
 
     public readonly headingText = 'Manage game';
     public readonly headingId = 'manageGameHeading';
+    public readonly baseGameGroupName = 'Base game';
     public readonly CategoryType = CategoryType;
     public readonly isEditing = computed<boolean>(() => this.editGameService.editedGame() !== null);
 
@@ -50,6 +52,9 @@ export class AddGameFormComponent {
         this.gameModel,
         (path) => {
             required(path.name);
+            applyEach(path.groups, (groupPath) => {
+                required(groupPath.name);
+            });
         },
         { submission: { action: () => this.saveGame() } }
     );
@@ -68,6 +73,16 @@ export class AddGameFormComponent {
     public clearField(field: FieldTree<string>): void {
         field().reset('');
         field().focusBoundControl();
+    }
+
+    public addGroup(index: number): void {
+        const newGroup: GameGroupFormModel = { name: '', hasNewAchievements: false };
+
+        this.gameModel.update((gameModel) => ({ ...gameModel, groups: [...gameModel.groups.slice(0, index), newGroup, ...gameModel.groups.slice(index)] }));
+    }
+
+    public removeGroup(index: number): void {
+        this.gameModel.update((gameModel) => ({ ...gameModel, groups: gameModel.groups.filter((_, groupIndex) => groupIndex !== index) }));
     }
 
     public resetForm(): void {
@@ -97,7 +112,7 @@ export class AddGameFormComponent {
     }
 
     private prepareRequestBody(): AddGameRequestBody {
-        const { name, length, difficulty, lovedGame, badGame, doesntCount, buggedGame, adultGame, hasNewAchievements } = this.gameModel();
+        const { name, length, difficulty, lovedGame, badGame, doesntCount, buggedGame, adultGame, hasNewAchievements, groups } = this.gameModel();
         const checkboxCategories: [boolean, CategoryType][] = [
             [lovedGame, CategoryType.LOVED_GAME],
             [badGame, CategoryType.BAD_GAME],
@@ -110,6 +125,7 @@ export class AddGameFormComponent {
         return {
             name,
             hasNewAchievements,
+            groups,
             categories: [length, difficulty, ...checkedCategories].filter((categoryType) => categoryType !== null),
         };
     }
@@ -127,6 +143,7 @@ export class AddGameFormComponent {
             buggedGame: categoryTypes.includes(CategoryType.BUGGED_GAME),
             adultGame: categoryTypes.includes(CategoryType.ADULT_GAME),
             hasNewAchievements: game?.hasNewAchievements ?? false,
+            groups: game?.groups.map(({ name, hasNewAchievements }) => ({ name, hasNewAchievements })) ?? [],
         };
     }
 }
