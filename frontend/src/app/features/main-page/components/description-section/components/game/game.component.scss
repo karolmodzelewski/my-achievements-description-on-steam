@@ -1,5 +1,6 @@
 @use 'src/styles/icon-button' as *;
 @use 'src/styles/colors' as *;
+@use 'src/styles/hidden-information' as *;
 
 :host {
     display: block;
@@ -25,10 +26,8 @@
     word-break: break-all;
 }
 
-// Presented only in the application, never copied with the description
 .hidden-information {
-    color: $color-gray-61;
-    font-style: italic;
+    @include hidden-information;
 }
 
 .icon-container {

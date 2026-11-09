@@ -286,7 +286,7 @@ export const descriptionResponseBody: DescriptionResponseBody = {
             type: CategoryType.BUGGED_GAME,
             iconName: 'ːpukeː',
             description: 'Bugged game with broken achievements',
-            amount: 2,
+            amount: 0,
         },
         {
             id: 5,

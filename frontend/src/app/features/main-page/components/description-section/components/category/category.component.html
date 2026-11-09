@@ -1,1 +1,1 @@
-<p [class.margin-top]="type() === CategoryType.LONG_GAME || type() === CategoryType.HARD_GAME">{{ iconName() }} {{ description() }} ({{ amount() }})</p>
+<p [class.margin-top]="type() === CategoryType.LONG_GAME || type() === CategoryType.HARD_GAME" [class.hidden-information]="isHidden()">{{ iconName() }} {{ description() }} ({{ amount() }})</p>
