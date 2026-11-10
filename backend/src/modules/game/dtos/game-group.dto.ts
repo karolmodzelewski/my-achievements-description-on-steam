@@ -1,8 +1,11 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
+
+import { Trim } from '../../../decorators/trim.decorator';
 
 export class GameGroupDto {
+    // Emptiness is validated in GameService, together with the game name
+    @Trim()
     @IsString()
-    @IsNotEmpty()
     public name: string;
 
     @IsBoolean()

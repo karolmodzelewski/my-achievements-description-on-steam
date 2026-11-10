@@ -10,17 +10,24 @@ export const getSectionHeading = (title: string, { amount, gamesAmount, groupsAm
     return `${title.toUpperCase()} (${amount})${amountPartsText}:`;
 };
 
-export const getEntryName = ({ game, group }: DescriptionEntry): string => (group ? `${game.name} - ${group.name}` : game.name);
+// Trims every part and skips empty ones, so untrimmed or empty values never leave extra spaces
+export const joinDescriptionParts = (...parts: string[]): string =>
+    parts
+        .map((part) => part.trim())
+        .filter((part) => part !== '')
+        .join(' ');
+
+export const getEntryName = ({ game, group }: DescriptionEntry): string => (group ? `${game.name.trim()} - ${group.name.trim()}` : game.name.trim());
 
 export const getEntryLine = (entry: DescriptionEntry): string => {
     const { game, group, listedGroups } = entry;
 
     if (group) {
-        return `${game.oneHundredPercentIconName} ${getEntryName(entry)}`;
+        return joinDescriptionParts(game.oneHundredPercentIconName, getEntryName(entry));
     }
 
     const groupsText = listedGroups.length ? ` (+ ${listedGroups.length} ${listedGroups.length === 1 ? 'group' : 'groups'})` : '';
-    const categoriesIconNames = game.categories?.map(({ iconName }) => iconName).join('') ?? '';
+    const categoriesIconNames = game.categories?.map(({ iconName }) => iconName.trim()).join('') ?? '';
 
-    return `${game.oneHundredPercentIconName} ${game.name}${groupsText} ${categoriesIconNames}`.trim();
+    return joinDescriptionParts(game.oneHundredPercentIconName, `${getEntryName(entry)}${groupsText}`, categoriesIconNames);
 };

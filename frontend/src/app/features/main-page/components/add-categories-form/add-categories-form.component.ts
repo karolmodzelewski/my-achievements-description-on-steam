@@ -111,7 +111,9 @@ export class AddCategoriesFormComponent {
     }
 
     private prepareRequestBody(): CategoryRequestBody[] {
-        return this.categoriesModel().map(({ type, iconName, description }) => (type === CategoryType.ONE_HUNDRED_PERCENT ? { type, iconName } : { type, iconName, description }));
+        return this.categoriesModel().map(({ type, iconName, description }) =>
+            type === CategoryType.ONE_HUNDRED_PERCENT ? { type, iconName: iconName.trim() } : { type, iconName: iconName.trim(), description: description.trim() }
+        );
     }
 
     private buildCategoriesModel(categories: Category[]): CategoryFormModel[] {

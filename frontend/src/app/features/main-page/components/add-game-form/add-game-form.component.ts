@@ -1,8 +1,9 @@
 import { ViewportScroller } from '@angular/common';
+import type { HttpErrorResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, effect, inject, linkedSignal, output, untracked } from '@angular/core';
 import type { FieldTree } from '@angular/forms/signals';
-import { applyEach, form, FormField, FormRoot, required } from '@angular/forms/signals';
+import { applyEach, form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatOption } from '@angular/material/core';
@@ -18,13 +19,16 @@ import type { GameGroupFormModel } from './interfaces/game-group-form-model.inte
 import { SnackbarType } from '../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
 import { CategoryType } from '../../../../enums/category-type.enum';
+import { ErrorCode } from '../../../../enums/error-code.enum';
 import type { AddGameRequestBody } from '../../../../interfaces/add-game-request-body.interface';
+import type { ErrorResponseBody } from '../../../../interfaces/error-response-body.interface';
 import type { Game } from '../../../../interfaces/game.interface';
 import { EditGameService } from '../../services/edit-game.service';
 import { SectionHeadingComponent } from '../section-heading/section-heading.component';
 
 const LENGTH_CATEGORY_TYPES = [CategoryType.LONG_GAME, CategoryType.VERY_LONG_GAME, CategoryType.ULTRA_LONG_GAME];
 const DIFFICULTY_CATEGORY_TYPES = [CategoryType.HARD_GAME, CategoryType.VERY_HARD_GAME, CategoryType.ULTRA_HARD_GAME];
+const NOT_BLANK_PATTERN = /\S/;
 
 @Component({
     selector: 'mados-add-game-form',
@@ -52,8 +56,10 @@ export class AddGameFormComponent {
         this.gameModel,
         (path) => {
             required(path.name);
+            pattern(path.name, NOT_BLANK_PATTERN);
             applyEach(path.groups, (groupPath) => {
                 required(groupPath.name);
+                pattern(groupPath.name, NOT_BLANK_PATTERN);
             });
         },
         { submission: { action: () => this.saveGame() } }
@@ -102,8 +108,11 @@ export class AddGameFormComponent {
                     this.resetForm();
                     this.reloadDescription.emit();
                 }),
-                catchError(() => {
-                    this.snackbarService.openSnackbar('An error has occurred while saving game', SnackbarType.ERROR);
+                catchError(({ error }: HttpErrorResponse) => {
+                    const errorResponseBody = error as ErrorResponseBody | null;
+                    const message = errorResponseBody?.errorCode === ErrorCode.EMPTY_NAME ? 'Game or group name has to be provided' : 'An error has occurred while saving game';
+
+                    this.snackbarService.openSnackbar(message, SnackbarType.ERROR);
 
                     return of(undefined);
                 })
@@ -123,9 +132,9 @@ export class AddGameFormComponent {
         const checkedCategories = checkboxCategories.filter(([isChecked]) => isChecked).map(([, categoryType]) => categoryType);
 
         return {
-            name,
+            name: name.trim(),
             hasNewAchievements,
-            groups,
+            groups: groups.map((group) => ({ name: group.name.trim(), hasNewAchievements: group.hasNewAchievements })),
             categories: [length, difficulty, ...checkedCategories].filter((categoryType) => categoryType !== null),
         };
     }
