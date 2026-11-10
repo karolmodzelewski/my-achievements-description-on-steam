@@ -14,7 +14,7 @@ import type { DescriptionEntry } from '../../../../interfaces/description-entry.
 import type { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
 import type { DescriptionSection } from '../../../../interfaces/description-section.interface';
 import type { Game } from '../../../../interfaces/game.interface';
-import { getEntryLine, getSectionHeading } from '../../utils/description-text.util';
+import { getEntryLine, getSectionHeading, joinDescriptionParts } from '../../utils/description-text.util';
 import { SectionHeadingComponent } from '../section-heading/section-heading.component';
 
 const COMPLETED_SECTION_TITLE = 'Completed';
@@ -85,7 +85,7 @@ export class DescriptionSectionComponent {
                 categoriesToCopy += '\n';
             }
 
-            categoriesToCopy += `${category.iconName} ${category.description ?? ''} (${category.amount ?? 0})\n`;
+            categoriesToCopy += `${joinDescriptionParts(category.iconName, category.description ?? '', `(${category.amount ?? 0})`)}\n`;
         });
 
         return categoriesToCopy;
@@ -142,7 +142,7 @@ export class DescriptionSectionComponent {
     private getAdultGamesText(entries: DescriptionEntry[]): string {
         const adultGamesAmount = this.countAdultGames(entries);
 
-        return adultGamesAmount > 0 ? `... and (${adultGamesAmount}) ${this.getAdultGameIconName(this.descriptionData().categories)} games` : '';
+        return adultGamesAmount > 0 ? joinDescriptionParts('... and', `(${adultGamesAmount})`, this.getAdultGameIconName(this.descriptionData().categories), 'games') : '';
     }
 
     private checkIfGameIsAnAdultGame(game: Game): boolean {

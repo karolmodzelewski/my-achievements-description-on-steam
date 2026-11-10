@@ -2,6 +2,12 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.5.1 - 10.11.2026
+
+- Trim game, group and category texts everywhere, so the copied description has no leading or trailing spaces
+- Block blank game and group names in the form and on backend
+- Improve error messages when saving a game fails due to blank names
+
 ## 1.5.0 - 09.11.2026
 
 - Hide categories with 0 games: presented as hidden information in the application and never copied

@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { catchError, from, map, Observable, throwError } from 'rxjs';
@@ -9,6 +9,7 @@ import { GameDto } from '../dtos/game.dto';
 import { GameGroupDto } from '../dtos/game-group.dto';
 import { Game } from '../../../entities/game.entity';
 import { GameGroup } from '../../../entities/game-group.entity';
+import { ErrorCode } from '../../../enums/error-code.enum';
 
 const POSTGRES_UNIQUE_VIOLATION_CODE = '23505';
 
@@ -27,6 +28,7 @@ export class GameService {
 
     public createGame(gameDto: GameDto): Observable<void> {
         this.logger.log(`Creating game ${JSON.stringify(gameDto)} in database`);
+        this.throwIfNameIsEmpty(gameDto);
 
         const { groups, ...game } = gameDto;
 
@@ -41,6 +43,7 @@ export class GameService {
 
     public updateGame(id: number, gameDto: GameDto): Observable<void> {
         this.logger.log(`Updating game with id '${id}' to ${JSON.stringify(gameDto)}`);
+        this.throwIfNameIsEmpty(gameDto);
 
         const { groups, ...game } = gameDto;
 
@@ -79,6 +82,14 @@ export class GameService {
             GameGroup,
             groups.map(({ name, hasNewAchievements }) => ({ name, hasNewAchievements, game: { id: gameId } }))
         );
+    }
+
+    private throwIfNameIsEmpty({ name, groups }: GameDto): void {
+        if (name !== '' && groups.every((group) => group.name !== '')) {
+            return;
+        }
+
+        throw new BadRequestException({ message: 'Game or group name has to be provided', errorCode: ErrorCode.EMPTY_NAME, statusCode: HttpStatus.BAD_REQUEST });
     }
 
     private throwIfNotFound(message: string, affected: number | null | undefined): void {
