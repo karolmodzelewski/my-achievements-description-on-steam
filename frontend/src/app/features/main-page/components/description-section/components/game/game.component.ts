@@ -3,8 +3,9 @@ import { Component, computed, inject, input, output } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { catchError, EMPTY, take, tap } from 'rxjs';
+import { catchError, EMPTY, filter, switchMap, take, tap } from 'rxjs';
 
+import { ConfirmationService } from '../../../../../../components/confirmation/confirmation.service';
 import { SnackbarType } from '../../../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
 import { CategoryType } from '../../../../../../enums/category-type.enum';
@@ -20,6 +21,7 @@ import { getEntryLine, getEntryName } from '../../../../utils/description-text.u
     imports: [MatIconButton, MatIcon],
 })
 export class GameComponent {
+    private readonly confirmationService = inject(ConfirmationService);
     private readonly editGameService = inject(EditGameService);
     private readonly httpClient = inject(HttpClient);
     private readonly snackbarService = inject(SnackbarService);
@@ -46,31 +48,38 @@ export class GameComponent {
             return;
         }
 
-        this.sendDeleteRequest(`game/${this.entry().game.id}`, 'game');
+        this.sendDeleteRequest(`game/${this.entry().game.id}`, 'game', this.entryName());
     }
 
-    public deleteGroup({ id }: GameGroup): void {
-        this.sendDeleteRequest(`game/${this.entry().game.id}/group/${id}`, 'group');
+    public deleteGroup(group: GameGroup): void {
+        this.sendDeleteRequest(`game/${this.entry().game.id}/group/${group.id}`, 'group', getEntryName({ ...this.entry(), group }));
     }
 
-    private sendDeleteRequest(url: string, deletedItemName: string): void {
+    private sendDeleteRequest(url: string, identifierType: string, identifier: string): void {
         const gameId = this.entry().game.id;
 
-        this.httpClient
-            .delete<void>(url)
+        this.confirmationService
+            .openConfirmation({
+                title: `Delete ${identifierType}`,
+                question: 'Are you sure you want to delete',
+                identifier,
+                identifierType,
+            })
             .pipe(
                 take(1),
+                filter(Boolean),
+                switchMap(() => this.httpClient.delete<void>(url)),
                 tap(() => {
                     // Edited game would be outdated after deleting it or one of its groups
                     if (this.editGameService.editedGame()?.id === gameId) {
                         this.editGameService.stopEditing();
                     }
 
-                    this.snackbarService.openSnackbar(`Successfully deleted ${deletedItemName}`, SnackbarType.SUCCESS);
+                    this.snackbarService.openSnackbar(`Successfully deleted ${identifierType}`, SnackbarType.SUCCESS);
                     this.reloadDescription.emit();
                 }),
                 catchError(() => {
-                    this.snackbarService.openSnackbar(`An error has occurred while deleting ${deletedItemName}`, SnackbarType.ERROR);
+                    this.snackbarService.openSnackbar(`An error has occurred while deleting ${identifierType}`, SnackbarType.ERROR);
 
                     return EMPTY;
                 })
