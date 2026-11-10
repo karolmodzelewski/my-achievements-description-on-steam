@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.6.0 - 10.11.2026
+
+- Replace the empty (...) option in Length and Difficulty dropdowns with a clear button to remove selected value, consistent with game and group names
+
 ## 1.5.1 - 10.11.2026
 
 - Trim game, group and category texts everywhere, so the copied description has no leading or trailing spaces
