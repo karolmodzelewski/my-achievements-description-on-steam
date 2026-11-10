@@ -1,0 +1,15 @@
+<div class="header">
+    <h2 class="title" mat-dialog-title>{{ title }}</h2>
+    <button (click)="cancelAction()" aria-label="Close confirmation" class="close-button" type="button" matIconButton>
+        <mat-icon fontIcon="clear"></mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content>
+    <p class="message">{{ question }} <strong class="identifier">{{ identifier }}</strong> {{ identifierType }}?</p>
+</mat-dialog-content>
+
+<mat-dialog-actions class="action-buttons-container">
+    <button (click)="cancelAction()" class="action-button" color="primary" type="button" mat-stroked-button cdkFocusInitial>No</button>
+    <button (click)="confirmAction()" class="action-button" color="primary" type="button" mat-stroked-button>Yes</button>
+</mat-dialog-actions>

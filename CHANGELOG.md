@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.7.0 - 10.11.2026
+
+- Add a confirmation dialog before deleting a game or group
+
 ## 1.6.1 - 10.11.2026
 
 - Simplify media queries syntax

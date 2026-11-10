@@ -30,3 +30,17 @@ body {
         );
     }
 }
+
+.confirmation-backdrop {
+    background: rgba($color-black-russian, 0.5);
+}
+
+.confirmation-dialog {
+    @include mat.dialog-overrides(
+        (
+            container-color: $color-dark-white,
+            container-shape: 8px,
+            actions-padding: 20px 24px 24px,
+        )
+    );
+}
