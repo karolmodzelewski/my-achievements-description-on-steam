@@ -2,7 +2,7 @@ import { ViewportScroller } from '@angular/common';
 import type { HttpErrorResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, effect, inject, linkedSignal, output, untracked } from '@angular/core';
-import type { FieldTree } from '@angular/forms/signals';
+import type { FieldState } from '@angular/forms/signals';
 import { applyEach, form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -76,8 +76,9 @@ export class AddGameFormComponent {
         });
     }
 
-    public clearField(field: FieldTree<string>): void {
-        field().reset('');
+    public clearField<T>(event: MouseEvent, field: () => FieldState<T>, emptyValue: T): void {
+        event.stopPropagation();
+        field().reset(emptyValue);
         field().focusBoundControl();
     }
 

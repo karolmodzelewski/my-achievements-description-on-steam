@@ -5,8 +5,9 @@
         <mat-form-field class="game-name-form-field">
             <mat-label>Game name:</mat-label>
             <input [formField]="gameForm.name" matInput type="text" />
+
             @if (gameForm.name().value()) {
-                <button (click)="clearField(gameForm.name)" aria-label="Clear game name" class="icon-clear" type="button" matIconButton matIconSuffix>
+                <button (click)="clearField($event, gameForm.name, '')" aria-label="Clear game name" class="icon-clear" type="button" matIconButton matIconSuffix>
                     <mat-icon fontIcon="clear"></mat-icon>
                 </button>
             }
@@ -26,8 +27,13 @@
                 <mat-option [value]="CategoryType.LONG_GAME">Long game</mat-option>
                 <mat-option [value]="CategoryType.VERY_LONG_GAME">Very long game</mat-option>
                 <mat-option [value]="CategoryType.ULTRA_LONG_GAME">Ultra long game</mat-option>
-                <mat-option [value]="null">...</mat-option>
             </mat-select>
+
+            @if (gameForm.length().value()) {
+                <button (click)="clearField($event, gameForm.length, null)" aria-label="Clear length" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <mat-icon fontIcon="clear"></mat-icon>
+                </button>
+            }
         </mat-form-field>
 
         <mat-form-field class="difficulty-form-field">
@@ -36,8 +42,13 @@
                 <mat-option [value]="CategoryType.HARD_GAME">Hard game</mat-option>
                 <mat-option [value]="CategoryType.VERY_HARD_GAME">Very hard game</mat-option>
                 <mat-option [value]="CategoryType.ULTRA_HARD_GAME">Ultra hard game</mat-option>
-                <mat-option [value]="null">...</mat-option>
             </mat-select>
+
+            @if (gameForm.difficulty().value()) {
+                <button (click)="clearField($event, gameForm.difficulty, null)" aria-label="Clear difficulty" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <mat-icon fontIcon="clear"></mat-icon>
+                </button>
+            }
         </mat-form-field>
     </div>
 
@@ -84,7 +95,7 @@
                     <input [formField]="groupField.name" matInput type="text" />
 
                     @if (groupField.name().value()) {
-                        <button (click)="clearField(groupField.name)" [attr.aria-label]="clearGroupNameAriaLabel" class="icon-clear" type="button" matIconButton matIconSuffix>
+                        <button (click)="clearField($event, groupField.name, '')" [attr.aria-label]="clearGroupNameAriaLabel" class="icon-clear" type="button" matIconButton matIconSuffix>
                             <mat-icon fontIcon="clear"></mat-icon>
                         </button>
                     }
