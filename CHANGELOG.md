@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.8.0 - 11.11.2026
+
+- Add a description size counter next to the Description heading, measured the way Steam limits descriptions (8000 bytes of UTF-8, line breaks counting as 2), colored red when the limit is reached
+- Highlight the part of the description Steam would cut off, from the exact cut-off character, without trimming the copied description or blocking the copy
+
 ## 1.7.0 - 10.11.2026
 
 - Add a confirmation dialog before deleting a game or group
