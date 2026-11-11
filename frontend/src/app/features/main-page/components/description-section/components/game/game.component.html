@@ -1,5 +1,7 @@
 <div class="game-container">
-    <p [class.hidden-information]="isAdultGame()" class="game-data">{{ entryLine() }}</p>
+    <p [class.hidden-information]="isAdultGame()" class="game-data">
+        <mados-cut-off-text [text]="entryLine()" [cutOffIndex]="cutOffIndex()" />
+    </p>
 
     @if (shouldShowEdition()) {
         @let editEntryAriaLabel = `Edit ${entryName()}`;

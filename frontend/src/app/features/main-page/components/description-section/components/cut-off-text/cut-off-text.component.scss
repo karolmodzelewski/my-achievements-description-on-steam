@@ -1,0 +1,6 @@
+@use 'sass:color';
+@use 'src/styles/colors' as *;
+
+.cut-off {
+    background: color.mix($color-red, $color-black-russian, 30%);
+}

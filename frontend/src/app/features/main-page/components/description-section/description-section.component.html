@@ -1,4 +1,7 @@
-<mados-section-heading [headingText]="headingText" [id]="headingId" />
+<div class="heading-container">
+    <mados-section-heading [headingText]="headingText" [id]="headingId" />
+    <p [class.limit-reached]="isLimitReached()" aria-live="polite" class="characters-counter">{{ descriptionSize() }} / {{ maxDescriptionSize }} characters</p>
+</div>
 
 <section [attr.aria-labelledby]="headingId" class="description">
     <div class="icons-container">
@@ -25,39 +28,77 @@
     </div>
 
     @for (category of descriptionData().categories; track category.type) {
-        <mados-category [type]="category.type" [iconName]="category.iconName" [description]="category.description" [amount]="category.amount" />
+        @let categoryKey = `category-${category.type}`;
+
+        <mados-category
+            [cutOffIndex]="cutOffIndexes().get(categoryKey)"
+            [type]="category.type"
+            [iconName]="category.iconName"
+            [description]="category.description"
+            [amount]="category.amount"
+        />
     }
 
     @if (descriptionData().completed.amount) {
         <div class="margin-top">
-            <p>{{ sectionSeparator }}</p>
-            <p>{{ completedHeading() }}</p>
-            <p>{{ sectionSeparator }}</p>
+            <p>
+                <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-top')" />
+            </p>
+            <p>
+                <mados-cut-off-text [text]="completedHeading()" [cutOffIndex]="cutOffIndexes().get('completed-heading')" />
+            </p>
+            <p>
+                <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-bottom')" />
+            </p>
         </div>
         <div class="margin-top">
             @for (entry of descriptionData().completed.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
-                <mados-game (reloadDescription)="reloadDescription.emit()" [entry]="entry" [shouldShowEdition]="shouldShowEdition()" />
+                @let completedEntryKey = `completed-${entry.game.id}-${entry.group?.id ?? 'base'}`;
+
+                <mados-game
+                    (reloadDescription)="reloadDescription.emit()"
+                    [cutOffIndex]="cutOffIndexes().get(completedEntryKey)"
+                    [entry]="entry"
+                    [shouldShowEdition]="shouldShowEdition()"
+                />
             }
 
             @if (completedAdultGamesText()) {
-                <p class="adult-games-text">{{ completedAdultGamesText() }}</p>
+                <p class="adult-games-text">
+                    <mados-cut-off-text [text]="completedAdultGamesText()" [cutOffIndex]="cutOffIndexes().get('completed-adult-games')" />
+                </p>
             }
         </div>
     }
 
     @if (descriptionData().newAchievements.amount) {
         <div class="margin-top">
-            <p>{{ sectionSeparator }}</p>
-            <p>{{ newAchievementsHeading() }}</p>
-            <p>{{ sectionSeparator }}</p>
+            <p>
+                <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-top')" />
+            </p>
+            <p>
+                <mados-cut-off-text [text]="newAchievementsHeading()" [cutOffIndex]="cutOffIndexes().get('new-achievements-heading')" />
+            </p>
+            <p>
+                <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-bottom')" />
+            </p>
         </div>
         <div class="margin-top">
             @for (entry of descriptionData().newAchievements.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
-                <mados-game (reloadDescription)="reloadDescription.emit()" [entry]="entry" [shouldShowEdition]="shouldShowEdition()" />
+                @let newAchievementsEntryKey = `new-achievements-${entry.game.id}-${entry.group?.id ?? 'base'}`;
+
+                <mados-game
+                    (reloadDescription)="reloadDescription.emit()"
+                    [cutOffIndex]="cutOffIndexes().get(newAchievementsEntryKey)"
+                    [entry]="entry"
+                    [shouldShowEdition]="shouldShowEdition()"
+                />
             }
 
             @if (newAchievementsAdultGamesText()) {
-                <p class="adult-games-text">{{ newAchievementsAdultGamesText() }}</p>
+                <p class="adult-games-text">
+                    <mados-cut-off-text [text]="newAchievementsAdultGamesText()" [cutOffIndex]="cutOffIndexes().get('new-achievements-adult-games')" />
+                </p>
             }
         </div>
     }

@@ -13,12 +13,13 @@ import type { DescriptionEntry } from '../../../../../../interfaces/description-
 import type { GameGroup } from '../../../../../../interfaces/game-group.interface';
 import { EditGameService } from '../../../../services/edit-game.service';
 import { getEntryLine, getEntryName } from '../../../../utils/description-text.util';
+import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
 
 @Component({
     selector: 'mados-game',
     templateUrl: './game.component.html',
     styleUrl: './game.component.scss',
-    imports: [MatIconButton, MatIcon],
+    imports: [MatIconButton, MatIcon, CutOffTextComponent],
 })
 export class GameComponent {
     private readonly confirmationService = inject(ConfirmationService);
@@ -28,6 +29,7 @@ export class GameComponent {
 
     public readonly entry = input.required<DescriptionEntry>();
     public readonly shouldShowEdition = input.required<boolean>();
+    public readonly cutOffIndex = input<number>();
 
     public readonly reloadDescription = output();
 

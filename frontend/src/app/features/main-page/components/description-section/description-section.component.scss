@@ -19,6 +19,24 @@
     }
 }
 
+.heading-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+}
+
+.characters-counter {
+    margin: 0;
+    white-space: nowrap;
+    font-size: 14px;
+    color: $color-gray-61;
+
+    &.limit-reached {
+        color: $color-red;
+    }
+}
+
 .margin-top {
     margin-top: 30px;
 }
