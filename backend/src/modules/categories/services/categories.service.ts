@@ -1,11 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { from, map, Observable } from 'rxjs';
 
-import { Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 
 import { Category } from '../../../entities/category.entity';
+import { CategoryKind } from '../../../enums/category-kind.enum';
+import { ErrorCode } from '../../../enums/error-code.enum';
+import { compareCategories } from '../../../utils/category-order.util';
 import { CategoryDto } from '../dtos/category.dto';
 
 @Injectable()
@@ -20,12 +23,78 @@ export class CategoriesService {
     public getCategories(): Observable<Category[]> {
         this.logger.log(`Getting categories from database`);
 
-        return from(this.categoriesRepository.find());
+        return from(this.categoriesRepository.find()).pipe(map((categories) => categories.sort(compareCategories)));
     }
 
-    public upsertCategories(categoriesDto: CategoryDto[]): Observable<void> {
-        this.logger.log(`Upserting categories to database`);
+    // Replaces all categories of the kind, so categories missing in the request are deleted and their order is the order of the request
+    public saveCategories(kind: CategoryKind, categoriesDto: CategoryDto[]): Observable<void> {
+        this.logger.log(`Saving ${kind} categories to database`);
 
-        return from(this.categoriesRepository.upsert(categoriesDto, ['type'])).pipe(map(() => undefined));
+        return from(
+            this.categoriesRepository.manager.transaction(async (manager) => {
+                const savedCategories = await manager.findBy(Category, { kind });
+
+                if (kind === CategoryKind.ONE_HUNDRED_PERCENT) {
+                    await this.saveOneHundredPercentCategory(manager, savedCategories, categoriesDto);
+
+                    return;
+                }
+
+                this.throwIfCategoriesAreInvalid(kind, savedCategories, categoriesDto);
+
+                const removedCategoriesIds = savedCategories.filter(({ id }) => !categoriesDto.some((categoryDto) => categoryDto.id === id)).map(({ id }) => id);
+
+                await this.deleteCategories(manager, removedCategoriesIds);
+                await manager.save(
+                    Category,
+                    categoriesDto.map(({ id, name, description, iconName, shouldHideGames }, position) => ({ id, kind, name, description: description ?? null, iconName, shouldHideGames, position }))
+                );
+            })
+        );
+    }
+
+    // The 100% category always exists and has a fixed name, so only its icon can be changed
+    private async saveOneHundredPercentCategory(manager: EntityManager, savedCategories: Category[], categoriesDto: CategoryDto[]): Promise<void> {
+        if (savedCategories.length !== 1 || categoriesDto.length !== 1 || categoriesDto[0].id !== savedCategories[0].id) {
+            throw new BadRequestException(`The 100% category can't be created or deleted`);
+        }
+
+        const [savedCategory] = savedCategories;
+        const [categoryDto] = categoriesDto;
+
+        await manager.update(Category, savedCategory.id, { iconName: categoryDto.iconName });
+    }
+
+    private throwIfCategoriesAreInvalid(kind: CategoryKind, savedCategories: Category[], categoriesDto: CategoryDto[]): void {
+        if (categoriesDto.some(({ id }) => id !== undefined && !savedCategories.some((category) => category.id === id))) {
+            throw new BadRequestException(`Only saved categories of the same kind can be updated`);
+        }
+
+        // Blank names, descriptions and icon names are rejected by CategoryDto, but only the 100% category can go without a description
+        if (categoriesDto.some(({ description }) => description === undefined)) {
+            throw new BadRequestException(`Category description has to be provided`);
+        }
+
+        // Length and difficulty categories are always listed with the game, so only main categories can hide games
+        if (kind !== CategoryKind.MAIN && categoriesDto.some(({ shouldHideGames }) => shouldHideGames)) {
+            throw new BadRequestException(`Only main categories can hide games`);
+        }
+
+        const names = categoriesDto.map(({ name }) => name);
+
+        if (new Set(names).size === names.length) {
+            return;
+        }
+
+        throw new BadRequestException({ message: 'Category names have to be unique', errorCode: ErrorCode.DUPLICATED_CATEGORY_NAME, statusCode: HttpStatus.BAD_REQUEST });
+    }
+
+    // Deleted categories are unassigned from games by the database, as their relation with games cascades on delete
+    private async deleteCategories(manager: EntityManager, categoriesIds: number[]): Promise<void> {
+        if (!categoriesIds.length) {
+            return;
+        }
+
+        await manager.delete(Category, { id: In(categoriesIds) });
     }
 }

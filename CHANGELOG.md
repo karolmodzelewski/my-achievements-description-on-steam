@@ -2,6 +2,17 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.9.0 - 12.11.2026
+
+- Replace predefined categories with user-defined main, length and difficulty categories stored on backend
+- Rename 'Add categories' section to 'Manage categories'
+- Rebuild 'Manage categories' section to a form per kind: category name, description, icon name and, for main categories only, an optional 'Hide games' checkbox, with adding and removing categories like groups
+- Keep 100% as a fixed category of its own kind in a separate '100% category' section, with only its icon editable
+- Replace the Adult game logic with 'Hide games'
+- Confirm deleting a saved category and unassign it from games after saving
+- Fix group buttons sticking out of the Manage game form on mobile
+- Fix GameService unit test missing the GameGroup repository
+
 ## 1.8.0 - 11.11.2026
 
 - Add a description size counter next to the Description heading, measured the way Steam limits descriptions (8000 bytes of UTF-8, line breaks counting as 2), colored red when the limit is reached

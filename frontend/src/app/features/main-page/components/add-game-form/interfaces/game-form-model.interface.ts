@@ -1,15 +1,12 @@
 import type { GameGroupFormModel } from './game-group-form-model.interface';
-import type { CategoryType } from '../../../../../enums/category-type.enum';
+import type { GameMainCategoryFormModel } from './game-main-category-form-model.interface';
 
 export interface GameFormModel {
     name: string;
-    length: CategoryType | null;
-    difficulty: CategoryType | null;
-    lovedGame: boolean;
-    badGame: boolean;
-    doesntCount: boolean;
-    buggedGame: boolean;
-    adultGame: boolean;
+    // Ids of the selected length and difficulty categories
+    length: number | null;
+    difficulty: number | null;
+    mainCategories: GameMainCategoryFormModel[];
     hasNewAchievements: boolean;
     groups: GameGroupFormModel[];
 }

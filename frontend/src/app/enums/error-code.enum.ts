@@ -1,3 +1,4 @@
 export enum ErrorCode {
     EMPTY_NAME = 'EMPTY_NAME',
+    DUPLICATED_CATEGORY_NAME = 'DUPLICATED_CATEGORY_NAME',
 }

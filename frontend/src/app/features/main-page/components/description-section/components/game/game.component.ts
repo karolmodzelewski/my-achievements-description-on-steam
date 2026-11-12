@@ -8,11 +8,10 @@ import { catchError, EMPTY, filter, switchMap, take, tap } from 'rxjs';
 import { ConfirmationService } from '../../../../../../components/confirmation/confirmation.service';
 import { SnackbarType } from '../../../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
-import { CategoryType } from '../../../../../../enums/category-type.enum';
 import type { DescriptionEntry } from '../../../../../../interfaces/description-entry.interface';
 import type { GameGroup } from '../../../../../../interfaces/game-group.interface';
 import { EditGameService } from '../../../../services/edit-game.service';
-import { getEntryLine, getEntryName } from '../../../../utils/description-text.util';
+import { checkIfGameIsHidden, getEntryLine, getEntryName } from '../../../../utils/description-text.util';
 import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
 
 @Component({
@@ -35,7 +34,7 @@ export class GameComponent {
 
     public readonly entryLine = computed<string>(() => getEntryLine(this.entry()));
     public readonly entryName = computed<string>(() => getEntryName(this.entry()));
-    public readonly isAdultGame = computed<boolean>(() => this.entry().game.categories?.some((category) => category.type === CategoryType.ADULT_GAME) === true);
+    public readonly isHidden = computed<boolean>(() => checkIfGameIsHidden(this.entry().game));
 
     public editGame(): void {
         this.editGameService.startEditing(this.entry().game);

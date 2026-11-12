@@ -24,12 +24,12 @@
         <mat-form-field class="length-form-field">
             <mat-label>Length:</mat-label>
             <mat-select [formField]="gameForm.length">
-                <mat-option [value]="CategoryType.LONG_GAME">Long game</mat-option>
-                <mat-option [value]="CategoryType.VERY_LONG_GAME">Very long game</mat-option>
-                <mat-option [value]="CategoryType.ULTRA_LONG_GAME">Ultra long game</mat-option>
+                @for (category of lengthCategories(); track category.id) {
+                    <mat-option [value]="category.id">{{ category.name }}</mat-option>
+                }
             </mat-select>
 
-            @if (gameForm.length().value()) {
+            @if (gameForm.length().value() !== null) {
                 <button (click)="clearField($event, gameForm.length, null)" aria-label="Clear length" class="icon-clear" type="button" matIconButton matIconSuffix>
                     <mat-icon fontIcon="clear"></mat-icon>
                 </button>
@@ -39,12 +39,12 @@
         <mat-form-field class="difficulty-form-field">
             <mat-label>Difficulty:</mat-label>
             <mat-select [formField]="gameForm.difficulty">
-                <mat-option [value]="CategoryType.HARD_GAME">Hard game</mat-option>
-                <mat-option [value]="CategoryType.VERY_HARD_GAME">Very hard game</mat-option>
-                <mat-option [value]="CategoryType.ULTRA_HARD_GAME">Ultra hard game</mat-option>
+                @for (category of difficultyCategories(); track category.id) {
+                    <mat-option [value]="category.id">{{ category.name }}</mat-option>
+                }
             </mat-select>
 
-            @if (gameForm.difficulty().value()) {
+            @if (gameForm.difficulty().value() !== null) {
                 <button (click)="clearField($event, gameForm.difficulty, null)" aria-label="Clear difficulty" class="icon-clear" type="button" matIconButton matIconSuffix>
                     <mat-icon fontIcon="clear"></mat-icon>
                 </button>
@@ -53,11 +53,9 @@
     </div>
 
     <div class="checkboxes-container">
-        <mat-checkbox [formField]="gameForm.lovedGame" color="primary">Loved game</mat-checkbox>
-        <mat-checkbox [formField]="gameForm.badGame" color="primary">Bad game</mat-checkbox>
-        <mat-checkbox [formField]="gameForm.doesntCount" color="primary">It doesn't count</mat-checkbox>
-        <mat-checkbox [formField]="gameForm.buggedGame" color="primary">Bugged game</mat-checkbox>
-        <mat-checkbox [formField]="gameForm.adultGame" color="primary">Adult game</mat-checkbox>
+        @for (mainCategoryField of gameForm.mainCategories; track mainCategoryField) {
+            <mat-checkbox [formField]="mainCategoryField.isChecked" color="primary">{{ mainCategoryField.name().value() }}</mat-checkbox>
+        }
     </div>
 
     <fieldset class="groups">

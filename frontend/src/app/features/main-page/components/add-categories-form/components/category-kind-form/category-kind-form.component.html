@@ -1,0 +1,104 @@
+<form [formRoot]="categoriesForm">
+    <fieldset>
+        <legend class="legend">{{ legend() }}</legend>
+
+        <div class="category-rows">
+            @for (categoryField of categoriesForm.categories; track categoryField) {
+                @let clearNameAriaLabel = `Clear category ${$index + 1} name`;
+                @let clearDescriptionAriaLabel = `Clear category ${$index + 1} description`;
+                @let clearIconNameAriaLabel = `Clear category ${$index + 1} icon name`;
+                @let addCategoryAriaLabel = `Add category below category ${$index + 1}`;
+                @let removeCategoryAriaLabel = `Remove category ${$index + 1}`;
+
+                <div [class.without-checkbox]="!canHideGames()" class="category-row">
+                    <mat-form-field class="name-form-field">
+                        <mat-label>Category name:</mat-label>
+                        <input [formField]="categoryField.name" matInput type="text" />
+
+                        @if (categoryField.name().value()) {
+                            <button (click)="clearField($event, categoryField.name)" [attr.aria-label]="clearNameAriaLabel" class="icon-clear" type="button" matIconButton matIconSuffix>
+                                <mat-icon fontIcon="clear"></mat-icon>
+                            </button>
+                        }
+
+                        @if (categoryField.name().getError('required')) {
+                            <mat-error>Category name is required</mat-error>
+                        }
+
+                        @if (categoryField.name().getError('pattern')) {
+                            <mat-error>Category name can't contain only whitespaces</mat-error>
+                        }
+
+                        @if (categoryField.name().getError('unique')) {
+                            <mat-error>Category name has to be unique</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <mat-form-field class="description-form-field">
+                        <mat-label>Category description:</mat-label>
+                        <input [formField]="categoryField.description" matInput type="text" />
+
+                        @if (categoryField.description().value()) {
+                            <button
+                                (click)="clearField($event, categoryField.description)"
+                                [attr.aria-label]="clearDescriptionAriaLabel"
+                                class="icon-clear"
+                                type="button"
+                                matIconButton
+                                matIconSuffix
+                            >
+                                <mat-icon fontIcon="clear"></mat-icon>
+                            </button>
+                        }
+
+                        @if (categoryField.description().getError('required')) {
+                            <mat-error>Category description is required</mat-error>
+                        }
+
+                        @if (categoryField.description().getError('pattern')) {
+                            <mat-error>Category description can't contain only whitespaces</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <mat-form-field class="icon-name-form-field">
+                        <mat-label>Icon name:</mat-label>
+                        <input [formField]="categoryField.iconName" matInput type="text" />
+
+                        @if (categoryField.iconName().value()) {
+                            <button (click)="clearField($event, categoryField.iconName)" [attr.aria-label]="clearIconNameAriaLabel" class="icon-clear" type="button" matIconButton matIconSuffix>
+                                <mat-icon fontIcon="clear"></mat-icon>
+                            </button>
+                        }
+
+                        @if (categoryField.iconName().getError('required')) {
+                            <mat-error>Icon name is required</mat-error>
+                        }
+
+                        @if (categoryField.iconName().getError('pattern')) {
+                            <mat-error>Icon name can't contain only whitespaces</mat-error>
+                        }
+                    </mat-form-field>
+
+                    @if (canHideGames()) {
+                        <mat-checkbox [formField]="categoryField.shouldHideGames" class="category-checkbox" color="primary">Hide games</mat-checkbox>
+                    }
+
+                    <div class="category-buttons">
+                        <button (click)="addCategory($index + 1)" [attr.aria-label]="addCategoryAriaLabel" class="icon-category" type="button" matIconButton>
+                            <mat-icon fontIcon="add"></mat-icon>
+                        </button>
+                        <button (click)="removeCategory($index)" [attr.aria-label]="removeCategoryAriaLabel" class="icon-category" type="button" matIconButton>
+                            <mat-icon fontIcon="remove"></mat-icon>
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (hasNoCategories()) {
+            <button (click)="addCategory(0)" class="add-category-button" color="primary" type="button" mat-stroked-button>Add category</button>
+        }
+    </fieldset>
+
+    <button [disabled]="!hasChanges() || categoriesForm().invalid() || categoriesForm().submitting()" class="save-button" color="primary" type="submit" mat-stroked-button>Save {{ lowerCaseLegend() }}</button>
+</form>

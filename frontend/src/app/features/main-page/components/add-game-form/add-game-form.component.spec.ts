@@ -21,6 +21,9 @@ describe('AddGameFormComponent', () => {
 
         fixture = TestBed.createComponent(AddGameFormComponent);
         component = fixture.componentInstance;
+        fixture.componentRef.setInput('mainCategories', []);
+        fixture.componentRef.setInput('lengthCategories', []);
+        fixture.componentRef.setInput('difficultyCategories', []);
 
         fixture.detectChanges();
     });

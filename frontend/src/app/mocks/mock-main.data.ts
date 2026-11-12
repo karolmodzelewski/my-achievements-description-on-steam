@@ -1,82 +1,128 @@
-import type { DescriptionResponseBody } from '../interfaces/description-response-body.interface';
-import { CategoryType } from '../enums/category-type.enum';
+import { CategoryKind } from '../enums/category-kind.enum';
 import type { Category } from '../interfaces/category.interface';
+import type { DescriptionCategory } from '../interfaces/description-category.interface';
+import type { DescriptionResponseBody } from '../interfaces/description-response-body.interface';
+import type { GameCategory } from '../interfaces/game-category.interface';
 import type { Game } from '../interfaces/game.interface';
 import type { GameGroup } from '../interfaces/game-group.interface';
 
+const oneHundredPercent: Category = { id: 12, kind: CategoryKind.ONE_HUNDRED_PERCENT, name: '100%', description: null, iconName: 'ː100ftː', shouldHideGames: false, position: 0 };
+const lovedGame: Category = {
+    id: 7,
+    kind: CategoryKind.MAIN,
+    name: 'Loved game',
+    description: 'The game I fell in love with',
+    iconName: 'ːHeartPixː',
+    shouldHideGames: false,
+    position: 0,
+};
+const badGame: Category = {
+    id: 8,
+    kind: CategoryKind.MAIN,
+    name: 'Bad game',
+    description: 'This game sucks for various reasons',
+    iconName: 'ːcleandinoː',
+    shouldHideGames: false,
+    position: 1,
+};
+const doesntCount: Category = {
+    id: 9,
+    kind: CategoryKind.MAIN,
+    name: `It doesn't count`,
+    description: `Somehow it doesn't count`,
+    iconName: 'ːQuestion_mː',
+    shouldHideGames: false,
+    position: 2,
+};
+const buggedGame: Category = {
+    id: 10,
+    kind: CategoryKind.MAIN,
+    name: 'Bugged game',
+    description: 'Bugged game with broken achievements',
+    iconName: 'ːpukeː',
+    shouldHideGames: false,
+    position: 3,
+};
+const adultGame: Category = { id: 11, kind: CategoryKind.MAIN, name: 'Adult game', description: '( ͡° ͜ʖ ͡°)', iconName: 'ːbadNkː', shouldHideGames: true, position: 4 };
+const longGame: Category = {
+    id: 1,
+    kind: CategoryKind.LENGTH,
+    name: 'Long game',
+    description: 'Long game (+25h)',
+    iconName: 'ːcleanhourglassː',
+    shouldHideGames: false,
+    position: 0,
+};
+const veryLongGame: Category = {
+    id: 2,
+    kind: CategoryKind.LENGTH,
+    name: 'Very long game',
+    description: 'Very long game (+50h)',
+    iconName: 'ːcleanhourglassːːcleanhourglassː',
+    shouldHideGames: false,
+    position: 1,
+};
+const ultraLongGame: Category = {
+    id: 3,
+    kind: CategoryKind.LENGTH,
+    name: 'Ultra long game',
+    description: 'Ultra long game (+100h)',
+    iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
+    shouldHideGames: false,
+    position: 2,
+};
+const hardGame: Category = {
+    id: 4,
+    kind: CategoryKind.DIFFICULTY,
+    name: 'Hard game',
+    description: 'Hard game to master',
+    iconName: 'ːcsgo_deadː',
+    shouldHideGames: false,
+    position: 0,
+};
+const veryHardGame: Category = {
+    id: 5,
+    kind: CategoryKind.DIFFICULTY,
+    name: 'Very hard game',
+    description: 'Very hard game to master',
+    iconName: 'ːcsgo_deadːːcsgo_deadː',
+    shouldHideGames: false,
+    position: 1,
+};
+const ultraHardGame: Category = {
+    id: 6,
+    kind: CategoryKind.DIFFICULTY,
+    name: 'Ultra hard game',
+    description: 'Ultra hard game to master',
+    iconName: 'ːcsgo_deadːːcsgo_deadːːcsgo_deadː',
+    shouldHideGames: false,
+    position: 2,
+};
+
+const toGameCategory = ({ id, kind, iconName, shouldHideGames }: Category): GameCategory => ({ id, kind, iconName, shouldHideGames });
+const toDescriptionCategory = ({ id, kind, name, description, iconName, shouldHideGames }: Category, amount: number): DescriptionCategory => ({
+    id,
+    kind,
+    name,
+    description,
+    iconName,
+    shouldHideGames,
+    amount,
+});
+
 export const categoriesResponseBody: Category[] = [
-    {
-        id: 1,
-        type: CategoryType.LONG_GAME,
-        iconName: 'ːcleanhourglassː',
-        description: 'Long game (+25h)',
-    },
-    {
-        id: 2,
-        type: CategoryType.VERY_LONG_GAME,
-        iconName: 'ːcleanhourglassːːcleanhourglassː',
-        description: 'Very long game (+50h)',
-    },
-    {
-        id: 3,
-        type: CategoryType.ULTRA_LONG_GAME,
-        iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
-        description: 'Ultra long game (+100h)',
-    },
-    {
-        id: 4,
-        type: CategoryType.HARD_GAME,
-        iconName: 'ːcsgo_deadː',
-        description: 'Hard game to master',
-    },
-    {
-        id: 5,
-        type: CategoryType.VERY_HARD_GAME,
-        iconName: 'ːcsgo_deadːːcsgo_deadː',
-        description: 'Very hard game to master',
-    },
-    {
-        id: 6,
-        type: CategoryType.ULTRA_HARD_GAME,
-        iconName: 'ːcsgo_deadːːcsgo_deadːːcsgo_deadː',
-        description: 'Ultra hard game to master',
-    },
-    {
-        id: 7,
-        type: CategoryType.LOVED_GAME,
-        iconName: 'ːHeartPixː',
-        description: 'The game I fell in love with',
-    },
-    {
-        id: 8,
-        type: CategoryType.BAD_GAME,
-        iconName: 'ːcleandinoː',
-        description: 'This game sucks for various reasons',
-    },
-    {
-        id: 9,
-        type: CategoryType.DOESNT_COUNT,
-        iconName: 'ːQuestion_mː',
-        description: `Somehow it doesn't count`,
-    },
-    {
-        id: 10,
-        type: CategoryType.BUGGED_GAME,
-        iconName: 'ːpukeː',
-        description: 'Bugged game with broken achievements',
-    },
-    {
-        id: 11,
-        type: CategoryType.ADULT_GAME,
-        iconName: 'ːbadNkː',
-        description: '( ͡° ͜ʖ ͡°)',
-    },
-    {
-        id: 12,
-        type: CategoryType.ONE_HUNDRED_PERCENT,
-        iconName: 'ː100ftː',
-        description: null,
-    },
+    oneHundredPercent,
+    lovedGame,
+    badGame,
+    doesntCount,
+    buggedGame,
+    adultGame,
+    longGame,
+    veryLongGame,
+    ultraLongGame,
+    hardGame,
+    veryHardGame,
+    ultraHardGame,
 ];
 
 const theKillers: Game = {
@@ -84,10 +130,7 @@ const theKillers: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'The Killers',
     hasNewAchievements: false,
-    categories: [
-        { type: CategoryType.LOVED_GAME, iconName: 'ːHeartPixː' },
-        { type: CategoryType.ADULT_GAME, iconName: 'ːbadNkː' },
-    ],
+    categories: [toGameCategory(lovedGame), toGameCategory(adultGame)],
     groups: [],
 };
 
@@ -104,11 +147,7 @@ const finalFantasy: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'FINAL FANTASY X / X-2 HD Remaster',
     hasNewAchievements: false,
-    categories: [
-        { type: CategoryType.LOVED_GAME, iconName: 'ːHeartPixː' },
-        { type: CategoryType.ULTRA_LONG_GAME, iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː' },
-        { type: CategoryType.VERY_HARD_GAME, iconName: 'ːcsgo_deadːːcsgo_deadː' },
-    ],
+    categories: [toGameCategory(lovedGame), toGameCategory(ultraLongGame), toGameCategory(veryHardGame)],
     groups: [],
 };
 
@@ -117,11 +156,7 @@ const fiveNightAtFreddys: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: `Five Nights At Freddy's`,
     hasNewAchievements: false,
-    categories: [
-        { type: CategoryType.LOVED_GAME, iconName: 'ːHeartPixː' },
-        { type: CategoryType.ULTRA_LONG_GAME, iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː' },
-        { type: CategoryType.ADULT_GAME, iconName: 'ːbadNkː' },
-    ],
+    categories: [toGameCategory(lovedGame), toGameCategory(adultGame), toGameCategory(ultraLongGame)],
     groups: [],
 };
 
@@ -130,10 +165,7 @@ const pixelPuzzles: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'Pixel Puzzles Traditional Jigsaws',
     hasNewAchievements: false,
-    categories: [
-        { type: CategoryType.BAD_GAME, iconName: 'ːcleandinoː' },
-        { type: CategoryType.ULTRA_LONG_GAME, iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː' },
-    ],
+    categories: [toGameCategory(badGame), toGameCategory(ultraLongGame)],
     groups: [],
 };
 
@@ -142,7 +174,7 @@ const sniperElite: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'Sniper Elite 4',
     hasNewAchievements: false,
-    categories: [{ type: CategoryType.VERY_LONG_GAME, iconName: 'ːcleanhourglassːːcleanhourglassː' }],
+    categories: [toGameCategory(veryLongGame)],
     groups: [],
 };
 
@@ -151,11 +183,7 @@ const stardewValley: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'Stardew Valley',
     hasNewAchievements: false,
-    categories: [
-        { type: CategoryType.LOVED_GAME, iconName: 'ːHeartPixː' },
-        { type: CategoryType.VERY_LONG_GAME, iconName: 'ːcleanhourglassːːcleanhourglassː' },
-        { type: CategoryType.HARD_GAME, iconName: 'ːcsgo_deadː' },
-    ],
+    categories: [toGameCategory(lovedGame), toGameCategory(veryLongGame), toGameCategory(hardGame)],
     groups: [],
 };
 
@@ -164,10 +192,7 @@ const warframe: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'Warframe',
     hasNewAchievements: false,
-    categories: [
-        { type: CategoryType.LOVED_GAME, iconName: 'ːHeartPixː' },
-        { type: CategoryType.ULTRA_LONG_GAME, iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː' },
-    ],
+    categories: [toGameCategory(lovedGame), toGameCategory(ultraLongGame)],
     groups: [],
 };
 
@@ -176,10 +201,7 @@ const cuphead: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'Cuphead',
     hasNewAchievements: true,
-    categories: [
-        { type: CategoryType.LONG_GAME, iconName: 'ːcleanhourglassː' },
-        { type: CategoryType.VERY_HARD_GAME, iconName: 'ːcsgo_deadːːcsgo_deadː' },
-    ],
+    categories: [toGameCategory(longGame), toGameCategory(veryHardGame)],
     groups: [],
 };
 
@@ -188,10 +210,7 @@ const graveyardKeeper: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'Graveyard Keeper',
     hasNewAchievements: true,
-    categories: [
-        { type: CategoryType.LOVED_GAME, iconName: 'ːHeartPixː' },
-        { type: CategoryType.LONG_GAME, iconName: 'ːcleanhourglassː' },
-    ],
+    categories: [toGameCategory(lovedGame), toGameCategory(longGame)],
     groups: [],
 };
 
@@ -200,10 +219,7 @@ const moonlitDiary: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'Moonlit Diary',
     hasNewAchievements: true,
-    categories: [
-        { type: CategoryType.BAD_GAME, iconName: 'ːcleandinoː' },
-        { type: CategoryType.ADULT_GAME, iconName: 'ːbadNkː' },
-    ],
+    categories: [toGameCategory(badGame), toGameCategory(adultGame)],
     groups: [],
 };
 
@@ -220,11 +236,7 @@ const bindingOfIsaac: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'The Binding of Isaac: Rebirth',
     hasNewAchievements: true,
-    categories: [
-        { type: CategoryType.LOVED_GAME, iconName: 'ːHeartPixː' },
-        { type: CategoryType.ULTRA_LONG_GAME, iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː' },
-        { type: CategoryType.HARD_GAME, iconName: 'ːcsgo_deadː' },
-    ],
+    categories: [toGameCategory(lovedGame), toGameCategory(ultraLongGame), toGameCategory(hardGame)],
     groups: [],
 };
 
@@ -239,10 +251,7 @@ const brotato: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'Brotato',
     hasNewAchievements: true,
-    categories: [
-        { type: CategoryType.LOVED_GAME, iconName: 'ːHeartPixː' },
-        { type: CategoryType.LONG_GAME, iconName: 'ːcleanhourglassː' },
-    ],
+    categories: [toGameCategory(lovedGame), toGameCategory(longGame)],
     groups: [abyssalTerrors, primalDread],
 };
 
@@ -251,92 +260,23 @@ const vampireSurvivors: Game = {
     oneHundredPercentIconName: 'ː100ftː',
     name: 'Vampire Survivors',
     hasNewAchievements: false,
-    categories: [
-        { type: CategoryType.LOVED_GAME, iconName: 'ːHeartPixː' },
-        { type: CategoryType.VERY_LONG_GAME, iconName: 'ːcleanhourglassːːcleanhourglassː' },
-    ],
+    categories: [toGameCategory(lovedGame), toGameCategory(veryLongGame)],
     groups: [emergencyMeeting, legacyOfTheMoonspell, tidesOfTheFoscari],
 };
 
 export const descriptionResponseBody: DescriptionResponseBody = {
     categories: [
-        {
-            id: 1,
-            type: CategoryType.LOVED_GAME,
-            iconName: 'ːHeartPixː',
-            description: 'The game I fell in love with',
-            amount: 31,
-        },
-        {
-            id: 2,
-            type: CategoryType.BAD_GAME,
-            iconName: 'ːcleandinoː',
-            description: 'This game sucks for various reasons',
-            amount: 13,
-        },
-        {
-            id: 3,
-            type: CategoryType.DOESNT_COUNT,
-            iconName: 'ːQuestion_mː',
-            description: `Somehow it doesn't count`,
-            amount: 5,
-        },
-        {
-            id: 4,
-            type: CategoryType.BUGGED_GAME,
-            iconName: 'ːpukeː',
-            description: 'Bugged game with broken achievements',
-            amount: 0,
-        },
-        {
-            id: 5,
-            type: CategoryType.ADULT_GAME,
-            iconName: 'ːbadNkː',
-            description: '( ͡° ͜ʖ ͡°)',
-            amount: 20,
-        },
-        {
-            id: 6,
-            type: CategoryType.LONG_GAME,
-            iconName: 'ːcleanhourglassː',
-            description: 'Long game (+25h)',
-            amount: 41,
-        },
-        {
-            id: 7,
-            type: CategoryType.VERY_LONG_GAME,
-            iconName: 'ːcleanhourglassːːcleanhourglassː',
-            description: 'Very long game (+50h)',
-            amount: 22,
-        },
-        {
-            id: 8,
-            type: CategoryType.ULTRA_LONG_GAME,
-            iconName: 'ːcleanhourglassːːcleanhourglassːːcleanhourglassː',
-            description: 'Ultra long game (+100h)',
-            amount: 1,
-        },
-        {
-            id: 9,
-            type: CategoryType.HARD_GAME,
-            iconName: 'ːcsgo_deadː',
-            description: 'Hard game to master',
-            amount: 12,
-        },
-        {
-            id: 10,
-            type: CategoryType.VERY_HARD_GAME,
-            iconName: 'ːcsgo_deadːːcsgo_deadː',
-            description: 'Very hard game to master',
-            amount: 21,
-        },
-        {
-            id: 11,
-            type: CategoryType.ULTRA_HARD_GAME,
-            iconName: 'ːcsgo_deadːːcsgo_deadːːcsgo_deadː',
-            description: 'Ultra hard game to master',
-            amount: 5,
-        },
+        toDescriptionCategory(lovedGame, 31),
+        toDescriptionCategory(badGame, 13),
+        toDescriptionCategory(doesntCount, 5),
+        toDescriptionCategory(buggedGame, 0),
+        toDescriptionCategory(adultGame, 20),
+        toDescriptionCategory(longGame, 41),
+        toDescriptionCategory(veryLongGame, 22),
+        toDescriptionCategory(ultraLongGame, 1),
+        toDescriptionCategory(hardGame, 12),
+        toDescriptionCategory(veryHardGame, 21),
+        toDescriptionCategory(ultraHardGame, 5),
     ],
     completed: {
         amount: 12,

@@ -1,56 +1,20 @@
 <mados-section-heading [headingText]="headingText" [id]="headingId" class="section-heading" />
 
 @if (shouldShowCategories()) {
-    <form [formRoot]="categoriesForm" [id]="categoriesFormId" class="categories">
-        <div class="form-fields-container">
-            @for (categoryField of categoriesForm; track categoryField.type().value()) {
-                <div class="category-form-group">
-                    <mados-category-type-translation [key]="categoryField.type().value()" />
+    <div [id]="categoriesFormsId" class="categories">
+        @if (oneHundredPercentCategory(); as oneHundredPercentCategory) {
+            <mados-one-hundred-percent-form (categorySaved)="categoriesSaved.emit()" [category]="oneHundredPercentCategory" />
+        }
 
-                    <mat-form-field>
-                        <mat-label>Icon name:</mat-label>
-                        <input [formField]="categoryField.iconName" matInput type="text" />
-                        <button (click)="clearField(categoryField.iconName)" aria-label="Clear icon name" class="icon-clear" type="button" matIconButton matIconSuffix>
-                            <mat-icon fontIcon="clear"></mat-icon>
-                        </button>
-
-                        @if (categoryField.iconName().getError('required')) {
-                            <mat-error>Icon name is required</mat-error>
-                        }
-                    </mat-form-field>
-
-                    @if (categoryField.type().value() !== CategoryType.ONE_HUNDRED_PERCENT) {
-                        <mat-form-field class="description">
-                            <mat-label>Description:</mat-label>
-                            <input [formField]="categoryField.description" matInput type="text" />
-                            <button (click)="clearField(categoryField.description)" aria-label="Clear description" class="icon-clear" type="button" matIconButton matIconSuffix>
-                                <mat-icon fontIcon="clear"></mat-icon>
-                            </button>
-
-                            @if (categoryField.description().getError('required')) {
-                                <mat-error>Description is required</mat-error>
-                            }
-                        </mat-form-field>
-                    }
-                </div>
-            }
-        </div>
-
-        <button
-            [disabled]="categoriesForm().invalid() || categoriesForm().submitting()"
-            class="save-categories-button button"
-            color="primary"
-            mat-stroked-button
-            type="submit"
-        >
-            Save categories
-        </button>
-    </form>
+        <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.MAIN" [categories]="mainCategories()" legend="Main categories" />
+        <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.LENGTH" [categories]="lengthCategories()" legend="Length categories" />
+        <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.DIFFICULTY" [categories]="difficultyCategories()" legend="Difficulty categories" />
+    </div>
 }
 
 <button
     (click)="handleCategoriesVisibility()"
-    [attr.aria-controls]="shouldShowCategories() ? categoriesFormId : null"
+    [attr.aria-controls]="shouldShowCategories() ? categoriesFormsId : null"
     [attr.aria-expanded]="shouldShowCategories()"
     class="expansion-button button"
     color="primary"

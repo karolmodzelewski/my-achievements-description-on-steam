@@ -6,6 +6,7 @@ import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { AddCategoriesFormComponent } from './add-categories-form.component';
+import { ConfirmationService } from '../../../../components/confirmation/confirmation.service';
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
 
 describe('AddCategoriesFormComponent', () => {
@@ -15,12 +16,15 @@ describe('AddCategoriesFormComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [AddCategoriesFormComponent],
-            providers: [provideHttpClient(), provideHttpClientTesting(), SnackbarService],
+            providers: [provideHttpClient(), provideHttpClientTesting(), SnackbarService, ConfirmationService],
         }).compileComponents();
 
         fixture = TestBed.createComponent(AddCategoriesFormComponent);
         component = fixture.componentInstance;
-        fixture.componentRef.setInput('categories', []);
+        fixture.componentRef.setInput('oneHundredPercentCategory', null);
+        fixture.componentRef.setInput('mainCategories', []);
+        fixture.componentRef.setInput('lengthCategories', []);
+        fixture.componentRef.setInput('difficultyCategories', []);
 
         fixture.detectChanges();
     });

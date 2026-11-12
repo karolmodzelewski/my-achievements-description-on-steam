@@ -1,7 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
+import { Category } from './category.entity';
 import type { GameGroup } from './game-group.entity';
-import { CategoryType } from '../enums/category-type.enum';
 
 @Entity()
 export class Game {
@@ -14,8 +14,9 @@ export class Game {
     @Column()
     public hasNewAchievements: boolean;
 
-    @Column('jsonb', { default: [] })
-    public categories: CategoryType[];
+    @ManyToMany(() => Category)
+    @JoinTable()
+    public categories: Category[];
 
     @OneToMany('GameGroup', 'game')
     public groups: GameGroup[];

@@ -1,3 +1,3 @@
-<p [class.margin-top]="type() === CategoryType.LONG_GAME || type() === CategoryType.HARD_GAME" [class.hidden-information]="isHidden()">
+<p [class.margin-top]="isBlockStart()" [class.hidden-information]="isHidden()">
     <mados-cut-off-text [text]="categoryLine()" [cutOffIndex]="cutOffIndex()" />
 </p>
