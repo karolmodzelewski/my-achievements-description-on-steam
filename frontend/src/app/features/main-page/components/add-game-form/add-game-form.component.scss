@@ -84,7 +84,7 @@
     font-size: 20px;
 }
 
-@media (width <= 480px) {
+@media (width <= 600px) {
     .form-fields-container {
         grid-template-columns: 1fr;
     }
@@ -97,6 +97,12 @@
 
     .group-row {
         flex-wrap: wrap;
+    }
+
+    .group-row + .group-row {
+        margin-top: 4px;
+        border-top: 1px solid rgba($color-purple, 0.2);
+        padding-top: 16px;
     }
 
     .group-name-form-field {

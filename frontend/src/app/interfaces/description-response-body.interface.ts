@@ -1,8 +1,8 @@
-import type { Category } from './category.interface';
+import type { DescriptionCategory } from './description-category.interface';
 import type { DescriptionSection } from './description-section.interface';
 
 export interface DescriptionResponseBody {
-    categories: Category[];
+    categories: DescriptionCategory[];
     completed: DescriptionSection;
     newAchievements: DescriptionSection;
 }

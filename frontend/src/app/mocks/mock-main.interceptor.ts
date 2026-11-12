@@ -7,6 +7,7 @@ import { delay, of } from 'rxjs';
 import { categoriesResponseBody, descriptionResponseBody } from './mock-main.data';
 import { HttpRequestMethod } from '../enums/http-request-method.enum';
 
+const categories = /categories\/[A-Z_]+$/;
 const gameWithIdUrlPattern = /game\/\d+$/;
 const gameGroupWithIdUrlPattern = /game\/\d+\/group\/\d+$/;
 
@@ -21,7 +22,7 @@ export const mockMainInterceptor: HttpInterceptorFn = (request, next) => {
             return mockSuccess(categoriesResponseBody);
         case url.endsWith('description') && method === HttpRequestMethod.GET:
             return mockSuccess(descriptionResponseBody);
-        case url.endsWith('categories') && method === HttpRequestMethod.POST:
+        case categories.test(url) && method === HttpRequestMethod.PUT:
         case url.endsWith('game') && method === HttpRequestMethod.POST:
         case gameWithIdUrlPattern.test(url) && method === HttpRequestMethod.PUT:
         case gameWithIdUrlPattern.test(url) && method === HttpRequestMethod.DELETE:

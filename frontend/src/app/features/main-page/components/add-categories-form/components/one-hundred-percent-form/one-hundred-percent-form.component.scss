@@ -1,0 +1,23 @@
+@use 'src/styles/icon-button' as *;
+
+.legend {
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.icon-name-form-field {
+    width: 100%;
+}
+
+.icon-clear {
+    @include icon-button(24px, 40px);
+
+    margin: 0 4px;
+}
+
+.save-button {
+    width: 100%;
+    height: 50px;
+    margin-top: 20px;
+    font-size: 20px;
+}

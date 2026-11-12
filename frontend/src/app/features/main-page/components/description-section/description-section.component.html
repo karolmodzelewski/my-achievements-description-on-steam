@@ -27,12 +27,12 @@
         </button>
     </div>
 
-    @for (category of descriptionData().categories; track category.type) {
-        @let categoryKey = `category-${category.type}`;
+    @for (category of descriptionData().categories; track category.id) {
+        @let categoryKey = `category-${category.id}`;
 
         <mados-category
             [cutOffIndex]="cutOffIndexes().get(categoryKey)"
-            [type]="category.type"
+            [isBlockStart]="blockStartCategoriesIds().has(category.id)"
             [iconName]="category.iconName"
             [description]="category.description"
             [amount]="category.amount"
@@ -63,9 +63,9 @@
                 />
             }
 
-            @if (completedAdultGamesText()) {
-                <p class="adult-games-text">
-                    <mados-cut-off-text [text]="completedAdultGamesText()" [cutOffIndex]="cutOffIndexes().get('completed-adult-games')" />
+            @if (completedHiddenGamesText()) {
+                <p class="hidden-games-text">
+                    <mados-cut-off-text [text]="completedHiddenGamesText()" [cutOffIndex]="cutOffIndexes().get('completed-hidden-games')" />
                 </p>
             }
         </div>
@@ -95,9 +95,9 @@
                 />
             }
 
-            @if (newAchievementsAdultGamesText()) {
-                <p class="adult-games-text">
-                    <mados-cut-off-text [text]="newAchievementsAdultGamesText()" [cutOffIndex]="cutOffIndexes().get('new-achievements-adult-games')" />
+            @if (newAchievementsHiddenGamesText()) {
+                <p class="hidden-games-text">
+                    <mados-cut-off-text [text]="newAchievementsHiddenGamesText()" [cutOffIndex]="cutOffIndexes().get('new-achievements-hidden-games')" />
                 </p>
             }
         </div>

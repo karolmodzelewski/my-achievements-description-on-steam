@@ -1,9 +1,9 @@
 import { ViewportScroller } from '@angular/common';
 import type { HttpErrorResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, effect, inject, linkedSignal, output, untracked } from '@angular/core';
+import { Component, computed, effect, inject, input, linkedSignal, output, untracked } from '@angular/core';
 import type { FieldState } from '@angular/forms/signals';
-import { applyEach, form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
+import { applyEach, disabled, form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatOption } from '@angular/material/core';
@@ -15,20 +15,18 @@ import { MatSelect } from '@angular/material/select';
 import { catchError, firstValueFrom, of, tap } from 'rxjs';
 
 import type { GameFormModel } from './interfaces/game-form-model.interface';
+import type { GameFormSource } from './interfaces/game-form-source.interface';
 import type { GameGroupFormModel } from './interfaces/game-group-form-model.interface';
+import type { GameMainCategoryFormModel } from './interfaces/game-main-category-form-model.interface';
 import { SnackbarType } from '../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
-import { CategoryType } from '../../../../enums/category-type.enum';
 import { ErrorCode } from '../../../../enums/error-code.enum';
 import type { AddGameRequestBody } from '../../../../interfaces/add-game-request-body.interface';
+import type { Category } from '../../../../interfaces/category.interface';
 import type { ErrorResponseBody } from '../../../../interfaces/error-response-body.interface';
-import type { Game } from '../../../../interfaces/game.interface';
+import { NOT_BLANK_PATTERN } from '../../constants/form.constants';
 import { EditGameService } from '../../services/edit-game.service';
 import { SectionHeadingComponent } from '../section-heading/section-heading.component';
-
-const LENGTH_CATEGORY_TYPES = [CategoryType.LONG_GAME, CategoryType.VERY_LONG_GAME, CategoryType.ULTRA_LONG_GAME];
-const DIFFICULTY_CATEGORY_TYPES = [CategoryType.HARD_GAME, CategoryType.VERY_HARD_GAME, CategoryType.ULTRA_HARD_GAME];
-const NOT_BLANK_PATTERN = /\S/;
 
 @Component({
     selector: 'mados-add-game-form',
@@ -42,21 +40,34 @@ export class AddGameFormComponent {
     private readonly viewportScroller = inject(ViewportScroller);
     private readonly snackbarService = inject(SnackbarService);
 
+    public readonly mainCategories = input.required<Category[]>();
+    public readonly lengthCategories = input.required<Category[]>();
+    public readonly difficultyCategories = input.required<Category[]>();
+
     public readonly reloadDescription = output();
 
     public readonly headingText = 'Manage game';
     public readonly headingId = 'manageGameHeading';
     public readonly baseGameGroupName = 'Base game';
-    public readonly CategoryType = CategoryType;
     public readonly isEditing = computed<boolean>(() => this.editGameService.editedGame() !== null);
 
-    private readonly gameModel = linkedSignal<GameFormModel>(() => this.mapGameToFormModel(this.editGameService.editedGame()));
+    private readonly gameModel = linkedSignal<GameFormSource, GameFormModel>({
+        source: () => ({
+            game: this.editGameService.editedGame(),
+            mainCategories: this.mainCategories(),
+            lengthCategories: this.lengthCategories(),
+            difficultyCategories: this.difficultyCategories(),
+        }),
+        computation: (source, previous) => this.computeGameModel(source, previous),
+    });
 
     public readonly gameForm = form(
         this.gameModel,
         (path) => {
             required(path.name);
             pattern(path.name, NOT_BLANK_PATTERN);
+            disabled(path.length, { when: () => !this.lengthCategories().length });
+            disabled(path.difficulty, { when: () => !this.difficultyCategories().length });
             applyEach(path.groups, (groupPath) => {
                 required(groupPath.name);
                 pattern(groupPath.name, NOT_BLANK_PATTERN);
@@ -122,38 +133,58 @@ export class AddGameFormComponent {
     }
 
     private prepareRequestBody(): AddGameRequestBody {
-        const { name, length, difficulty, lovedGame, badGame, doesntCount, buggedGame, adultGame, hasNewAchievements, groups } = this.gameModel();
-        const checkboxCategories: [boolean, CategoryType][] = [
-            [lovedGame, CategoryType.LOVED_GAME],
-            [badGame, CategoryType.BAD_GAME],
-            [doesntCount, CategoryType.DOESNT_COUNT],
-            [buggedGame, CategoryType.BUGGED_GAME],
-            [adultGame, CategoryType.ADULT_GAME],
-        ];
-        const checkedCategories = checkboxCategories.filter(([isChecked]) => isChecked).map(([, categoryType]) => categoryType);
+        const { name, length, difficulty, mainCategories, hasNewAchievements, groups } = this.gameModel();
+        const checkedMainCategoriesIds = mainCategories.filter(({ isChecked }) => isChecked).map(({ id }) => id);
 
         return {
             name: name.trim(),
             hasNewAchievements,
             groups: groups.map((group) => ({ name: group.name.trim(), hasNewAchievements: group.hasNewAchievements })),
-            categories: [length, difficulty, ...checkedCategories].filter((categoryType) => categoryType !== null),
+            categories: [...checkedMainCategoriesIds, length, difficulty].filter((categoryId) => categoryId !== null),
         };
     }
 
-    private mapGameToFormModel(game: Game | null): GameFormModel {
-        const categoryTypes = game?.categories?.map(({ type }) => type) ?? [];
+    // Categories saved while filling the form keep the filled values, only deleted categories are dropped from them
+    private computeGameModel(source: GameFormSource, previous?: { source: GameFormSource; value: GameFormModel }): GameFormModel {
+        const haveOnlyCategoriesChanged =
+            previous?.source.game === source.game &&
+            (previous.source.mainCategories !== source.mainCategories ||
+                previous.source.lengthCategories !== source.lengthCategories ||
+                previous.source.difficultyCategories !== source.difficultyCategories);
+
+        if (!haveOnlyCategoriesChanged) {
+            return this.mapGameToFormModel(source);
+        }
+
+        const { length, difficulty, mainCategories } = previous.value;
+        const checkedMainCategoriesIds = mainCategories.filter(({ isChecked }) => isChecked).map(({ id }) => id);
+
+        return {
+            ...previous.value,
+            length: this.findCategoryId(source.lengthCategories, length === null ? [] : [length]),
+            difficulty: this.findCategoryId(source.difficultyCategories, difficulty === null ? [] : [difficulty]),
+            mainCategories: this.mapMainCategories(source.mainCategories, checkedMainCategoriesIds),
+        };
+    }
+
+    private mapGameToFormModel({ game, mainCategories, lengthCategories, difficultyCategories }: GameFormSource): GameFormModel {
+        const categoriesIds = game?.categories?.map(({ id }) => id) ?? [];
 
         return {
             name: game?.name ?? '',
-            length: categoryTypes.find((categoryType) => LENGTH_CATEGORY_TYPES.includes(categoryType)) ?? null,
-            difficulty: categoryTypes.find((categoryType) => DIFFICULTY_CATEGORY_TYPES.includes(categoryType)) ?? null,
-            lovedGame: categoryTypes.includes(CategoryType.LOVED_GAME),
-            badGame: categoryTypes.includes(CategoryType.BAD_GAME),
-            doesntCount: categoryTypes.includes(CategoryType.DOESNT_COUNT),
-            buggedGame: categoryTypes.includes(CategoryType.BUGGED_GAME),
-            adultGame: categoryTypes.includes(CategoryType.ADULT_GAME),
+            length: this.findCategoryId(lengthCategories, categoriesIds),
+            difficulty: this.findCategoryId(difficultyCategories, categoriesIds),
+            mainCategories: this.mapMainCategories(mainCategories, categoriesIds),
             hasNewAchievements: game?.hasNewAchievements ?? false,
             groups: game?.groups.map(({ name, hasNewAchievements }) => ({ name, hasNewAchievements })) ?? [],
         };
+    }
+
+    private mapMainCategories(mainCategories: Category[], checkedCategoriesIds: number[]): GameMainCategoryFormModel[] {
+        return mainCategories.map(({ id, name }) => ({ id, name, isChecked: checkedCategoriesIds.includes(id) }));
+    }
+
+    private findCategoryId(categories: Category[], categoriesIds: number[]): number | null {
+        return categories.find(({ id }) => categoriesIds.includes(id))?.id ?? null;
     }
 }

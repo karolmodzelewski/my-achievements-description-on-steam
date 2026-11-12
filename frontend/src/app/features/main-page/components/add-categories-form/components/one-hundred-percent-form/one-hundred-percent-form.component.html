@@ -1,0 +1,26 @@
+<form [formRoot]="categoryForm">
+    <fieldset>
+        <legend class="legend">{{ legend }}</legend>
+
+        <mat-form-field class="icon-name-form-field">
+            <mat-label>Icon name:</mat-label>
+            <input [formField]="categoryForm.iconName" matInput type="text" />
+
+            @if (categoryForm.iconName().value()) {
+                <button (click)="clearField($event, categoryForm.iconName)" aria-label="Clear 100% icon name" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <mat-icon fontIcon="clear"></mat-icon>
+                </button>
+            }
+
+            @if (categoryForm.iconName().getError('required')) {
+                <mat-error>Icon name is required</mat-error>
+            }
+
+            @if (categoryForm.iconName().getError('pattern')) {
+                <mat-error>Icon name can't contain only whitespaces</mat-error>
+            }
+        </mat-form-field>
+    </fieldset>
+
+    <button [disabled]="!hasChanges() || categoryForm().invalid() || categoryForm().submitting()" class="save-button" color="primary" type="submit" mat-stroked-button>Save 100% category</button>
+</form>

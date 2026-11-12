@@ -1,19 +1,29 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 
 import { Trim } from '../../../decorators/trim.decorator';
-import { CategoryType } from '../../../enums/category-type.enum';
 
 export class CategoryDto {
-    @IsEnum(CategoryType)
-    public type: CategoryType;
+    // Missing for a new main, length or difficulty category, which is not saved yet
+    @IsInt()
+    @IsOptional()
+    public id?: number;
+
+    @Trim()
+    @IsString()
+    @IsNotEmpty()
+    public name: string;
+
+    @Trim()
+    @ValidateIf((_categoryDto: CategoryDto, description: unknown) => description !== undefined)
+    @IsString()
+    @IsNotEmpty()
+    public description?: string;
 
     @Trim()
     @IsString()
     @IsNotEmpty()
     public iconName: string;
 
-    @Trim()
-    @IsString()
-    @IsOptional()
-    public description?: string;
+    @IsBoolean()
+    public shouldHideGames: boolean;
 }

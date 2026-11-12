@@ -1,7 +1,8 @@
-import type { CategoryType } from '../enums/category-type.enum';
-
 export interface CategoryRequestBody {
-    type: CategoryType;
-    iconName: string;
+    // Missing for a category which is not saved yet
+    id?: number;
+    name: string;
     description?: string;
+    iconName: string;
+    shouldHideGames: boolean;
 }

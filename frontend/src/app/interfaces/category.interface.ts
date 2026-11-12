@@ -1,9 +1,11 @@
-import type { CategoryType } from '../enums/category-type.enum';
+import type { CategoryKind } from '../enums/category-kind.enum';
 
 export interface Category {
     id: number;
-    type: CategoryType;
-    iconName: string;
+    kind: CategoryKind;
+    name: string;
     description: string | null;
-    amount?: number;
+    iconName: string;
+    shouldHideGames: boolean;
+    position: number;
 }

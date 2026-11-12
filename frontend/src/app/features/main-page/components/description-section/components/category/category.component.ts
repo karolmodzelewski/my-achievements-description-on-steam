@@ -1,6 +1,5 @@
 import { Component, computed, input } from '@angular/core';
 
-import { CategoryType } from '../../../../../../enums/category-type.enum';
 import { joinDescriptionParts } from '../../../../utils/description-text.util';
 import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
 
@@ -11,13 +10,12 @@ import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
     imports: [CutOffTextComponent],
 })
 export class CategoryComponent {
-    public readonly type = input.required<CategoryType>();
     public readonly iconName = input.required<string>();
     public readonly description = input.required<string | null>();
     public readonly amount = input<number>();
     public readonly cutOffIndex = input<number>();
-
-    public readonly CategoryType = CategoryType;
+    // The first category of a kind, separated from the categories of the previous kind
+    public readonly isBlockStart = input<boolean>(false);
 
     // Empty categories are hidden information, presented only in the application and never copied
     public readonly isHidden = computed<boolean>(() => this.amount() === 0);

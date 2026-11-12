@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Logger, ParseArrayPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Param, ParseArrayPipe, ParseEnumPipe, Put } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
 import { CategoryDto } from './dtos/category.dto';
 import { Category } from '../../entities/category.entity';
+import { CategoryKind } from '../../enums/category-kind.enum';
 import { CategoriesService } from './services/categories.service';
 
 @Controller('categories')
@@ -19,11 +20,14 @@ export class CategoriesController {
         return this.categoriesService.getCategories();
     }
 
-    @Post()
+    @Put(':kind')
     @HttpCode(HttpStatus.NO_CONTENT)
-    public upsertCategories(@Body(new ParseArrayPipe({ items: CategoryDto, whitelist: true, forbidNonWhitelisted: true })) categoriesDto: CategoryDto[]): Observable<void> {
-        this.logger.log(`POST Request: Upsert '${JSON.stringify(categoriesDto)}' categories`);
+    public saveCategories(
+        @Param('kind', new ParseEnumPipe(CategoryKind)) kind: CategoryKind,
+        @Body(new ParseArrayPipe({ items: CategoryDto, whitelist: true, forbidNonWhitelisted: true })) categoriesDto: CategoryDto[]
+    ): Observable<void> {
+        this.logger.log(`PUT Request: Save '${JSON.stringify(categoriesDto)}' ${kind} categories`);
 
-        return this.categoriesService.upsertCategories(categoriesDto);
+        return this.categoriesService.saveCategories(kind, categoriesDto);
     }
 }

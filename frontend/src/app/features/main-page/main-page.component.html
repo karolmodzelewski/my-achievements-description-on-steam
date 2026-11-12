@@ -3,10 +3,21 @@
 @if (hasError()) {
     <mados-error-state class="margin-top" />
 } @else if (data(); as pageData) {
-    <mados-add-categories-form (reloadDescription)="reloadDescription()" [categories]="pageData.categories" />
+    <mados-add-categories-form
+        (categoriesSaved)="reloadCategoriesAndDescription()"
+        [oneHundredPercentCategory]="oneHundredPercentCategory()"
+        [mainCategories]="mainCategories()"
+        [lengthCategories]="lengthCategories()"
+        [difficultyCategories]="difficultyCategories()"
+    />
 
-    @if (pageData.description.categories.length) {
-        <mados-add-game-form (reloadDescription)="reloadDescription()" />
+    @if (isOneHundredPercentIconSet()) {
+        <mados-add-game-form
+            (reloadDescription)="reloadDescription()"
+            [mainCategories]="mainCategories()"
+            [lengthCategories]="lengthCategories()"
+            [difficultyCategories]="difficultyCategories()"
+        />
         <mados-description-section (reloadDescription)="reloadDescription()" [descriptionData]="pageData.description" />
     } @else {
         <mados-infobar [message]="infobarMessage" class="margin-top" />

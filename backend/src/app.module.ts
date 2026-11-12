@@ -6,6 +6,7 @@ import { DataSource } from 'typeorm';
 import type { DataSourceOptions } from 'typeorm';
 
 import { validationSchemaConfig } from './configs/validation-schema.config';
+import { seedOneHundredPercentCategory } from './seeds/one-hundred-percent-category.seed';
 import { GameModule } from './modules/game/game.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { DescriptionModule } from './modules/description/description.module';
@@ -29,7 +30,13 @@ import { DescriptionModule } from './modules/description/description.module';
                 autoLoadEntities: true,
                 synchronize: true,
             }),
-            dataSourceFactory: async (options: DataSourceOptions) => new DataSource(options).initialize(),
+            dataSourceFactory: async (options: DataSourceOptions) => {
+                const dataSource = await new DataSource(options).initialize();
+
+                await seedOneHundredPercentCategory(dataSource);
+
+                return dataSource;
+            },
         }),
         CategoriesModule,
         GameModule,

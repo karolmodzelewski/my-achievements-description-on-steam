@@ -1,5 +1,9 @@
 import type { DescriptionEntry } from '../../../interfaces/description-entry.interface';
 import type { DescriptionSection } from '../../../interfaces/description-section.interface';
+import type { Game } from '../../../interfaces/game.interface';
+
+// Games of a category hiding games are hidden information, summarised at the end of each section without revealing their names
+export const checkIfGameIsHidden = (game: Game): boolean => game.categories?.some((category) => category.shouldHideGames) === true;
 
 // Shared by the rendered and the copied description, so both always present the same text
 
