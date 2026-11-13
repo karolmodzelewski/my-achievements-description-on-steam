@@ -1,4 +1,4 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
@@ -7,14 +7,10 @@ import { DescriptionService } from './services/description.service';
 
 @Controller('description')
 export class DescriptionController {
-    private readonly logger = new Logger(DescriptionController.name, { timestamp: true });
-
     constructor(private readonly descriptionService: DescriptionService) {}
 
     @Get()
     public getDescription(): Observable<Description> {
-        this.logger.log(`GET Request: Description`);
-
         return this.descriptionService.getDescription();
     }
 }

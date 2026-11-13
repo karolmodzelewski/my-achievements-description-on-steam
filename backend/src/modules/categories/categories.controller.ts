@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Param, ParseArrayPipe, ParseEnumPipe, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseArrayPipe, ParseEnumPipe, Put } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
@@ -9,14 +9,10 @@ import { CategoriesService } from './services/categories.service';
 
 @Controller('categories')
 export class CategoriesController {
-    private readonly logger = new Logger(CategoriesController.name, { timestamp: true });
-
     constructor(private readonly categoriesService: CategoriesService) {}
 
     @Get()
     public getCategories(): Observable<Category[]> {
-        this.logger.log(`GET Request: Categories`);
-
         return this.categoriesService.getCategories();
     }
 
@@ -26,8 +22,6 @@ export class CategoriesController {
         @Param('kind', new ParseEnumPipe(CategoryKind)) kind: CategoryKind,
         @Body(new ParseArrayPipe({ items: CategoryDto, whitelist: true, forbidNonWhitelisted: true })) categoriesDto: CategoryDto[]
     ): Observable<void> {
-        this.logger.log(`PUT Request: Save '${JSON.stringify(categoriesDto)}' ${kind} categories`);
-
         return this.categoriesService.saveCategories(kind, categoriesDto);
     }
 }

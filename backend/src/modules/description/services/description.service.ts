@@ -32,8 +32,10 @@ export class DescriptionService {
     public getDescription(): Observable<Description> {
         return zip(this.categoriesRepository.find(), this.gameRepository.find({ relations: { groups: true, categories: true } })).pipe(
             take(1),
-            tap(() => this.logger.log(`Get description`)),
-            map(([categories, games]) => this.getMappedDescription(categories.sort(compareCategories), games))
+            map(([categories, games]) => this.getMappedDescription(categories.sort(compareCategories), games)),
+            tap(({ categories, completed, newAchievements }) =>
+                this.logger.debug(`Built description: ${categories.length} categories, ${completed.amount} completed and ${newAchievements.amount} with new achievements`)
+            )
         );
     }
 

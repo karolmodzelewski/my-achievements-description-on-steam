@@ -1,7 +1,7 @@
 import { BadRequestException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { from, map, Observable } from 'rxjs';
+import { from, map, Observable, tap } from 'rxjs';
 
 import { EntityManager, In, Repository } from 'typeorm';
 
@@ -21,23 +21,20 @@ export class CategoriesService {
     ) {}
 
     public getCategories(): Observable<Category[]> {
-        this.logger.log(`Getting categories from database`);
-
-        return from(this.categoriesRepository.find()).pipe(map((categories) => categories.sort(compareCategories)));
+        return from(this.categoriesRepository.find()).pipe(
+            tap((categories) => this.logger.debug(`Found ${categories.length} categories`)),
+            map((categories) => categories.sort(compareCategories))
+        );
     }
 
     // Replaces all categories of the kind, so categories missing in the request are deleted and their order is the order of the request
     public saveCategories(kind: CategoryKind, categoriesDto: CategoryDto[]): Observable<void> {
-        this.logger.log(`Saving ${kind} categories to database`);
-
         return from(
             this.categoriesRepository.manager.transaction(async (manager) => {
                 const savedCategories = await manager.findBy(Category, { kind });
 
                 if (kind === CategoryKind.ONE_HUNDRED_PERCENT) {
-                    await this.saveOneHundredPercentCategory(manager, savedCategories, categoriesDto);
-
-                    return;
+                    return this.saveOneHundredPercentCategory(manager, savedCategories, categoriesDto);
                 }
 
                 this.throwIfCategoriesAreInvalid(kind, savedCategories, categoriesDto);
@@ -49,25 +46,34 @@ export class CategoriesService {
                     Category,
                     categoriesDto.map(({ id, name, description, iconName, shouldHideGames }, position) => ({ id, kind, name, description: description ?? null, iconName, shouldHideGames, position }))
                 );
+
+                return this.getSavedCategoriesSummary(kind, categoriesDto, removedCategoriesIds);
             })
+        ).pipe(
+            tap((summary) => this.logger.log(summary)),
+            map(() => undefined)
         );
     }
 
     // The 100% category always exists and has a fixed name, so only its icon can be changed
-    private async saveOneHundredPercentCategory(manager: EntityManager, savedCategories: Category[], categoriesDto: CategoryDto[]): Promise<void> {
+    private async saveOneHundredPercentCategory(manager: EntityManager, savedCategories: Category[], categoriesDto: CategoryDto[]): Promise<string> {
         if (savedCategories.length !== 1 || categoriesDto.length !== 1 || categoriesDto[0].id !== savedCategories[0].id) {
-            throw new BadRequestException(`The 100% category can't be created or deleted`);
+            throw new BadRequestException(`The 100% category can't be created or deleted (saved ids: ${this.getIdsList(savedCategories)}, requested ids: ${this.getIdsList(categoriesDto)})`);
         }
 
         const [savedCategory] = savedCategories;
         const [categoryDto] = categoriesDto;
 
         await manager.update(Category, savedCategory.id, { iconName: categoryDto.iconName });
+
+        return `Updated 100% category icon to '${categoryDto.iconName}'`;
     }
 
     private throwIfCategoriesAreInvalid(kind: CategoryKind, savedCategories: Category[], categoriesDto: CategoryDto[]): void {
-        if (categoriesDto.some(({ id }) => id !== undefined && !savedCategories.some((category) => category.id === id))) {
-            throw new BadRequestException(`Only saved categories of the same kind can be updated`);
+        const unknownCategories = categoriesDto.filter(({ id }) => id !== undefined && !savedCategories.some((category) => category.id === id));
+
+        if (unknownCategories.length) {
+            throw new BadRequestException(`Only saved categories of the same kind can be updated (unknown ${kind} category ids: ${this.getIdsList(unknownCategories)})`);
         }
 
         // Blank names, descriptions and icon names are rejected by CategoryDto, but only the 100% category can go without a description
@@ -96,5 +102,17 @@ export class CategoriesService {
         }
 
         await manager.delete(Category, { id: In(categoriesIds) });
+    }
+
+    private getSavedCategoriesSummary(kind: CategoryKind, categoriesDto: CategoryDto[], removedCategoriesIds: number[]): string {
+        const createdAmount = categoriesDto.filter(({ id }) => id === undefined).length;
+        const updatedAmount = categoriesDto.length - createdAmount;
+        const deletedSummary = removedCategoriesIds.length ? `${removedCategoriesIds.length} deleted and unassigned from games (ids: ${removedCategoriesIds.join(', ')})` : '0 deleted';
+
+        return `Saved ${kind} categories: ${createdAmount} created, ${updatedAmount} updated, ${deletedSummary}`;
+    }
+
+    private getIdsList(categories: { id?: number }[]): string {
+        return categories.map(({ id }) => id ?? 'new').join(', ') || 'none';
     }
 }

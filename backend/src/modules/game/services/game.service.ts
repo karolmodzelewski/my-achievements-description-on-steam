@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { catchError, from, map, Observable, throwError } from 'rxjs';
+import { catchError, from, map, Observable, tap, throwError } from 'rxjs';
 
 import { EntityManager, In, QueryFailedError, Repository } from 'typeorm';
 
@@ -29,7 +29,6 @@ export class GameService {
     ) {}
 
     public createGame(gameDto: GameDto): Observable<void> {
-        this.logger.log(`Creating game ${JSON.stringify(gameDto)} in database`);
         this.throwIfNameIsEmpty(gameDto);
 
         const { groups, categories: categoriesIds, ...game } = gameDto;
@@ -40,12 +39,17 @@ export class GameService {
                 const { id } = await manager.save(manager.create(Game, { ...game, categories }));
 
                 await this.insertGroups(manager, id, groups);
+
+                return id;
             })
-        ).pipe(catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name))));
+        ).pipe(
+            tap((id) => this.logger.log(`Created game ${this.getGameSummary(id, gameDto)}`)),
+            map(() => undefined),
+            catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name)))
+        );
     }
 
     public updateGame(id: number, gameDto: GameDto): Observable<void> {
-        this.logger.log(`Updating game with id '${id}' to ${JSON.stringify(gameDto)}`);
         this.throwIfNameIsEmpty(gameDto);
 
         const { groups, categories: categoriesIds, ...game } = gameDto;
@@ -62,20 +66,23 @@ export class GameService {
                 await manager.delete(GameGroup, { game: { id } });
                 await this.insertGroups(manager, id, groups);
             })
-        ).pipe(catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name))));
+        ).pipe(
+            tap(() => this.logger.log(`Updated game ${this.getGameSummary(id, gameDto)}`)),
+            catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name)))
+        );
     }
 
     public deleteGame(id: number): Observable<void> {
-        this.logger.log(`Deleting game with id '${id}'`);
-
-        return from(this.gameRepository.delete(id)).pipe(map(({ affected }) => this.throwIfNotFound(getGameNotFoundMessage(id), affected)));
+        return from(this.gameRepository.delete(id)).pipe(
+            map(({ affected }) => this.throwIfNotFound(getGameNotFoundMessage(id), affected)),
+            tap(() => this.logger.log(`Deleted game with id '${id}'`))
+        );
     }
 
     public deleteGroup(gameId: number, groupId: number): Observable<void> {
-        this.logger.log(`Deleting group with id '${groupId}' of game with id '${gameId}'`);
-
         return from(this.gameGroupRepository.delete({ id: groupId, game: { id: gameId } })).pipe(
-            map(({ affected }) => this.throwIfNotFound(`Group with id '${groupId}' of game with id '${gameId}' doesn't exist`, affected))
+            map(({ affected }) => this.throwIfNotFound(`Group with id '${groupId}' of game with id '${gameId}' doesn't exist`, affected)),
+            tap(() => this.logger.log(`Deleted group with id '${groupId}' of game with id '${gameId}'`))
         );
     }
 
@@ -106,14 +113,40 @@ export class GameService {
         }
 
         const categories = await manager.findBy(Category, { id: In(categoriesIds) });
-        const countCategoriesOfKind = (kind: CategoryKind): number => categories.filter((category) => category.kind === kind).length;
-        const areCategoriesAssignable = categories.length === categoriesIds.length && categories.every((category) => category.kind !== CategoryKind.ONE_HUNDRED_PERCENT);
+        const reason = this.getUnassignableCategoriesReason(categoriesIds, categories);
 
-        if (areCategoriesAssignable && countCategoriesOfKind(CategoryKind.LENGTH) <= 1 && countCategoriesOfKind(CategoryKind.DIFFICULTY) <= 1) {
+        if (reason === null) {
             return categories;
         }
 
-        throw new BadRequestException('Game can belong only to saved categories, with at most one length and one difficulty category');
+        throw new BadRequestException(`Game can belong only to saved categories, with at most one length and one difficulty category (${reason})`);
+    }
+
+    private getUnassignableCategoriesReason(categoriesIds: number[], categories: Category[]): string | null {
+        const missingCategoriesIds = categoriesIds.filter((id) => !categories.some((category) => category.id === id));
+        const countCategoriesOfKind = (kind: CategoryKind): number => categories.filter((category) => category.kind === kind).length;
+
+        if (missingCategoriesIds.length) {
+            return `unknown category ids: ${missingCategoriesIds.join(', ')}`;
+        }
+
+        if (countCategoriesOfKind(CategoryKind.ONE_HUNDRED_PERCENT)) {
+            return `the 100% category can't be assigned`;
+        }
+
+        if (countCategoriesOfKind(CategoryKind.LENGTH) > 1) {
+            return `${countCategoriesOfKind(CategoryKind.LENGTH)} length categories`;
+        }
+
+        if (countCategoriesOfKind(CategoryKind.DIFFICULTY) > 1) {
+            return `${countCategoriesOfKind(CategoryKind.DIFFICULTY)} difficulty categories`;
+        }
+
+        return null;
+    }
+
+    private getGameSummary(id: number, { name, groups, categories }: GameDto): string {
+        return `'${name}' (id ${id}) with ${groups.length} groups and ${categories.length} categories`;
     }
 
     private throwIfNotFound(message: string, affected: number | null | undefined): void {

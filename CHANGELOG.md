@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.11.0 - 13.11.2026
+
+- Improve logs on backend
+
 ## 1.10.0 - 13.11.2026
 
 - Allow changing the order of main, length and difficulty categories with drag & drop
