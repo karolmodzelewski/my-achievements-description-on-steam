@@ -1,3 +1,5 @@
+import type { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragHandle, CdkDragPreview, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import type { HttpErrorResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, inject, input, linkedSignal, output } from '@angular/core';
@@ -28,7 +30,7 @@ import { areJsonEqual } from '../../../../utils/json-equality.util';
     selector: 'mados-category-kind-form',
     templateUrl: './category-kind-form.component.html',
     styleUrl: './category-kind-form.component.scss',
-    imports: [FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatCheckbox, MatButton],
+    imports: [CdkDropList, CdkDrag, CdkDragHandle, CdkDragPreview, FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatCheckbox, MatButton],
 })
 export class CategoryKindFormComponent {
     private readonly httpClient = inject(HttpClient);
@@ -84,6 +86,21 @@ export class CategoryKindFormComponent {
             ...categoriesModel,
             categories: [...categoriesModel.categories.slice(0, index), newCategory, ...categoriesModel.categories.slice(index)],
         }));
+    }
+
+    // The new order is saved only after saving the form, the same way as added and removed categories
+    public moveCategory({ previousIndex, currentIndex }: CdkDragDrop<unknown>): void {
+        if (previousIndex === currentIndex) {
+            return;
+        }
+
+        this.categoriesModel.update((categoriesModel) => {
+            const categories = [...categoriesModel.categories];
+
+            moveItemInArray(categories, previousIndex, currentIndex);
+
+            return { ...categoriesModel, categories };
+        });
     }
 
     // A saved category is deleted only after saving the form, so its removal is confirmed first
