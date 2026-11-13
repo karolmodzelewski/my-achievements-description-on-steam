@@ -2,15 +2,28 @@
     <fieldset>
         <legend class="legend">{{ legend() }}</legend>
 
-        <div class="category-rows">
+        @let categoryRowsClass = 'category-rows';
+
+        <div (cdkDropListDropped)="moveCategory($event)" [class]="categoryRowsClass" cdkDropList cdkDropListLockAxis="y">
             @for (categoryField of categoriesForm.categories; track categoryField) {
+                @let moveCategoryAriaLabel = `Move category ${$index + 1}`;
                 @let clearNameAriaLabel = `Clear category ${$index + 1} name`;
                 @let clearDescriptionAriaLabel = `Clear category ${$index + 1} description`;
                 @let clearIconNameAriaLabel = `Clear category ${$index + 1} icon name`;
                 @let addCategoryAriaLabel = `Add category below category ${$index + 1}`;
                 @let removeCategoryAriaLabel = `Remove category ${$index + 1}`;
+                @let dragBoundary = `.${categoryRowsClass}`;
 
-                <div [class.without-checkbox]="!canHideGames()" class="category-row">
+                <div [class.without-checkbox]="!canHideGames()" [cdkDragBoundary]="dragBoundary" class="category-row" cdkDrag>
+                    <button [attr.aria-label]="moveCategoryAriaLabel" class="drag-handle icon-category" type="button" matIconButton cdkDragHandle>
+                        <mat-icon fontIcon="drag_indicator"></mat-icon>
+                    </button>
+
+                    <div *cdkDragPreview class="drag-preview">
+                        <mat-icon class="drag-preview-icon" fontIcon="drag_indicator"></mat-icon>
+                        {{ categoryField.name().value().trim() || 'New category' }}
+                    </div>
+
                     <mat-form-field class="name-form-field">
                         <mat-label>Category name:</mat-label>
                         <input [formField]="categoryField.name" matInput type="text" />
