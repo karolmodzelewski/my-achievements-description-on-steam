@@ -1,6 +1,10 @@
 <div class="game-container">
     <p [class.hidden-information]="isHidden()" class="game-data">
         <mados-cut-off-text [text]="entryLine()" [cutOffIndex]="cutOffIndex()" />
+
+        @if (isHidden()) {
+            <span class="cdk-visually-hidden"> (not copied)</span>
+        }
     </p>
 
     @if (shouldShowEdition()) {
@@ -20,7 +24,10 @@
 
 @for (group of entry().listedGroups; track group.id) {
     <div class="game-container">
-        <p class="game-data hidden-information">- {{ group.name }}</p>
+        <p class="game-data hidden-information">
+            - {{ group.name }}
+            <span class="cdk-visually-hidden"> (not copied)</span>
+        </p>
 
         @if (shouldShowEdition()) {
             @let deleteGroupAriaLabel = `Delete ${entry().game.name} - ${group.name}`;

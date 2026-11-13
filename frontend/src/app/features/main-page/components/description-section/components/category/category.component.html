@@ -1,3 +1,7 @@
 <p [class.margin-top]="isBlockStart()" [class.hidden-information]="isHidden()">
     <mados-cut-off-text [text]="categoryLine()" [cutOffIndex]="cutOffIndex()" />
+
+    @if (isHidden()) {
+        <span class="cdk-visually-hidden"> (not copied)</span>
+    }
 </p>

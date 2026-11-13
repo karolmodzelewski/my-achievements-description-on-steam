@@ -6,7 +6,7 @@
 </div>
 
 <mat-dialog-content>
-    <p class="message">{{ question }} <strong class="identifier">{{ identifier }}</strong> {{ identifierType }}?</p>
+    <p [id]="messageId" class="message">{{ question }} <strong class="identifier">{{ identifier }}</strong> {{ identifierType }}?</p>
 </mat-dialog-content>
 
 <mat-dialog-actions class="action-buttons-container">

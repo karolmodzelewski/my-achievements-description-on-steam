@@ -1,5 +1,5 @@
 import { ViewportScroller } from '@angular/common';
-import { Component, inject, input, output, signal } from '@angular/core';
+import { afterNextRender, Component, inject, Injector, input, output, signal, viewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 
 import { CategoryKindFormComponent } from './components/category-kind-form/category-kind-form.component';
@@ -17,6 +17,10 @@ import { SectionHeadingComponent } from '../section-heading/section-heading.comp
 })
 export class AddCategoriesFormComponent {
     private readonly viewportScroller = inject(ViewportScroller);
+    private readonly injector = inject(Injector);
+
+    private readonly topCollapseButton = viewChild('topCollapseButton', { read: MatButton });
+    private readonly bottomExpansionButton = viewChild.required('bottomExpansionButton', { read: MatButton });
 
     public readonly oneHundredPercentCategory = input.required<Category | null>();
     public readonly mainCategories = input.required<Category[]>();
@@ -35,5 +39,8 @@ export class AddCategoriesFormComponent {
         this.shouldShowCategories.update((shouldShowCategories) => !shouldShowCategories);
 
         this.viewportScroller.scrollToAnchor(this.headingId);
+        // Expanding focuses the top button, so the forms follow it in the focus order and the focus stays in view.
+        // Collapsing focuses the bottom button, as the top one disappears together with the forms
+        afterNextRender(() => (this.shouldShowCategories() ? this.topCollapseButton() : this.bottomExpansionButton())?.focus(), { injector: this.injector });
     }
 }

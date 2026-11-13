@@ -7,6 +7,10 @@
         <div (cdkDropListDropped)="moveCategory($event)" [class]="categoryRowsClass" cdkDropList cdkDropListLockAxis="y">
             @for (categoryField of categoriesForm.categories; track categoryField) {
                 @let moveCategoryAriaLabel = `Move category ${$index + 1}`;
+                @let nameAriaLabel = `Category name (category ${$index + 1})`;
+                @let descriptionAriaLabel = `Category description (category ${$index + 1})`;
+                @let iconNameAriaLabel = `Icon name (category ${$index + 1})`;
+                @let hideGamesAriaLabel = `Hide games (category ${$index + 1})`;
                 @let clearNameAriaLabel = `Clear category ${$index + 1} name`;
                 @let clearDescriptionAriaLabel = `Clear category ${$index + 1} description`;
                 @let clearIconNameAriaLabel = `Clear category ${$index + 1} icon name`;
@@ -15,18 +19,28 @@
                 @let dragBoundary = `.${categoryRowsClass}`;
 
                 <div [class.without-checkbox]="!canHideGames()" [cdkDragBoundary]="dragBoundary" class="category-row" cdkDrag>
-                    <button [attr.aria-label]="moveCategoryAriaLabel" class="drag-handle icon-category" type="button" matIconButton cdkDragHandle>
+                    <button
+                        #dragHandle
+                        (keydown.arrowUp)="moveCategoryWithKeyboard($event, $index, -1)"
+                        (keydown.arrowDown)="moveCategoryWithKeyboard($event, $index, 1)"
+                        [attr.aria-label]="moveCategoryAriaLabel"
+                        aria-keyshortcuts="ArrowUp ArrowDown"
+                        class="drag-handle icon-category"
+                        type="button"
+                        matIconButton
+                        cdkDragHandle
+                    >
                         <mat-icon fontIcon="drag_indicator"></mat-icon>
                     </button>
 
                     <div *cdkDragPreview class="drag-preview">
                         <mat-icon class="drag-preview-icon" fontIcon="drag_indicator"></mat-icon>
-                        {{ categoryField.name().value().trim() || 'New category' }}
+                        {{ categoryField.name().value().trim() || newCategoryName }}
                     </div>
 
                     <mat-form-field class="name-form-field">
                         <mat-label>Category name:</mat-label>
-                        <input [formField]="categoryField.name" matInput type="text" />
+                        <input [formField]="categoryField.name" [attr.aria-label]="nameAriaLabel" matInput type="text" />
 
                         @if (categoryField.name().value()) {
                             <button (click)="clearField($event, categoryField.name)" [attr.aria-label]="clearNameAriaLabel" class="icon-clear" type="button" matIconButton matIconSuffix>
@@ -49,7 +63,7 @@
 
                     <mat-form-field class="description-form-field">
                         <mat-label>Category description:</mat-label>
-                        <input [formField]="categoryField.description" matInput type="text" />
+                        <input [formField]="categoryField.description" [attr.aria-label]="descriptionAriaLabel" matInput type="text" />
 
                         @if (categoryField.description().value()) {
                             <button
@@ -75,7 +89,7 @@
 
                     <mat-form-field class="icon-name-form-field">
                         <mat-label>Icon name:</mat-label>
-                        <input [formField]="categoryField.iconName" matInput type="text" />
+                        <input [formField]="categoryField.iconName" [attr.aria-label]="iconNameAriaLabel" matInput type="text" />
 
                         @if (categoryField.iconName().value()) {
                             <button (click)="clearField($event, categoryField.iconName)" [attr.aria-label]="clearIconNameAriaLabel" class="icon-clear" type="button" matIconButton matIconSuffix>
@@ -93,11 +107,11 @@
                     </mat-form-field>
 
                     @if (canHideGames()) {
-                        <mat-checkbox [formField]="categoryField.shouldHideGames" class="category-checkbox" color="primary">Hide games</mat-checkbox>
+                        <mat-checkbox [formField]="categoryField.shouldHideGames" [aria-label]="hideGamesAriaLabel" class="category-checkbox" color="primary">Hide games</mat-checkbox>
                     }
 
                     <div class="category-buttons">
-                        <button (click)="addCategory($index + 1)" [attr.aria-label]="addCategoryAriaLabel" class="icon-category" type="button" matIconButton>
+                        <button #addCategoryButton (click)="addCategory($index + 1)" [attr.aria-label]="addCategoryAriaLabel" class="icon-category" type="button" matIconButton>
                             <mat-icon fontIcon="add"></mat-icon>
                         </button>
                         <button (click)="removeCategory($index)" [attr.aria-label]="removeCategoryAriaLabel" class="icon-category" type="button" matIconButton>
@@ -109,9 +123,18 @@
         </div>
 
         @if (hasNoCategories()) {
-            <button (click)="addCategory(0)" class="add-category-button" color="primary" type="button" mat-stroked-button>Add category</button>
+            <button #addFirstCategoryButton (click)="addCategory(0)" class="add-category-button" color="primary" type="button" mat-stroked-button>Add category</button>
         }
     </fieldset>
 
-    <button [disabled]="!hasChanges() || categoriesForm().invalid() || categoriesForm().submitting()" class="save-button" color="primary" type="submit" mat-stroked-button>Save {{ lowerCaseLegend() }}</button>
+    <button
+        [disabled]="!hasChanges() || categoriesForm().invalid() || categoriesForm().submitting()"
+        class="save-button"
+        color="primary"
+        type="submit"
+        mat-stroked-button
+        disabledInteractive
+    >
+        Save {{ lowerCaseLegend() }}
+    </button>
 </form>

@@ -1,7 +1,7 @@
 import { ViewportScroller } from '@angular/common';
 import type { HttpErrorResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, effect, inject, input, linkedSignal, output, untracked } from '@angular/core';
+import { afterNextRender, Component, computed, effect, inject, Injector, input, linkedSignal, output, untracked, viewChild, viewChildren } from '@angular/core';
 import type { FieldState } from '@angular/forms/signals';
 import { applyEach, disabled, form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -39,6 +39,10 @@ export class AddGameFormComponent {
     private readonly editGameService = inject(EditGameService);
     private readonly viewportScroller = inject(ViewportScroller);
     private readonly snackbarService = inject(SnackbarService);
+    private readonly injector = inject(Injector);
+
+    private readonly addBaseGameGroupButton = viewChild.required('addBaseGameGroupButton', { read: MatIconButton });
+    private readonly addGroupButtons = viewChildren('addGroupButton', { read: MatIconButton });
 
     public readonly mainCategories = input.required<Category[]>();
     public readonly lengthCategories = input.required<Category[]>();
@@ -101,11 +105,16 @@ export class AddGameFormComponent {
 
     public removeGroup(index: number): void {
         this.gameModel.update((gameModel) => ({ ...gameModel, groups: gameModel.groups.filter((_, groupIndex) => groupIndex !== index) }));
+        // The removed group takes its focused button with it. The add button of the group above restores the same position,
+        // while focusing another remove button would let repeated key presses remove several groups by accident
+        afterNextRender(() => (index === 0 ? this.addBaseGameGroupButton() : this.addGroupButtons().at(index - 1))?.focus(), { injector: this.injector });
     }
 
     public resetForm(): void {
         this.gameForm().reset();
         this.editGameService.stopEditing();
+        // The cancel button disappears and the submit button gets disabled, so the focus is moved to where the next game starts
+        this.gameForm.name().focusBoundControl();
     }
 
     private saveGame(): Promise<void> {
