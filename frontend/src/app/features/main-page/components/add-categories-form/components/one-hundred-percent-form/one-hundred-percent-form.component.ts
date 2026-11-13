@@ -54,6 +54,11 @@ export class OneHundredPercentFormComponent {
     }
 
     private saveCategory(): Promise<void> {
+        // The save button stays focusable while there is nothing to save, so its submission has to be ignored here
+        if (!this.hasChanges()) {
+            return Promise.resolve();
+        }
+
         const { id, name } = this.category();
         const requestBody: CategoryRequestBody[] = [{ id, name, iconName: this.categoryModel().iconName.trim(), shouldHideGames: false }];
 

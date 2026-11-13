@@ -1,29 +1,45 @@
-<mados-section-heading [headingText]="headingText" [id]="headingId" class="section-heading" />
+<section [attr.aria-labelledby]="headingId">
+    <mados-section-heading [headingText]="headingText" [id]="headingId" class="section-heading" />
 
-@if (shouldShowCategories()) {
-    <div [id]="categoriesFormsId" class="categories">
-        @if (oneHundredPercentCategory(); as oneHundredPercentCategory) {
-            <mados-one-hundred-percent-form (categorySaved)="categoriesSaved.emit()" [category]="oneHundredPercentCategory" />
-        }
-
-        <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.MAIN" [categories]="mainCategories()" legend="Main categories" />
-        <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.LENGTH" [categories]="lengthCategories()" legend="Length categories" />
-        <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.DIFFICULTY" [categories]="difficultyCategories()" legend="Difficulty categories" />
-    </div>
-}
-
-<button
-    (click)="handleCategoriesVisibility()"
-    [attr.aria-controls]="shouldShowCategories() ? categoriesFormsId : null"
-    [attr.aria-expanded]="shouldShowCategories()"
-    class="expansion-button button"
-    color="primary"
-    type="button"
-    mat-raised-button
->
     @if (shouldShowCategories()) {
-        <mados-expansion-button-text iconName="expand_less" buttonText="Collapse" />
-    } @else {
-        <mados-expansion-button-text iconName="expand_more" buttonText="Expand" />
+        <button
+            #topCollapseButton
+            (click)="handleCategoriesVisibility()"
+            [attr.aria-controls]="categoriesFormsId"
+            aria-expanded="true"
+            class="expansion-button top-expansion-button button"
+            color="primary"
+            type="button"
+            mat-raised-button
+        >
+            <mados-expansion-button-text iconName="expand_less" buttonText="Collapse" />
+        </button>
+
+        <div [id]="categoriesFormsId" class="categories">
+            @if (oneHundredPercentCategory(); as oneHundredPercentCategory) {
+                <mados-one-hundred-percent-form (categorySaved)="categoriesSaved.emit()" [category]="oneHundredPercentCategory" />
+            }
+
+            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.MAIN" [categories]="mainCategories()" legend="Main categories" />
+            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.LENGTH" [categories]="lengthCategories()" legend="Length categories" />
+            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.DIFFICULTY" [categories]="difficultyCategories()" legend="Difficulty categories" />
+        </div>
     }
-</button>
+
+    <button
+        #bottomExpansionButton
+        (click)="handleCategoriesVisibility()"
+        [attr.aria-controls]="shouldShowCategories() ? categoriesFormsId : null"
+        [attr.aria-expanded]="shouldShowCategories()"
+        class="expansion-button button"
+        color="primary"
+        type="button"
+        mat-raised-button
+    >
+        @if (shouldShowCategories()) {
+            <mados-expansion-button-text iconName="expand_less" buttonText="Collapse" />
+        } @else {
+            <mados-expansion-button-text iconName="expand_more" buttonText="Expand" />
+        }
+    </button>
+</section>

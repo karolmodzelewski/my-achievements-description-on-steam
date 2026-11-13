@@ -5,6 +5,7 @@ import type { Observable } from 'rxjs';
 import { map } from 'rxjs';
 
 import { ConfirmationComponent } from './confirmation.component';
+import { CONFIRMATION_MESSAGE_ID } from './constants/confirmation.constants';
 import type { ConfirmationData } from './interfaces/confirmation-data.interface';
 
 @Injectable()
@@ -15,6 +16,8 @@ export class ConfirmationService {
         return this.matDialog
             .open<ConfirmationComponent, ConfirmationData, boolean>(ConfirmationComponent, {
                 data,
+                role: 'alertdialog',
+                ariaDescribedBy: CONFIRMATION_MESSAGE_ID,
                 width: '450px',
                 // Keeps the same 20px side gutter as the page wrapper on mobile
                 maxWidth: 'calc(100vw - 40px)',

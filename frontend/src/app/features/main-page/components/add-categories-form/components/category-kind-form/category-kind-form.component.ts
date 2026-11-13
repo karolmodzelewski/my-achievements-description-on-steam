@@ -1,8 +1,9 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import type { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { CdkDrag, CdkDragHandle, CdkDragPreview, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import type { HttpErrorResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, inject, input, linkedSignal, output } from '@angular/core';
+import { afterNextRender, Component, computed, inject, Injector, input, linkedSignal, output, viewChild, viewChildren } from '@angular/core';
 import type { FieldState } from '@angular/forms/signals';
 import { applyEach, form, FormField, FormRoot, pattern, required, validate } from '@angular/forms/signals';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -36,12 +37,20 @@ export class CategoryKindFormComponent {
     private readonly httpClient = inject(HttpClient);
     private readonly confirmationService = inject(ConfirmationService);
     private readonly snackbarService = inject(SnackbarService);
+    private readonly liveAnnouncer = inject(LiveAnnouncer);
+    private readonly injector = inject(Injector);
+
+    private readonly dragHandles = viewChildren('dragHandle', { read: MatIconButton });
+    private readonly addCategoryButtons = viewChildren('addCategoryButton', { read: MatIconButton });
+    private readonly addFirstCategoryButton = viewChild('addFirstCategoryButton', { read: MatButton });
 
     public readonly kind = input.required<CategoryKind>();
     public readonly legend = input.required<string>();
     public readonly categories = input.required<Category[]>();
 
     public readonly categoriesSaved = output();
+
+    public readonly newCategoryName = 'New category';
 
     private readonly categoriesModel = linkedSignal<CategoryKindFormModel>(() => this.buildCategoriesModel(this.categories()));
 
@@ -94,13 +103,24 @@ export class CategoryKindFormComponent {
             return;
         }
 
-        this.categoriesModel.update((categoriesModel) => {
-            const categories = [...categoriesModel.categories];
+        this.reorderCategories(previousIndex, currentIndex);
+    }
 
-            moveItemInArray(categories, previousIndex, currentIndex);
+    public moveCategoryWithKeyboard(event: Event, index: number, offset: number): void {
+        const { categories } = this.categoriesModel();
+        const targetIndex = index + offset;
 
-            return { ...categoriesModel, categories };
-        });
+        event.preventDefault();
+
+        if (targetIndex < 0 || targetIndex >= categories.length) {
+            return;
+        }
+
+        const categoryName = categories[index].name.trim() || this.newCategoryName;
+
+        this.reorderCategories(index, targetIndex);
+        void this.liveAnnouncer.announce(`${categoryName} moved to position ${targetIndex + 1} of ${categories.length}`);
+        afterNextRender(() => this.dragHandles().at(targetIndex)?.focus(), { injector: this.injector });
     }
 
     // A saved category is deleted only after saving the form, so its removal is confirmed first
@@ -125,11 +145,37 @@ export class CategoryKindFormComponent {
             .subscribe(() => this.removeCategoryFromModel(category));
     }
 
+    private reorderCategories(previousIndex: number, currentIndex: number): void {
+        this.categoriesModel.update((categoriesModel) => {
+            const categories = [...categoriesModel.categories];
+
+            moveItemInArray(categories, previousIndex, currentIndex);
+
+            return { ...categoriesModel, categories };
+        });
+    }
+
     private removeCategoryFromModel(removedCategory: CategoryFormModel): void {
+        const removedIndex = this.categoriesModel().categories.indexOf(removedCategory);
+
         this.categoriesModel.update((categoriesModel) => ({ ...categoriesModel, categories: categoriesModel.categories.filter((category) => category !== removedCategory) }));
+        afterNextRender(() => this.focusAfterRemoval(removedIndex), { injector: this.injector });
+    }
+
+    // The removed category takes its focused button with it. The add button of the category above restores the same position,
+    // while focusing another remove button would let repeated key presses remove several categories by accident
+    private focusAfterRemoval(removedIndex: number): void {
+        const addCategoryButton = this.addCategoryButtons().at(Math.max(removedIndex - 1, 0)) ?? this.addFirstCategoryButton();
+
+        addCategoryButton?.focus();
     }
 
     private saveCategories(): Promise<void> {
+        // The save button stays focusable while there is nothing to save, so its submission has to be ignored here
+        if (!this.hasChanges()) {
+            return Promise.resolve();
+        }
+
         return firstValueFrom(
             this.httpClient.put<void>(`categories/${this.kind()}`, this.prepareRequestBody(this.categoriesModel())).pipe(
                 tap(() => {

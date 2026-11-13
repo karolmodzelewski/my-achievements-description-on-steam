@@ -1,5 +1,5 @@
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal, viewChild } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -26,6 +26,8 @@ import { SectionHeadingComponent } from '../section-heading/section-heading.comp
 })
 export class DescriptionSectionComponent {
     private readonly snackbarService = inject(SnackbarService);
+
+    private readonly editModeButton = viewChild.required('editModeButton', { read: MatIconButton });
 
     public readonly descriptionData = input.required<DescriptionResponseBody>();
 
@@ -64,6 +66,12 @@ export class DescriptionSectionComponent {
         }
 
         this.snackbarService.openSnackbar('An error has occurred while copying description', SnackbarType.ERROR);
+    }
+
+    // The deleted entry takes its focused button with it, so the focus is moved to the always visible edit mode button
+    public handleEntryDeleted(): void {
+        this.editModeButton().focus();
+        this.reloadDescription.emit();
     }
 
     // The first length and the first difficulty category start a new block of categories, separated from the previous kind

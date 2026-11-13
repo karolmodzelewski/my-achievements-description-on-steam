@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import type { SnackbarType } from './enums/snackbar-type.enum';
+import { SnackbarType } from './enums/snackbar-type.enum';
 import type { SnackbarData } from './interfaces/snackbar-data.interface';
 import { SnackbarComponent } from './snackbar.component';
 
@@ -11,7 +11,7 @@ export class SnackbarService {
 
     public openSnackbar(snackbarMessage: string, snackbarType: SnackbarType): void {
         this.matSnackBar.openFromComponent(SnackbarComponent, {
-            duration: 3000,
+            duration: snackbarType === SnackbarType.ERROR ? undefined : 6000,
             panelClass: snackbarType,
             data: { snackbarMessage } satisfies SnackbarData,
         });

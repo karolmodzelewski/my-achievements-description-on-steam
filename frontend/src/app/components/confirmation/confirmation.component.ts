@@ -3,6 +3,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 
+import { CONFIRMATION_MESSAGE_ID } from './constants/confirmation.constants';
 import type { ConfirmationData } from './interfaces/confirmation-data.interface';
 
 @Component({
@@ -15,6 +16,7 @@ export class ConfirmationComponent {
     private readonly data = inject<ConfirmationData>(MAT_DIALOG_DATA);
     private readonly matDialogRef = inject<MatDialogRef<ConfirmationComponent, boolean>>(MatDialogRef);
 
+    public readonly messageId = CONFIRMATION_MESSAGE_ID;
     public readonly title = this.data.title;
     public readonly question = this.data.question;
     public readonly identifier = this.data.identifier;

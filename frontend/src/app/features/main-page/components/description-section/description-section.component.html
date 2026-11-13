@@ -1,105 +1,103 @@
-<div class="heading-container">
-    <mados-section-heading [headingText]="headingText" [id]="headingId" />
-    <p [class.limit-reached]="isLimitReached()" aria-live="polite" class="characters-counter">{{ descriptionSize() }} / {{ maxDescriptionSize }} characters</p>
-</div>
-
-<section [attr.aria-labelledby]="headingId" class="description">
-    <div class="icons-container">
-        <button
-            (click)="handleEditionMode()"
-            [attr.aria-pressed]="shouldShowEdition()"
-            aria-label="Edit mode"
-            class="icon-button"
-            type="button"
-            matIconButton
-        >
-            <mat-icon [fontIcon]="shouldShowEdition() ? 'edit' : 'edit_off'"></mat-icon>
-        </button>
-        <button
-            (cdkCopyToClipboardCopied)="handleDescriptionCopied($event)"
-            [cdkCopyToClipboard]="descriptionToCopy()"
-            aria-label="Copy description"
-            class="icon-button"
-            matIconButton
-            type="button"
-        >
-            <mat-icon fontIcon="content_copy"></mat-icon>
-        </button>
+<section [attr.aria-labelledby]="headingId">
+    <div class="heading-container">
+        <mados-section-heading [headingText]="headingText" [id]="headingId" />
+        <p [class.limit-reached]="isLimitReached()" aria-live="polite" class="characters-counter">{{ descriptionSize() }} / {{ maxDescriptionSize }} characters</p>
     </div>
 
-    @for (category of descriptionData().categories; track category.id) {
-        @let categoryKey = `category-${category.id}`;
-
-        <mados-category
-            [cutOffIndex]="cutOffIndexes().get(categoryKey)"
-            [isBlockStart]="blockStartCategoriesIds().has(category.id)"
-            [iconName]="category.iconName"
-            [description]="category.description"
-            [amount]="category.amount"
-        />
-    }
-
-    @if (descriptionData().completed.amount) {
-        <div class="margin-top">
-            <p>
-                <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-top')" />
-            </p>
-            <p>
-                <mados-cut-off-text [text]="completedHeading()" [cutOffIndex]="cutOffIndexes().get('completed-heading')" />
-            </p>
-            <p>
-                <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-bottom')" />
-            </p>
+    <div class="description">
+        <div class="icons-container">
+            <button
+                #editModeButton
+                (click)="handleEditionMode()"
+                [attr.aria-pressed]="shouldShowEdition()"
+                aria-label="Edit mode"
+                class="icon-button"
+                type="button"
+                matIconButton
+            >
+                <mat-icon [fontIcon]="shouldShowEdition() ? 'edit' : 'edit_off'"></mat-icon>
+            </button>
+            <button
+                (cdkCopyToClipboardCopied)="handleDescriptionCopied($event)"
+                [cdkCopyToClipboard]="descriptionToCopy()"
+                aria-label="Copy description"
+                class="icon-button"
+                matIconButton
+                type="button"
+            >
+                <mat-icon fontIcon="content_copy"></mat-icon>
+            </button>
         </div>
-        <div class="margin-top">
-            @for (entry of descriptionData().completed.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
-                @let completedEntryKey = `completed-${entry.game.id}-${entry.group?.id ?? 'base'}`;
 
-                <mados-game
-                    (reloadDescription)="reloadDescription.emit()"
-                    [cutOffIndex]="cutOffIndexes().get(completedEntryKey)"
-                    [entry]="entry"
-                    [shouldShowEdition]="shouldShowEdition()"
-                />
-            }
+        @for (category of descriptionData().categories; track category.id) {
+            @let categoryKey = `category-${category.id}`;
 
-            @if (completedHiddenGamesText()) {
-                <p class="hidden-games-text">
-                    <mados-cut-off-text [text]="completedHiddenGamesText()" [cutOffIndex]="cutOffIndexes().get('completed-hidden-games')" />
+            <mados-category
+                [cutOffIndex]="cutOffIndexes().get(categoryKey)"
+                [isBlockStart]="blockStartCategoriesIds().has(category.id)"
+                [iconName]="category.iconName"
+                [description]="category.description"
+                [amount]="category.amount"
+            />
+        }
+
+        @if (descriptionData().completed.amount) {
+            <div class="margin-top">
+                <p aria-hidden="true">
+                    <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-top')" />
                 </p>
-            }
-        </div>
-    }
-
-    @if (descriptionData().newAchievements.amount) {
-        <div class="margin-top">
-            <p>
-                <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-top')" />
-            </p>
-            <p>
-                <mados-cut-off-text [text]="newAchievementsHeading()" [cutOffIndex]="cutOffIndexes().get('new-achievements-heading')" />
-            </p>
-            <p>
-                <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-bottom')" />
-            </p>
-        </div>
-        <div class="margin-top">
-            @for (entry of descriptionData().newAchievements.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
-                @let newAchievementsEntryKey = `new-achievements-${entry.game.id}-${entry.group?.id ?? 'base'}`;
-
-                <mados-game
-                    (reloadDescription)="reloadDescription.emit()"
-                    [cutOffIndex]="cutOffIndexes().get(newAchievementsEntryKey)"
-                    [entry]="entry"
-                    [shouldShowEdition]="shouldShowEdition()"
-                />
-            }
-
-            @if (newAchievementsHiddenGamesText()) {
-                <p class="hidden-games-text">
-                    <mados-cut-off-text [text]="newAchievementsHiddenGamesText()" [cutOffIndex]="cutOffIndexes().get('new-achievements-hidden-games')" />
+                <p>
+                    <mados-cut-off-text [text]="completedHeading()" [cutOffIndex]="cutOffIndexes().get('completed-heading')" />
                 </p>
-            }
-        </div>
-    }
+                <p aria-hidden="true">
+                    <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-bottom')" />
+                </p>
+            </div>
+            <div class="margin-top">
+                @for (entry of descriptionData().completed.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
+                    @let completedEntryKey = `completed-${entry.game.id}-${entry.group?.id ?? 'base'}`;
+
+                    <mados-game (reloadDescription)="handleEntryDeleted()" [cutOffIndex]="cutOffIndexes().get(completedEntryKey)" [entry]="entry" [shouldShowEdition]="shouldShowEdition()" />
+                }
+
+                @if (completedHiddenGamesText()) {
+                    <p class="hidden-games-text">
+                        <mados-cut-off-text [text]="completedHiddenGamesText()" [cutOffIndex]="cutOffIndexes().get('completed-hidden-games')" />
+                    </p>
+                }
+            </div>
+        }
+
+        @if (descriptionData().newAchievements.amount) {
+            <div class="margin-top">
+                <p aria-hidden="true">
+                    <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-top')" />
+                </p>
+                <p>
+                    <mados-cut-off-text [text]="newAchievementsHeading()" [cutOffIndex]="cutOffIndexes().get('new-achievements-heading')" />
+                </p>
+                <p aria-hidden="true">
+                    <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-bottom')" />
+                </p>
+            </div>
+            <div class="margin-top">
+                @for (entry of descriptionData().newAchievements.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
+                    @let newAchievementsEntryKey = `new-achievements-${entry.game.id}-${entry.group?.id ?? 'base'}`;
+
+                    <mados-game
+                        (reloadDescription)="handleEntryDeleted()"
+                        [cutOffIndex]="cutOffIndexes().get(newAchievementsEntryKey)"
+                        [entry]="entry"
+                        [shouldShowEdition]="shouldShowEdition()"
+                    />
+                }
+
+                @if (newAchievementsHiddenGamesText()) {
+                    <p class="hidden-games-text">
+                        <mados-cut-off-text [text]="newAchievementsHiddenGamesText()" [cutOffIndex]="cutOffIndexes().get('new-achievements-hidden-games')" />
+                    </p>
+                }
+            </div>
+        }
+    </div>
 </section>
