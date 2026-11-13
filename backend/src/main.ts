@@ -1,14 +1,23 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import type { LogLevel } from '@nestjs/common';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './filters/all-exceptions.filter';
+import { httpLoggerMiddleware } from './middlewares/http-logger.middleware';
+
+const logger = new Logger('Bootstrap');
+const PRODUCTION_STAGE = 'prod';
+const getLogLevels = (stage: string | undefined): LogLevel[] => (stage === PRODUCTION_STAGE ? ['fatal', 'error', 'warn', 'log'] : ['fatal', 'error', 'warn', 'log', 'debug', 'verbose']);
 
 async function bootstrap(): Promise<void> {
-    const logger = new Logger();
-    const app = await NestFactory.create(AppModule);
+    const stage = process.env.STAGE;
+    const app = await NestFactory.create(AppModule, { logger: getLogLevels(stage) });
     const port = 3001;
 
     app.setGlobalPrefix('api');
+    app.use(httpLoggerMiddleware);
+    app.useGlobalFilters(new AllExceptionsFilter(app.get(HttpAdapterHost).httpAdapter));
     app.useGlobalPipes(
         new ValidationPipe({
             whitelist: true,
@@ -19,7 +28,10 @@ async function bootstrap(): Promise<void> {
 
     await app.listen(port);
 
-    logger.log(`Starts listening on port: ${port}`);
+    logger.log(`Listening on port ${port} (stage: ${stage})`);
 }
 
-void bootstrap();
+void bootstrap().catch((error: unknown) => {
+    logger.fatal('Failed to start application', error instanceof Error ? error.stack : error);
+    process.exit(1);
+});
