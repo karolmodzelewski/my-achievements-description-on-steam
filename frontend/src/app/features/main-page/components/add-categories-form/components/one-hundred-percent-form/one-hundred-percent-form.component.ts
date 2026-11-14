@@ -9,6 +9,8 @@ import { MatInput } from '@angular/material/input';
 
 import { catchError, firstValueFrom, of, tap } from 'rxjs';
 
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
 import type { OneHundredPercentFormModel } from './interfaces/one-hundred-percent-form-model.interface';
 import { SnackbarType } from '../../../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
@@ -21,18 +23,17 @@ import { NOT_BLANK_PATTERN } from '../../../../constants/form.constants';
     selector: 'mados-one-hundred-percent-form',
     templateUrl: './one-hundred-percent-form.component.html',
     styleUrl: './one-hundred-percent-form.component.scss',
-    imports: [FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatButton],
+    imports: [FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatButton, TranslocoPipe],
 })
 export class OneHundredPercentFormComponent {
     private readonly httpClient = inject(HttpClient);
     private readonly snackbarService = inject(SnackbarService);
+    private readonly translocoService = inject(TranslocoService);
 
     // The 100% category always exists and has a fixed name, so only its icon can be changed
     public readonly category = input.required<Category>();
 
     public readonly categorySaved = output();
-
-    public readonly legend = '100% category';
 
     private readonly categoryModel = linkedSignal<OneHundredPercentFormModel>(() => ({ iconName: this.category().iconName }));
 
@@ -65,11 +66,11 @@ export class OneHundredPercentFormComponent {
         return firstValueFrom(
             this.httpClient.put<void>(`categories/${CategoryKind.ONE_HUNDRED_PERCENT}`, requestBody).pipe(
                 tap(() => {
-                    this.snackbarService.openSnackbar('Successfully saved 100% category', SnackbarType.SUCCESS);
+                    this.snackbarService.openSnackbar(this.translocoService.translate('oneHundredPercentForm.saveSuccess'), SnackbarType.SUCCESS);
                     this.categorySaved.emit();
                 }),
                 catchError(() => {
-                    this.snackbarService.openSnackbar('An error has occurred while saving 100% category', SnackbarType.ERROR);
+                    this.snackbarService.openSnackbar(this.translocoService.translate('oneHundredPercentForm.saveError'), SnackbarType.ERROR);
 
                     return of(undefined);
                 })

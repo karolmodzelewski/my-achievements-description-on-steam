@@ -5,6 +5,9 @@ import { MatIcon } from '@angular/material/icon';
 
 import { catchError, EMPTY, filter, switchMap, take, tap } from 'rxjs';
 
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import { DeletedEntryType } from './enums/deleted-entry-type.enum';
 import { ConfirmationService } from '../../../../../../components/confirmation/confirmation.service';
 import { SnackbarType } from '../../../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
@@ -18,13 +21,14 @@ import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
     selector: 'mados-game',
     templateUrl: './game.component.html',
     styleUrl: './game.component.scss',
-    imports: [MatIconButton, MatIcon, CutOffTextComponent],
+    imports: [MatIconButton, MatIcon, CutOffTextComponent, TranslocoPipe],
 })
 export class GameComponent {
     private readonly confirmationService = inject(ConfirmationService);
     private readonly editGameService = inject(EditGameService);
     private readonly httpClient = inject(HttpClient);
     private readonly snackbarService = inject(SnackbarService);
+    private readonly translocoService = inject(TranslocoService);
 
     public readonly entry = input.required<DescriptionEntry>();
     public readonly shouldShowEdition = input.required<boolean>();
@@ -49,22 +53,22 @@ export class GameComponent {
             return;
         }
 
-        this.sendDeleteRequest(`game/${this.entry().game.id}`, 'game', this.entryName());
+        this.sendDeleteRequest(`game/${this.entry().game.id}`, DeletedEntryType.GAME, this.entryName());
     }
 
     public deleteGroup(group: GameGroup): void {
-        this.sendDeleteRequest(`game/${this.entry().game.id}/group/${group.id}`, 'group', getEntryName({ ...this.entry(), group }));
+        this.sendDeleteRequest(`game/${this.entry().game.id}/group/${group.id}`, DeletedEntryType.GROUP, getEntryName({ ...this.entry(), group }));
     }
 
-    private sendDeleteRequest(url: string, identifierType: string, identifier: string): void {
+    private sendDeleteRequest(url: string, deletedEntryType: DeletedEntryType, identifier: string): void {
         const gameId = this.entry().game.id;
 
         this.confirmationService
             .openConfirmation({
-                title: `Delete ${identifierType}`,
-                question: 'Are you sure you want to delete',
+                title: this.translocoService.translate(`confirmation.delete.${deletedEntryType}.title`),
+                questionStart: this.translocoService.translate(`confirmation.delete.${deletedEntryType}.questionStart`),
                 identifier,
-                identifierType,
+                questionEnd: this.translocoService.translate(`confirmation.delete.${deletedEntryType}.questionEnd`),
             })
             .pipe(
                 take(1),
@@ -76,11 +80,11 @@ export class GameComponent {
                         this.editGameService.stopEditing();
                     }
 
-                    this.snackbarService.openSnackbar(`Successfully deleted ${identifierType}`, SnackbarType.SUCCESS);
+                    this.snackbarService.openSnackbar(this.translocoService.translate(`game.deleteSuccess.${deletedEntryType}`), SnackbarType.SUCCESS);
                     this.reloadDescription.emit();
                 }),
                 catchError(() => {
-                    this.snackbarService.openSnackbar(`An error has occurred while deleting ${identifierType}`, SnackbarType.ERROR);
+                    this.snackbarService.openSnackbar(this.translocoService.translate(`game.deleteError.${deletedEntryType}`), SnackbarType.ERROR);
 
                     return EMPTY;
                 })

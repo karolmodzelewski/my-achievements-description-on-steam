@@ -20,7 +20,7 @@
         />
         <mados-description-section (reloadDescription)="reloadDescription()" [descriptionData]="pageData.description" />
     } @else {
-        <mados-infobar [message]="infobarMessage" class="margin-top" />
+        <mados-infobar [message]="'mainPage.infobar' | transloco" class="margin-top" />
     }
 } @else {
     <mados-loading-state class="margin-top" />

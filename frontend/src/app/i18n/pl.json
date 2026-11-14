@@ -1,0 +1,158 @@
+{
+    "common": {
+        "yes": "Tak",
+        "no": "Nie",
+        "notCopied": "(nie jest kopiowane)"
+    },
+    "iconNameField": {
+        "label": "Nazwa ikony:",
+        "required": "Nazwa ikony jest wymagana",
+        "blank": "Nazwa ikony nie może składać się wyłącznie z białych znaków"
+    },
+    "languageSwitcher": {
+        "label": "Język"
+    },
+    "confirmation": {
+        "close": "Zamknij potwierdzenie",
+        "delete": {
+            "category": {
+                "title": "Usuń kategorię",
+                "questionStart": "Czy na pewno chcesz usunąć kategorię",
+                "questionEnd": "?"
+            },
+            "game": {
+                "title": "Usuń grę",
+                "questionStart": "Czy na pewno chcesz usunąć grę",
+                "questionEnd": "?"
+            },
+            "group": {
+                "title": "Usuń grupę",
+                "questionStart": "Czy na pewno chcesz usunąć grupę",
+                "questionEnd": "?"
+            }
+        }
+    },
+    "snackbar": {
+        "close": "Zamknij powiadomienie"
+    },
+    "errorState": {
+        "message": "Coś poszło nie tak. Spróbuj ponownie."
+    },
+    "loadingState": {
+        "message": "Ładowanie..."
+    },
+    "mainPage": {
+        "infobar": "Aby dodać grę i zobaczyć opis, ustaw ikonę 100% w sekcji Zarządzaj kategoriami"
+    },
+    "addCategoriesForm": {
+        "heading": "Zarządzaj kategoriami",
+        "collapse": "Zwiń",
+        "expand": "Rozwiń"
+    },
+    "categoryKind": {
+        "MAIN": {
+            "legend": "Kategorie główne",
+            "save": "Zapisz kategorie główne",
+            "saveSuccess": "Pomyślnie zapisano kategorie główne",
+            "saveError": "Wystąpił błąd podczas zapisywania kategorii głównych"
+        },
+        "LENGTH": {
+            "legend": "Kategorie długości",
+            "save": "Zapisz kategorie długości",
+            "saveSuccess": "Pomyślnie zapisano kategorie długości",
+            "saveError": "Wystąpił błąd podczas zapisywania kategorii długości"
+        },
+        "DIFFICULTY": {
+            "legend": "Kategorie trudności",
+            "save": "Zapisz kategorie trudności",
+            "saveSuccess": "Pomyślnie zapisano kategorie trudności",
+            "saveError": "Wystąpił błąd podczas zapisywania kategorii trudności"
+        }
+    },
+    "categoryKindForm": {
+        "nameLabel": "Nazwa kategorii:",
+        "nameRequired": "Nazwa kategorii jest wymagana",
+        "nameBlank": "Nazwa kategorii nie może składać się wyłącznie z białych znaków",
+        "nameUnique": "Nazwa kategorii musi być unikalna",
+        "descriptionLabel": "Opis kategorii:",
+        "descriptionRequired": "Opis kategorii jest wymagany",
+        "descriptionBlank": "Opis kategorii nie może składać się wyłącznie z białych znaków",
+        "hideGames": "Ukryj gry",
+        "addCategory": "Dodaj kategorię",
+        "newCategory": "Nowa kategoria",
+        "namesUnique": "Nazwy kategorii muszą być unikalne",
+        "categoryMoved": "{{ name }} przeniesiono na pozycję {{ position }} z {{ total }}",
+        "moveCategoryAriaLabel": "Przenieś kategorię {{ index }}",
+        "nameAriaLabel": "Nazwa kategorii (kategoria {{ index }})",
+        "descriptionAriaLabel": "Opis kategorii (kategoria {{ index }})",
+        "iconNameAriaLabel": "Nazwa ikony (kategoria {{ index }})",
+        "hideGamesAriaLabel": "Ukryj gry (kategoria {{ index }})",
+        "clearNameAriaLabel": "Wyczyść nazwę kategorii {{ index }}",
+        "clearDescriptionAriaLabel": "Wyczyść opis kategorii {{ index }}",
+        "clearIconNameAriaLabel": "Wyczyść nazwę ikony kategorii {{ index }}",
+        "addCategoryAriaLabel": "Dodaj kategorię poniżej kategorii {{ index }}",
+        "removeCategoryAriaLabel": "Usuń kategorię {{ index }}"
+    },
+    "oneHundredPercentForm": {
+        "legend": "Kategoria 100%",
+        "clearIconNameAriaLabel": "Wyczyść nazwę ikony 100%",
+        "save": "Zapisz kategorię 100%",
+        "saveSuccess": "Pomyślnie zapisano kategorię 100%",
+        "saveError": "Wystąpił błąd podczas zapisywania kategorii 100%"
+    },
+    "addGameForm": {
+        "heading": "Zarządzaj grą",
+        "gameNameLabel": "Nazwa gry:",
+        "clearGameNameAriaLabel": "Wyczyść nazwę gry",
+        "gameNameRequired": "Nazwa gry jest wymagana",
+        "gameNameBlank": "Nazwa gry nie może składać się wyłącznie z białych znaków",
+        "lengthLabel": "Długość:",
+        "clearLengthAriaLabel": "Wyczyść długość",
+        "difficultyLabel": "Trudność:",
+        "clearDifficultyAriaLabel": "Wyczyść trudność",
+        "mainCategories": "Kategorie główne",
+        "groups": "Grupy",
+        "groupNameLabel": "Nazwa grupy:",
+        "baseGame": "Gra podstawowa",
+        "newAchievements": "Nowe osiągnięcia",
+        "baseGameNewAchievementsAriaLabel": "Nowe osiągnięcia (gra podstawowa)",
+        "addBaseGameGroupAriaLabel": "Dodaj grupę poniżej gry podstawowej",
+        "removeBaseGameGroupAriaLabel": "Usuń grę podstawową",
+        "groupNameAriaLabel": "Nazwa grupy (grupa {{ index }})",
+        "newAchievementsAriaLabel": "Nowe osiągnięcia (grupa {{ index }})",
+        "clearGroupNameAriaLabel": "Wyczyść nazwę grupy {{ index }}",
+        "addGroupAriaLabel": "Dodaj grupę poniżej grupy {{ index }}",
+        "removeGroupAriaLabel": "Usuń grupę {{ index }}",
+        "groupNameRequired": "Nazwa grupy jest wymagana",
+        "groupNameBlank": "Nazwa grupy nie może składać się wyłącznie z białych znaków",
+        "editGame": "Edytuj grę",
+        "addGame": "Dodaj grę",
+        "cancelEditing": "Anuluj edycję",
+        "saveSuccess": "Pomyślnie zapisano grę",
+        "emptyName": "Należy podać nazwę gry lub grupy",
+        "saveError": "Wystąpił błąd podczas zapisywania gry"
+    },
+    "descriptionSection": {
+        "heading": "Opis",
+        "charactersCounter": "{{ size }} / {{ max }} znaków",
+        "editModeAriaLabel": "Tryb edycji",
+        "copyDescriptionAriaLabel": "Kopiuj opis",
+        "copySuccess": "Skopiowano opis do schowka",
+        "copyError": "Wystąpił błąd podczas kopiowania opisu"
+    },
+    "cutOffText": {
+        "exceedsLimit": "(przekracza limit Steama)"
+    },
+    "game": {
+        "editAriaLabel": "Edytuj: {{ name }}",
+        "deleteAriaLabel": "Usuń: {{ name }}",
+        "deleteSuccess": {
+            "game": "Pomyślnie usunięto grę",
+            "group": "Pomyślnie usunięto grupę"
+        },
+        "deleteError": {
+            "game": "Wystąpił błąd podczas usuwania gry",
+            "group": "Wystąpił błąd podczas usuwania grupy"
+        }
+    }
+}

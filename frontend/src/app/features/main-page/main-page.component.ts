@@ -1,6 +1,8 @@
 import { httpResource } from '@angular/common/http';
 import { Component, computed } from '@angular/core';
 
+import { TranslocoPipe } from '@jsverse/transloco';
+
 import { AddCategoriesFormComponent } from './components/add-categories-form/add-categories-form.component';
 import { AddGameFormComponent } from './components/add-game-form/add-game-form.component';
 import { DescriptionSectionComponent } from './components/description-section/description-section.component';
@@ -18,13 +20,11 @@ import type { DescriptionResponseBody } from '../../interfaces/description-respo
     selector: 'mados-main-page',
     templateUrl: './main-page.component.html',
     styleUrl: './main-page.component.scss',
-    imports: [HeaderComponent, AddCategoriesFormComponent, AddGameFormComponent, DescriptionSectionComponent, InfobarComponent, LoadingStateComponent, ErrorStateComponent],
+    imports: [HeaderComponent, AddCategoriesFormComponent, AddGameFormComponent, DescriptionSectionComponent, InfobarComponent, LoadingStateComponent, ErrorStateComponent, TranslocoPipe],
 })
 export class MainPageComponent {
     private readonly categoriesResource = httpResource<Category[]>(() => 'categories');
     private readonly descriptionResource = httpResource<DescriptionResponseBody>(() => 'description');
-
-    public readonly infobarMessage = 'To add a game and see the description, please set the 100% icon in Manage categories';
 
     public readonly hasError = computed<boolean>(() => this.categoriesResource.error() !== undefined || this.descriptionResource.error() !== undefined);
     public readonly data = computed<MainPageData | null>(() =>

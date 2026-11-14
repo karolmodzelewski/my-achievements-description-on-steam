@@ -2,5 +2,5 @@
 
 @if (cutOffText()) {
     <span class="cut-off">{{ cutOffText() }}</span>
-    <span class="cdk-visually-hidden"> (exceeds Steam limit)</span>
+    <span class="cdk-visually-hidden"> {{ 'cutOffText.exceedsLimit' | transloco }}</span>
 }

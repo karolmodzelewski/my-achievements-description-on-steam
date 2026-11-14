@@ -1,0 +1,158 @@
+{
+    "common": {
+        "yes": "Yes",
+        "no": "No",
+        "notCopied": "(not copied)"
+    },
+    "iconNameField": {
+        "label": "Icon name:",
+        "required": "Icon name is required",
+        "blank": "Icon name can't contain only whitespaces"
+    },
+    "languageSwitcher": {
+        "label": "Language"
+    },
+    "confirmation": {
+        "close": "Close confirmation",
+        "delete": {
+            "category": {
+                "title": "Delete category",
+                "questionStart": "Are you sure you want to delete",
+                "questionEnd": " category?"
+            },
+            "game": {
+                "title": "Delete game",
+                "questionStart": "Are you sure you want to delete",
+                "questionEnd": " game?"
+            },
+            "group": {
+                "title": "Delete group",
+                "questionStart": "Are you sure you want to delete",
+                "questionEnd": " group?"
+            }
+        }
+    },
+    "snackbar": {
+        "close": "Close notification"
+    },
+    "errorState": {
+        "message": "Something went wrong. Try again."
+    },
+    "loadingState": {
+        "message": "Loading..."
+    },
+    "mainPage": {
+        "infobar": "To add a game and see the description, please set the 100% icon in Manage categories"
+    },
+    "addCategoriesForm": {
+        "heading": "Manage categories",
+        "collapse": "Collapse",
+        "expand": "Expand"
+    },
+    "categoryKind": {
+        "MAIN": {
+            "legend": "Main categories",
+            "save": "Save main categories",
+            "saveSuccess": "Successfully saved main categories",
+            "saveError": "An error has occurred while saving main categories"
+        },
+        "LENGTH": {
+            "legend": "Length categories",
+            "save": "Save length categories",
+            "saveSuccess": "Successfully saved length categories",
+            "saveError": "An error has occurred while saving length categories"
+        },
+        "DIFFICULTY": {
+            "legend": "Difficulty categories",
+            "save": "Save difficulty categories",
+            "saveSuccess": "Successfully saved difficulty categories",
+            "saveError": "An error has occurred while saving difficulty categories"
+        }
+    },
+    "categoryKindForm": {
+        "nameLabel": "Category name:",
+        "nameRequired": "Category name is required",
+        "nameBlank": "Category name can't contain only whitespaces",
+        "nameUnique": "Category name has to be unique",
+        "descriptionLabel": "Category description:",
+        "descriptionRequired": "Category description is required",
+        "descriptionBlank": "Category description can't contain only whitespaces",
+        "hideGames": "Hide games",
+        "addCategory": "Add category",
+        "newCategory": "New category",
+        "namesUnique": "Category names have to be unique",
+        "categoryMoved": "{{ name }} moved to position {{ position }} of {{ total }}",
+        "moveCategoryAriaLabel": "Move category {{ index }}",
+        "nameAriaLabel": "Category name (category {{ index }})",
+        "descriptionAriaLabel": "Category description (category {{ index }})",
+        "iconNameAriaLabel": "Icon name (category {{ index }})",
+        "hideGamesAriaLabel": "Hide games (category {{ index }})",
+        "clearNameAriaLabel": "Clear category {{ index }} name",
+        "clearDescriptionAriaLabel": "Clear category {{ index }} description",
+        "clearIconNameAriaLabel": "Clear category {{ index }} icon name",
+        "addCategoryAriaLabel": "Add category below category {{ index }}",
+        "removeCategoryAriaLabel": "Remove category {{ index }}"
+    },
+    "oneHundredPercentForm": {
+        "legend": "100% category",
+        "clearIconNameAriaLabel": "Clear 100% icon name",
+        "save": "Save 100% category",
+        "saveSuccess": "Successfully saved 100% category",
+        "saveError": "An error has occurred while saving 100% category"
+    },
+    "addGameForm": {
+        "heading": "Manage game",
+        "gameNameLabel": "Game name:",
+        "clearGameNameAriaLabel": "Clear game name",
+        "gameNameRequired": "Game name is required",
+        "gameNameBlank": "Game name can't contain only whitespaces",
+        "lengthLabel": "Length:",
+        "clearLengthAriaLabel": "Clear length",
+        "difficultyLabel": "Difficulty:",
+        "clearDifficultyAriaLabel": "Clear difficulty",
+        "mainCategories": "Main categories",
+        "groups": "Groups",
+        "groupNameLabel": "Group name:",
+        "baseGame": "Base game",
+        "newAchievements": "New achievements",
+        "baseGameNewAchievementsAriaLabel": "New achievements (Base game)",
+        "addBaseGameGroupAriaLabel": "Add group below Base game",
+        "removeBaseGameGroupAriaLabel": "Remove Base game",
+        "groupNameAriaLabel": "Group name (group {{ index }})",
+        "newAchievementsAriaLabel": "New achievements (group {{ index }})",
+        "clearGroupNameAriaLabel": "Clear group {{ index }} name",
+        "addGroupAriaLabel": "Add group below group {{ index }}",
+        "removeGroupAriaLabel": "Remove group {{ index }}",
+        "groupNameRequired": "Group name is required",
+        "groupNameBlank": "Group name can't contain only whitespaces",
+        "editGame": "Edit game",
+        "addGame": "Add game",
+        "cancelEditing": "Cancel editing",
+        "saveSuccess": "Successfully saved game",
+        "emptyName": "Game or group name has to be provided",
+        "saveError": "An error has occurred while saving game"
+    },
+    "descriptionSection": {
+        "heading": "Description",
+        "charactersCounter": "{{ size }} / {{ max }} characters",
+        "editModeAriaLabel": "Edit mode",
+        "copyDescriptionAriaLabel": "Copy description",
+        "copySuccess": "Description copied to clipboard",
+        "copyError": "An error has occurred while copying description"
+    },
+    "cutOffText": {
+        "exceedsLimit": "(exceeds Steam limit)"
+    },
+    "game": {
+        "editAriaLabel": "Edit {{ name }}",
+        "deleteAriaLabel": "Delete {{ name }}",
+        "deleteSuccess": {
+            "game": "Successfully deleted game",
+            "group": "Successfully deleted group"
+        },
+        "deleteError": {
+            "game": "An error has occurred while deleting game",
+            "group": "An error has occurred while deleting group"
+        }
+    }
+}

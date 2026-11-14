@@ -1,28 +1,28 @@
 <form [formRoot]="categoryForm">
     <fieldset>
-        <legend class="legend">{{ legend }}</legend>
+        <legend class="legend">{{ 'oneHundredPercentForm.legend' | transloco }}</legend>
 
         <mat-form-field class="icon-name-form-field">
-            <mat-label>Icon name:</mat-label>
+            <mat-label>{{ 'iconNameField.label' | transloco }}</mat-label>
             <input [formField]="categoryForm.iconName" matInput type="text" />
 
             @if (categoryForm.iconName().value()) {
-                <button (click)="clearField($event, categoryForm.iconName)" aria-label="Clear 100% icon name" class="icon-clear" type="button" matIconButton matIconSuffix>
+                <button (click)="clearField($event, categoryForm.iconName)" [attr.aria-label]="'oneHundredPercentForm.clearIconNameAriaLabel' | transloco" class="icon-clear" type="button" matIconButton matIconSuffix>
                     <mat-icon fontIcon="clear"></mat-icon>
                 </button>
             }
 
             @if (categoryForm.iconName().getError('required')) {
-                <mat-error>Icon name is required</mat-error>
+                <mat-error>{{ 'iconNameField.required' | transloco }}</mat-error>
             }
 
             @if (categoryForm.iconName().getError('pattern')) {
-                <mat-error>Icon name can't contain only whitespaces</mat-error>
+                <mat-error>{{ 'iconNameField.blank' | transloco }}</mat-error>
             }
         </mat-form-field>
     </fieldset>
 
     <button [disabled]="!hasChanges() || categoryForm().invalid() || categoryForm().submitting()" class="save-button" type="submit" matButton="outlined" disabledInteractive>
-        Save 100% category
+        {{ 'oneHundredPercentForm.save' | transloco }}
     </button>
 </form>

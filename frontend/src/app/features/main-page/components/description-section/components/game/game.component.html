@@ -3,19 +3,16 @@
         <mados-cut-off-text [text]="entryLine()" [cutOffIndex]="cutOffIndex()" />
 
         @if (isHidden()) {
-            <span class="cdk-visually-hidden"> (not copied)</span>
+            <span class="cdk-visually-hidden"> {{ 'common.notCopied' | transloco }}</span>
         }
     </p>
 
     @if (shouldShowEdition()) {
-        @let editEntryAriaLabel = `Edit ${entryName()}`;
-        @let deleteEntryAriaLabel = `Delete ${entryName()}`;
-
         <div class="icon-container">
-            <button (click)="editGame()" [attr.aria-label]="editEntryAriaLabel" class="icon-button" matIconButton type="button">
+            <button (click)="editGame()" [attr.aria-label]="'game.editAriaLabel' | transloco: { name: entryName() }" class="icon-button" matIconButton type="button">
                 <mat-icon fontIcon="edit"></mat-icon>
             </button>
-            <button (click)="deleteEntry()" [attr.aria-label]="deleteEntryAriaLabel" class="icon-button" matIconButton type="button">
+            <button (click)="deleteEntry()" [attr.aria-label]="'game.deleteAriaLabel' | transloco: { name: entryName() }" class="icon-button" matIconButton type="button">
                 <mat-icon fontIcon="delete"></mat-icon>
             </button>
         </div>
@@ -26,11 +23,11 @@
     <div class="game-container">
         <p class="game-data hidden-information">
             - {{ group.name }}
-            <span class="cdk-visually-hidden"> (not copied)</span>
+            <span class="cdk-visually-hidden"> {{ 'common.notCopied' | transloco }}</span>
         </p>
 
         @if (shouldShowEdition()) {
-            @let deleteGroupAriaLabel = `Delete ${entry().game.name} - ${group.name}`;
+            @let deleteGroupAriaLabel = 'game.deleteAriaLabel' | transloco: { name: `${entry().game.name} - ${group.name}` };
 
             <div class="icon-container">
                 <button (click)="deleteGroup(group)" [attr.aria-label]="deleteGroupAriaLabel" class="icon-button" matIconButton type="button">

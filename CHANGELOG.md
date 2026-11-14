@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.16.0 - 14.11.2026
+
+- Add internationalization with Transloco: English (default) and Polish languages, switchable with flags next to the title and remembered in local storage
+
 ## 1.15.0 - 14.11.2026
 
 - Improve overall security in the application

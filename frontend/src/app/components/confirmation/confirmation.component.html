@@ -1,15 +1,15 @@
 <div class="header">
     <h2 class="title" mat-dialog-title>{{ title }}</h2>
-    <button (click)="cancelAction()" aria-label="Close confirmation" class="close-button" type="button" matIconButton>
+    <button (click)="cancelAction()" [attr.aria-label]="'confirmation.close' | transloco" class="close-button" type="button" matIconButton>
         <mat-icon fontIcon="clear"></mat-icon>
     </button>
 </div>
 
 <mat-dialog-content>
-    <p [id]="messageId" class="message">{{ question }} <strong class="identifier">{{ identifier }}</strong> {{ identifierType }}?</p>
+    <p [id]="messageId" class="message">{{ questionStart }} <strong class="identifier">{{ identifier }}</strong>{{ questionEnd }}</p>
 </mat-dialog-content>
 
 <mat-dialog-actions class="action-buttons-container">
-    <button (click)="cancelAction()" class="action-button" type="button" matButton="outlined" cdkFocusInitial>No</button>
-    <button (click)="confirmAction()" class="action-button" type="button" matButton="outlined">Yes</button>
+    <button (click)="cancelAction()" class="action-button" type="button" matButton="outlined" cdkFocusInitial>{{ 'common.no' | transloco }}</button>
+    <button (click)="confirmAction()" class="action-button" type="button" matButton="outlined">{{ 'common.yes' | transloco }}</button>
 </mat-dialog-actions>
