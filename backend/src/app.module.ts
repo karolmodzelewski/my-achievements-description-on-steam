@@ -7,6 +7,7 @@ import type { DataSourceOptions } from 'typeorm';
 import type { PostgresDataSourceOptions } from 'typeorm/driver/postgres/PostgresDataSourceOptions';
 
 import { validationSchemaConfig } from './configs/validation-schema.config';
+import { PRODUCTION_STAGE } from './constants/stage.constants';
 import { seedOneHundredPercentCategory } from './seeds/one-hundred-percent-category.seed';
 import { GameModule } from './modules/game/game.module';
 import { CategoriesModule } from './modules/categories/categories.module';
@@ -31,7 +32,7 @@ const databaseLogger = new Logger('Database', { timestamp: true });
                 password: configService.getOrThrow<string>('DB_PASSWORD'),
                 database: configService.getOrThrow<string>('DB_DATABASE'),
                 autoLoadEntities: true,
-                synchronize: true,
+                synchronize: configService.getOrThrow<string>('STAGE') !== PRODUCTION_STAGE,
             }),
             dataSourceFactory: async (options?: DataSourceOptions) => {
                 if (!options) {

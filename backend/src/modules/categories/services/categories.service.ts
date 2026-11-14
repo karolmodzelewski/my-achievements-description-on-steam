@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, In, Repository } from 'typeorm';
 
+import { CATEGORIES_MAX_AMOUNT } from '../../../constants/validation.constants';
 import { Category } from '../../../entities/category.entity';
 import { CategoryKind } from '../../../enums/category-kind.enum';
 import { ErrorCode } from '../../../enums/error-code.enum';
@@ -66,6 +67,10 @@ export class CategoriesService {
     }
 
     private throwIfCategoriesAreInvalid(kind: CategoryKind, savedCategories: Category[], categoriesDto: CategoryDto[]): void {
+        if (categoriesDto.length > CATEGORIES_MAX_AMOUNT) {
+            throw new BadRequestException(`At most ${CATEGORIES_MAX_AMOUNT} ${kind} categories can be saved (requested ${categoriesDto.length})`);
+        }
+
         const unknownCategories = categoriesDto.filter(({ id }) => id !== undefined && !savedCategories.some((category) => category.id === id));
 
         if (unknownCategories.length) {
