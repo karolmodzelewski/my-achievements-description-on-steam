@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.15.0 - 14.11.2026
+
+- Improve overall security in the application
+
 ## 1.14.0 - 14.11.2026
 
 - Bump dependencies to the newest compatible versions, including @stylistic/eslint-plugin 6 and @types/node 26
