@@ -1,10 +1,60 @@
+@use 'sass:math';
 @use '@angular/cdk' as cdk;
 @use '@angular/material' as mat;
 @use 'src/styles/reset' as *;
 @use 'src/styles/colors' as *;
+@use 'src/styles/theme-colors' as theme-colors;
+
+// Material 2 button tracking: 1.25px at its 14px font size, in em so it scales with the button font size
+$button-letter-spacing: math.div(1.25, 14) * 1em;
 
 // Provides the .cdk-visually-hidden class for text meant only for screen readers
 @include cdk.a11y-visually-hidden();
+
+html {
+    @include mat.theme(
+        (
+            color: (
+                primary: theme-colors.$primary-palette,
+                theme-type: light,
+            ),
+            typography: Roboto,
+        )
+    );
+    @include mat.theme-overrides(
+        (
+            on-surface: rgba(0, 0, 0, 0.87),
+            on-surface-variant: rgba(0, 0, 0, 0.54),
+            error: $color-light-red,
+            body-large-tracking: 0.5px,
+            body-medium-tracking: 0.25px,
+            hover-state-layer-opacity: 0.04,
+        )
+    );
+    @include mat.button-overrides(
+        (
+            outlined-container-shape: 4px,
+            protected-container-shape: 4px,
+            outlined-container-height: 36px,
+            protected-container-height: 36px,
+            outlined-disabled-outline-color: rgba(0, 0, 0, 0.12),
+            outlined-label-text-tracking: $button-letter-spacing,
+            protected-label-text-tracking: $button-letter-spacing,
+        )
+    );
+    @include mat.form-field-overrides(
+        (
+            filled-container-color: $color-dark-white,
+            trailing-icon-color: currentColor,
+            error-trailing-icon-color: currentColor,
+            error-hover-trailing-icon-color: currentColor,
+            error-focus-trailing-icon-color: currentColor,
+            filled-error-hover-label-text-color: var(--mat-sys-error),
+            filled-error-hover-active-indicator-color: var(--mat-sys-error),
+            subscript-text-line-height: 20px,
+        )
+    );
+}
 
 html,
 body {
@@ -13,8 +63,28 @@ body {
 
 body {
     margin: 0;
-    font-family: Roboto, 'Helvetica Neue', sans-serif;
+    font: var(--mat-sys-body-medium);
+    letter-spacing: var(--mat-sys-body-medium-tracking);
     background: $color-light-purple;
+}
+
+.mat-mdc-button-disabled {
+    @include mat.button-overrides(
+        (
+            outlined-hover-state-layer-opacity: 0,
+        )
+    );
+}
+
+.mat-mdc-raised-button.mat-primary {
+    @include mat.button-overrides(
+        (
+            protected-container-color: var(--mat-sys-primary),
+            protected-label-text-color: var(--mat-sys-on-primary),
+            protected-state-layer-color: var(--mat-sys-on-primary),
+            protected-ripple-color: color-mix(in srgb, var(--mat-sys-on-primary) 12%, transparent),
+        )
+    );
 }
 
 .mat-mdc-snack-bar-container {
@@ -44,6 +114,11 @@ body {
         (
             container-color: $color-dark-white,
             container-shape: 8px,
+            subhead-tracking: 0.25px,
+            supporting-text-size: 16px,
+            supporting-text-line-height: 24px,
+            supporting-text-tracking: 0.5px,
+            with-actions-content-padding: 20px 24px,
             actions-padding: 20px 24px 24px,
         )
     );

@@ -3,8 +3,6 @@
     "compilerOptions": {
         "outDir": "./dist/out-tsc",
         "rootDir": "./src",
-        "forceConsistentCasingInFileNames": true,
-        "esModuleInterop": true,
         "strict": true,
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,
@@ -16,9 +14,8 @@
         "moduleResolution": "bundler",
         "importHelpers": true,
         "target": "ES2022",
-        "module": "ES2022",
-        "useDefineForClassFields": false,
-        "strictPropertyInitialization": false
+        "module": "preserve",
+        "useDefineForClassFields": false
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,

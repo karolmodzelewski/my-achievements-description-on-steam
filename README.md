@@ -79,7 +79,6 @@ Frontend:
 Backend:
 
 - NestJS 12
-- RxJS 7
 - TypeScript 6
 - PostgreSQL
 - TypeORM

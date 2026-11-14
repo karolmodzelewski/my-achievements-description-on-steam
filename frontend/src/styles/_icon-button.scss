@@ -9,6 +9,7 @@
             (
                 state-layer-size: $state-layer-size,
                 icon-size: $icon-size,
+                icon-color: currentColor,
             ),
             $overrides
         )

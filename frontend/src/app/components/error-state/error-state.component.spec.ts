@@ -10,14 +10,14 @@ describe('ErrorStateComponent', () => {
     let fixture: ComponentFixture<ErrorStateComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [ErrorStateComponent],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(ErrorStateComponent);
         component = fixture.componentInstance;
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('should create', () => {

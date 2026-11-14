@@ -13,10 +13,10 @@ describe('DescriptionSectionComponent', () => {
     let fixture: ComponentFixture<DescriptionSectionComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [DescriptionSectionComponent],
             providers: [SnackbarService],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(DescriptionSectionComponent);
         component = fixture.componentInstance;
@@ -24,7 +24,7 @@ describe('DescriptionSectionComponent', () => {
 
         fixture.componentRef.setInput('descriptionData', { categories: [], completed: emptySection, newAchievements: emptySection } satisfies DescriptionResponseBody);
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {

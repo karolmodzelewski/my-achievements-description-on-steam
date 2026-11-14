@@ -10,16 +10,16 @@ describe('ExpansionButtonTextComponent', () => {
     let fixture: ComponentFixture<ExpansionButtonTextComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [ExpansionButtonTextComponent],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(ExpansionButtonTextComponent);
         component = fixture.componentInstance;
         fixture.componentRef.setInput('buttonText', 'Expand');
         fixture.componentRef.setInput('iconName', 'expand_more');
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {

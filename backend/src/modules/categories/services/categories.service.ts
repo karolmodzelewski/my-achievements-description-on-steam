@@ -1,8 +1,6 @@
 import { BadRequestException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { from, map, Observable, tap } from 'rxjs';
-
 import { EntityManager, In, Repository } from 'typeorm';
 
 import { Category } from '../../../entities/category.entity';
@@ -20,39 +18,37 @@ export class CategoriesService {
         private readonly categoriesRepository: Repository<Category>
     ) {}
 
-    public getCategories(): Observable<Category[]> {
-        return from(this.categoriesRepository.find()).pipe(
-            tap((categories) => this.logger.debug(`Found ${categories.length} categories`)),
-            map((categories) => categories.sort(compareCategories))
-        );
+    public async getCategories(): Promise<Category[]> {
+        const categories = await this.categoriesRepository.find();
+
+        this.logger.debug(`Found ${categories.length} categories`);
+
+        return categories.sort(compareCategories);
     }
 
     // Replaces all categories of the kind, so categories missing in the request are deleted and their order is the order of the request
-    public saveCategories(kind: CategoryKind, categoriesDto: CategoryDto[]): Observable<void> {
-        return from(
-            this.categoriesRepository.manager.transaction(async (manager) => {
-                const savedCategories = await manager.findBy(Category, { kind });
+    public async saveCategories(kind: CategoryKind, categoriesDto: CategoryDto[]): Promise<void> {
+        const summary = await this.categoriesRepository.manager.transaction(async (manager) => {
+            const savedCategories = await manager.findBy(Category, { kind });
 
-                if (kind === CategoryKind.ONE_HUNDRED_PERCENT) {
-                    return this.saveOneHundredPercentCategory(manager, savedCategories, categoriesDto);
-                }
+            if (kind === CategoryKind.ONE_HUNDRED_PERCENT) {
+                return this.saveOneHundredPercentCategory(manager, savedCategories, categoriesDto);
+            }
 
-                this.throwIfCategoriesAreInvalid(kind, savedCategories, categoriesDto);
+            this.throwIfCategoriesAreInvalid(kind, savedCategories, categoriesDto);
 
-                const removedCategoriesIds = savedCategories.filter(({ id }) => !categoriesDto.some((categoryDto) => categoryDto.id === id)).map(({ id }) => id);
+            const removedCategoriesIds = savedCategories.filter(({ id }) => !categoriesDto.some((categoryDto) => categoryDto.id === id)).map(({ id }) => id);
 
-                await this.deleteCategories(manager, removedCategoriesIds);
-                await manager.save(
-                    Category,
-                    categoriesDto.map(({ id, name, description, iconName, shouldHideGames }, position) => ({ id, kind, name, description: description ?? null, iconName, shouldHideGames, position }))
-                );
+            await this.deleteCategories(manager, removedCategoriesIds);
+            await manager.save(
+                Category,
+                categoriesDto.map(({ id, name, description, iconName, shouldHideGames }, position) => ({ id, kind, name, description: description ?? null, iconName, shouldHideGames, position }))
+            );
 
-                return this.getSavedCategoriesSummary(kind, categoriesDto, removedCategoriesIds);
-            })
-        ).pipe(
-            tap((summary) => this.logger.log(summary)),
-            map(() => undefined)
-        );
+            return this.getSavedCategoriesSummary(kind, categoriesDto, removedCategoriesIds);
+        });
+
+        this.logger.log(summary);
     }
 
     // The 100% category always exists and has a fixed name, so only its icon can be changed

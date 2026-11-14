@@ -22,7 +22,7 @@
         </mat-form-field>
     </fieldset>
 
-    <button [disabled]="!hasChanges() || categoryForm().invalid() || categoryForm().submitting()" class="save-button" color="primary" type="submit" mat-stroked-button disabledInteractive>
+    <button [disabled]="!hasChanges() || categoryForm().invalid() || categoryForm().submitting()" class="save-button" type="submit" matButton="outlined" disabledInteractive>
         Save 100% category
     </button>
 </form>

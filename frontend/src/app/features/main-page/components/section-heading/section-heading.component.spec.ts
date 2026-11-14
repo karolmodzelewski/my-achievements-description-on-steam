@@ -10,15 +10,15 @@ describe('SectionHeadingComponent', () => {
     let fixture: ComponentFixture<SectionHeadingComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [SectionHeadingComponent],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(SectionHeadingComponent);
         component = fixture.componentInstance;
         fixture.componentRef.setInput('headingText', 'Heading');
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {

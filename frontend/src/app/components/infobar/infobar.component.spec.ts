@@ -13,16 +13,16 @@ describe('InfobarComponent', () => {
     let debugElement: DebugElement;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [InfobarComponent],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(InfobarComponent);
         component = fixture.componentInstance;
         debugElement = fixture.debugElement;
         fixture.componentRef.setInput('message', '');
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {
@@ -37,14 +37,14 @@ describe('InfobarComponent', () => {
         expect(components.length, `Should be only 1 'mat-icon' component`).toEqual(1);
     });
 
-    it(`Should render paragraph with given message`, () => {
+    it(`Should render paragraph with given message`, async () => {
         // Arrange
         const message = 'Some test message';
 
         fixture.componentRef.setInput('message', message);
 
         // Act
-        fixture.detectChanges();
+        await fixture.whenStable();
 
         // Assert
         const paragraphs = debugElement.queryAll(By.css('[data-testId="infobarMessage"]'));

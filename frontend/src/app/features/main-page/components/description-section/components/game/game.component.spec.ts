@@ -16,10 +16,10 @@ describe('GameComponent', () => {
     let fixture: ComponentFixture<GameComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [GameComponent],
             providers: [provideHttpClient(), provideHttpClientTesting(), EditGameService, SnackbarService, ConfirmationService],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(GameComponent);
         component = fixture.componentInstance;
@@ -30,7 +30,7 @@ describe('GameComponent', () => {
         } satisfies DescriptionEntry);
         fixture.componentRef.setInput('shouldShowEdition', false);
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {
