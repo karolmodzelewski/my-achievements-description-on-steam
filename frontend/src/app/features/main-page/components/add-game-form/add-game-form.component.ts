@@ -1,7 +1,7 @@
 import { ViewportScroller } from '@angular/common';
 import type { HttpErrorResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
-import { afterNextRender, Component, computed, effect, inject, Injector, input, linkedSignal, output, untracked, viewChild, viewChildren } from '@angular/core';
+import { afterNextRender, afterRenderEffect, Component, computed, inject, Injector, input, linkedSignal, output, untracked, viewChild, viewChildren } from '@angular/core';
 import type { FieldState } from '@angular/forms/signals';
 import { applyEach, disabled, form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -83,13 +83,15 @@ export class AddGameFormComponent {
     );
 
     constructor() {
-        effect(() => {
-            if (this.editGameService.editedGame()) {
-                untracked(() => {
-                    this.viewportScroller.scrollToAnchor(this.headingId);
-                    this.gameForm.name().focusBoundControl({ preventScroll: true });
-                });
+        afterRenderEffect(() => {
+            if (!this.editGameService.editedGame()) {
+                return;
             }
+
+            untracked(() => {
+                this.viewportScroller.scrollToAnchor(this.headingId);
+                this.gameForm.name().focusBoundControl({ preventScroll: true });
+            });
         });
     }
 

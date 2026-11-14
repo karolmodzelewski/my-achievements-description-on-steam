@@ -14,15 +14,15 @@ describe('WrapperComponent', () => {
     let debugElement: DebugElement;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [WrapperComponent, WrapperFixtureComponent],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(WrapperComponent);
         component = fixture.componentInstance;
         debugElement = fixture.debugElement;
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {
@@ -37,12 +37,12 @@ describe('WrapperComponent', () => {
         expect(wrapper, 'There should be a wrapper container').toBeTruthy();
     });
 
-    it('Should show ng-content content', () => {
+    it('Should show ng-content content', async () => {
         // Arrange
         const componentFixture = TestBed.createComponent(WrapperFixtureComponent);
 
         // Act
-        componentFixture.detectChanges();
+        await componentFixture.whenStable();
 
         // Assert
         const wrapperFixtureComponent = componentFixture.debugElement.query(By.css('[data-testId="wrapperHost"]'));

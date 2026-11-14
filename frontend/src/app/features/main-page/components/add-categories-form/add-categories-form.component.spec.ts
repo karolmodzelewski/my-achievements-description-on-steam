@@ -14,10 +14,10 @@ describe('AddCategoriesFormComponent', () => {
     let fixture: ComponentFixture<AddCategoriesFormComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [AddCategoriesFormComponent],
             providers: [provideHttpClient(), provideHttpClientTesting(), SnackbarService, ConfirmationService],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(AddCategoriesFormComponent);
         component = fixture.componentInstance;
@@ -26,7 +26,7 @@ describe('AddCategoriesFormComponent', () => {
         fixture.componentRef.setInput('lengthCategories', []);
         fixture.componentRef.setInput('difficultyCategories', []);
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {

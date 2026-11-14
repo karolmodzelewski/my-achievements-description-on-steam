@@ -10,14 +10,14 @@ describe('HeaderComponent', () => {
     let fixture: ComponentFixture<HeaderComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [HeaderComponent],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(HeaderComponent);
         component = fixture.componentInstance;
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {

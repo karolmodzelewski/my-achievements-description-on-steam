@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { map, Observable, take, tap, zip } from 'rxjs';
-
 import { Repository } from 'typeorm';
 
 import { Description } from '../interfaces/description.interface';
@@ -29,14 +27,14 @@ export class DescriptionService {
         private readonly categoriesRepository: Repository<Category>
     ) {}
 
-    public getDescription(): Observable<Description> {
-        return zip(this.categoriesRepository.find(), this.gameRepository.find({ relations: { groups: true, categories: true } })).pipe(
-            take(1),
-            map(([categories, games]) => this.getMappedDescription(categories.sort(compareCategories), games)),
-            tap(({ categories, completed, newAchievements }) =>
-                this.logger.debug(`Built description: ${categories.length} categories, ${completed.amount} completed and ${newAchievements.amount} with new achievements`)
-            )
-        );
+    public async getDescription(): Promise<Description> {
+        const [categories, games] = await Promise.all([this.categoriesRepository.find(), this.gameRepository.find({ relations: { groups: true, categories: true } })]);
+        const description = this.getMappedDescription(categories.sort(compareCategories), games);
+        const { completed, newAchievements } = description;
+
+        this.logger.debug(`Built description: ${description.categories.length} categories, ${completed.amount} completed and ${newAchievements.amount} with new achievements`);
+
+        return description;
     }
 
     // Categories are sorted, so both the listed categories and the icons of every game go from the first main to the last difficulty category

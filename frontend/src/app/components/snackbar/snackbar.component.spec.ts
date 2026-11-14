@@ -14,18 +14,18 @@ describe('SnackbarComponent', () => {
     beforeEach(async () => {
         const data = { snackbarMessage: 'Snackbar message' } satisfies SnackbarData;
 
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [SnackbarComponent],
             providers: [
                 { provide: MAT_SNACK_BAR_DATA, useValue: data },
                 { provide: MatSnackBarRef, useValue: { dismiss: vi.fn() } },
             ],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(SnackbarComponent);
         component = fixture.componentInstance;
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('should create', () => {

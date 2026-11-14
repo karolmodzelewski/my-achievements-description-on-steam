@@ -10,14 +10,14 @@ describe('LoadingStateComponent', () => {
     let fixture: ComponentFixture<LoadingStateComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [LoadingStateComponent],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(LoadingStateComponent);
         component = fixture.componentInstance;
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('should create', () => {

@@ -14,15 +14,16 @@ describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
+    beforeEach(() => {
+        TestBed.configureTestingModule({
             imports: [MainPageComponent],
             providers: [provideHttpClient(), provideHttpClientTesting(), EditGameService, SnackbarService, ConfirmationService],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(MainPageComponent);
         component = fixture.componentInstance;
 
+        // whenStable would wait for the categories and description requests, which are never flushed by HttpTestingController
         fixture.detectChanges();
     });
 

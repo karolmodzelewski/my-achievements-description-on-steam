@@ -10,16 +10,16 @@ describe('CategoryComponent', () => {
     let fixture: ComponentFixture<CategoryComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [CategoryComponent],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(CategoryComponent);
         component = fixture.componentInstance;
         fixture.componentRef.setInput('iconName', 'icon');
         fixture.componentRef.setInput('description', 'Long game');
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {

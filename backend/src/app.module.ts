@@ -33,7 +33,11 @@ const databaseLogger = new Logger('Database', { timestamp: true });
                 autoLoadEntities: true,
                 synchronize: true,
             }),
-            dataSourceFactory: async (options: DataSourceOptions) => {
+            dataSourceFactory: async (options?: DataSourceOptions) => {
+                if (!options) {
+                    throw new Error('Database options are missing');
+                }
+
                 const dataSource = await new DataSource(options).initialize();
                 const { host, port, database } = options as PostgresDataSourceOptions;
 

@@ -15,10 +15,10 @@ describe('AddGameFormComponent', () => {
     let fixture: ComponentFixture<AddGameFormComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [AddGameFormComponent],
             providers: [provideHttpClient(), provideHttpClientTesting(), EditGameService, SnackbarService, ConfirmationService],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(AddGameFormComponent);
         component = fixture.componentInstance;
@@ -26,7 +26,7 @@ describe('AddGameFormComponent', () => {
         fixture.componentRef.setInput('lengthCategories', []);
         fixture.componentRef.setInput('difficultyCategories', []);
 
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('Should create a component', () => {

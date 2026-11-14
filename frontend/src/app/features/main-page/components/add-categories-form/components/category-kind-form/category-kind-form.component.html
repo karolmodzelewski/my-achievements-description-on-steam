@@ -107,7 +107,7 @@
                     </mat-form-field>
 
                     @if (canHideGames()) {
-                        <mat-checkbox [formField]="categoryField.shouldHideGames" [aria-label]="hideGamesAriaLabel" class="category-checkbox" color="primary">Hide games</mat-checkbox>
+                        <mat-checkbox [formField]="categoryField.shouldHideGames" [aria-label]="hideGamesAriaLabel" class="category-checkbox">Hide games</mat-checkbox>
                     }
 
                     <div class="category-buttons">
@@ -123,16 +123,15 @@
         </div>
 
         @if (hasNoCategories()) {
-            <button #addFirstCategoryButton (click)="addCategory(0)" class="add-category-button" color="primary" type="button" mat-stroked-button>Add category</button>
+            <button #addFirstCategoryButton (click)="addCategory(0)" class="add-category-button" type="button" matButton="outlined">Add category</button>
         }
     </fieldset>
 
     <button
         [disabled]="!hasChanges() || categoriesForm().invalid() || categoriesForm().submitting()"
         class="save-button"
-        color="primary"
         type="submit"
-        mat-stroked-button
+        matButton="outlined"
         disabledInteractive
     >
         Save {{ lowerCaseLegend() }}

@@ -1,8 +1,6 @@
 import { BadRequestException, ConflictException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { catchError, from, map, Observable, tap, throwError } from 'rxjs';
-
 import { EntityManager, In, QueryFailedError, Repository } from 'typeorm';
 
 import { GameDto } from '../dtos/game.dto';
@@ -28,62 +26,62 @@ export class GameService {
         private readonly gameGroupRepository: Repository<GameGroup>
     ) {}
 
-    public createGame(gameDto: GameDto): Observable<void> {
+    public async createGame(gameDto: GameDto): Promise<void> {
+        this.throwIfNameIsEmpty(gameDto);
+
+        const { groups, categories: categoriesIds, ...game } = gameDto;
+        const id = await this.saveGameInTransaction(gameDto.name, async (manager) => {
+            const categories = await this.findAssignableCategories(manager, categoriesIds);
+            const { id: createdId } = await manager.save(manager.create(Game, { ...game, categories }));
+
+            await this.insertGroups(manager, createdId, groups);
+
+            return createdId;
+        });
+
+        this.logger.log(`Created game ${this.getGameSummary(id, gameDto)}`);
+    }
+
+    public async updateGame(id: number, gameDto: GameDto): Promise<void> {
         this.throwIfNameIsEmpty(gameDto);
 
         const { groups, categories: categoriesIds, ...game } = gameDto;
 
-        return from(
-            this.gameRepository.manager.transaction(async (manager) => {
-                const categories = await this.findAssignableCategories(manager, categoriesIds);
-                const { id } = await manager.save(manager.create(Game, { ...game, categories }));
+        await this.saveGameInTransaction(gameDto.name, async (manager) => {
+            const categories = await this.findAssignableCategories(manager, categoriesIds);
+            const { affected } = await manager.update(Game, id, game);
 
-                await this.insertGroups(manager, id, groups);
+            this.throwIfNotFound(getGameNotFoundMessage(id), affected);
 
-                return id;
-            })
-        ).pipe(
-            tap((id) => this.logger.log(`Created game ${this.getGameSummary(id, gameDto)}`)),
-            map(() => undefined),
-            catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name)))
-        );
+            await manager.save(Game, { id, categories });
+
+            await manager.delete(GameGroup, { game: { id } });
+            await this.insertGroups(manager, id, groups);
+        });
+
+        this.logger.log(`Updated game ${this.getGameSummary(id, gameDto)}`);
     }
 
-    public updateGame(id: number, gameDto: GameDto): Observable<void> {
-        this.throwIfNameIsEmpty(gameDto);
+    public async deleteGame(id: number): Promise<void> {
+        const { affected } = await this.gameRepository.delete(id);
 
-        const { groups, categories: categoriesIds, ...game } = gameDto;
-
-        return from(
-            this.gameRepository.manager.transaction(async (manager) => {
-                const categories = await this.findAssignableCategories(manager, categoriesIds);
-                const { affected } = await manager.update(Game, id, game);
-
-                this.throwIfNotFound(getGameNotFoundMessage(id), affected);
-
-                await manager.save(Game, { id, categories });
-
-                await manager.delete(GameGroup, { game: { id } });
-                await this.insertGroups(manager, id, groups);
-            })
-        ).pipe(
-            tap(() => this.logger.log(`Updated game ${this.getGameSummary(id, gameDto)}`)),
-            catchError((error: unknown) => throwError(() => this.mapUniqueNameViolation(error, gameDto.name)))
-        );
+        this.throwIfNotFound(getGameNotFoundMessage(id), affected);
+        this.logger.log(`Deleted game with id '${id}'`);
     }
 
-    public deleteGame(id: number): Observable<void> {
-        return from(this.gameRepository.delete(id)).pipe(
-            map(({ affected }) => this.throwIfNotFound(getGameNotFoundMessage(id), affected)),
-            tap(() => this.logger.log(`Deleted game with id '${id}'`))
-        );
+    public async deleteGroup(gameId: number, groupId: number): Promise<void> {
+        const { affected } = await this.gameGroupRepository.delete({ id: groupId, game: { id: gameId } });
+
+        this.throwIfNotFound(`Group with id '${groupId}' of game with id '${gameId}' doesn't exist`, affected);
+        this.logger.log(`Deleted group with id '${groupId}' of game with id '${gameId}'`);
     }
 
-    public deleteGroup(gameId: number, groupId: number): Observable<void> {
-        return from(this.gameGroupRepository.delete({ id: groupId, game: { id: gameId } })).pipe(
-            map(({ affected }) => this.throwIfNotFound(`Group with id '${groupId}' of game with id '${gameId}' doesn't exist`, affected)),
-            tap(() => this.logger.log(`Deleted group with id '${groupId}' of game with id '${gameId}'`))
-        );
+    private async saveGameInTransaction<T>(name: string, saveGame: (manager: EntityManager) => Promise<T>): Promise<T> {
+        try {
+            return await this.gameRepository.manager.transaction(saveGame);
+        } catch (error) {
+            throw this.mapUniqueNameViolation(error, name);
+        }
     }
 
     private async insertGroups(manager: EntityManager, gameId: number, groups: GameGroupDto[]): Promise<void> {

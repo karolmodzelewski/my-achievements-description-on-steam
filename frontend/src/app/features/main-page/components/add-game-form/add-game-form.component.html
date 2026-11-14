@@ -59,7 +59,7 @@
 
                 <div class="checkboxes-container">
                     @for (mainCategoryField of gameForm.mainCategories; track mainCategoryField) {
-                        <mat-checkbox [formField]="mainCategoryField.isChecked" color="primary">{{ mainCategoryField.name().value() }}</mat-checkbox>
+                        <mat-checkbox [formField]="mainCategoryField.isChecked">{{ mainCategoryField.name().value() }}</mat-checkbox>
                     }
                 </div>
             </fieldset>
@@ -78,7 +78,7 @@
                     <input [value]="baseGameGroupName" matInput type="text" disabled />
                 </mat-form-field>
 
-                <mat-checkbox [formField]="gameForm.hasNewAchievements" [aria-label]="baseGameNewAchievementsAriaLabel" class="group-checkbox" color="primary">New achievements</mat-checkbox>
+                <mat-checkbox [formField]="gameForm.hasNewAchievements" [aria-label]="baseGameNewAchievementsAriaLabel" class="group-checkbox">New achievements</mat-checkbox>
 
                 <div class="group-buttons">
                     <button #addBaseGameGroupButton (click)="addGroup(0)" [attr.aria-label]="addBaseGameGroupAriaLabel" class="icon-group" type="button" matIconButton>
@@ -124,7 +124,7 @@
                         }
                     </mat-form-field>
 
-                    <mat-checkbox [formField]="groupField.hasNewAchievements" [aria-label]="newAchievementsAriaLabel" class="group-checkbox" color="primary">New achievements</mat-checkbox>
+                    <mat-checkbox [formField]="groupField.hasNewAchievements" [aria-label]="newAchievementsAriaLabel" class="group-checkbox">New achievements</mat-checkbox>
 
                     <div class="group-buttons">
                         <button #addGroupButton (click)="addGroup($index + 1)" [attr.aria-label]="addGroupAriaLabel" class="icon-group" type="button" matIconButton>
@@ -139,12 +139,12 @@
         </fieldset>
 
         <div class="buttons-container">
-            <button [disabled]="gameForm().invalid() || gameForm().submitting()" class="form-button" color="primary" type="submit" mat-stroked-button disabledInteractive>
+            <button [disabled]="gameForm().invalid() || gameForm().submitting()" class="form-button" type="submit" matButton="outlined" disabledInteractive>
                 {{ isEditing() ? 'Edit game' : 'Add game' }}
             </button>
 
             @if (isEditing()) {
-                <button (click)="resetForm()" class="form-button" color="primary" type="button" mat-stroked-button>Cancel editing</button>
+                <button (click)="resetForm()" class="form-button" type="button" matButton="outlined">Cancel editing</button>
             }
         </div>
     </form>

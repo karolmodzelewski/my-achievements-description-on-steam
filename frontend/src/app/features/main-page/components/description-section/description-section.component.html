@@ -43,13 +43,13 @@
 
         @if (descriptionData().completed.amount) {
             <div class="margin-top">
-                <p aria-hidden="true">
+                <p aria-hidden="true" class="section-line">
                     <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-top')" />
                 </p>
-                <p>
+                <p class="section-line">
                     <mados-cut-off-text [text]="completedHeading()" [cutOffIndex]="cutOffIndexes().get('completed-heading')" />
                 </p>
-                <p aria-hidden="true">
+                <p aria-hidden="true" class="section-line">
                     <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-bottom')" />
                 </p>
             </div>
@@ -70,13 +70,13 @@
 
         @if (descriptionData().newAchievements.amount) {
             <div class="margin-top">
-                <p aria-hidden="true">
+                <p aria-hidden="true" class="section-line">
                     <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-top')" />
                 </p>
-                <p>
+                <p class="section-line">
                     <mados-cut-off-text [text]="newAchievementsHeading()" [cutOffIndex]="cutOffIndexes().get('new-achievements-heading')" />
                 </p>
-                <p aria-hidden="true">
+                <p aria-hidden="true" class="section-line">
                     <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-bottom')" />
                 </p>
             </div>

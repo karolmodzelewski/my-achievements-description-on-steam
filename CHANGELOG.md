@@ -2,6 +2,15 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.14.0 - 14.11.2026
+
+- Bump dependencies to the newest compatible versions, including @stylistic/eslint-plugin 6 and @types/node 26
+- Switch frontend to Material 3 theming with palettes generated from the application purple and matButton variants, keeping the previous look of buttons, form fields and texts
+- Switch frontend HttpClient to the default Fetch backend
+- Replace RxJS with async/await on backend and remove unused backend dependencies
+- Make backend TypeScript config strict and aligned with frontend, and drop options deprecated in TypeScript 6
+- Modernize frontend unit tests for zoneless change detection
+
 ## 1.13.0 - 14.11.2026
 
 - Add a confirmation dialog before deleting a group on Edit game mode
