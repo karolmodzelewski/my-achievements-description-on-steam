@@ -1,5 +1,7 @@
+@let collapseText = 'addCategoriesForm.collapse' | transloco;
+
 <section [attr.aria-labelledby]="headingId">
-    <mados-section-heading [headingText]="headingText" [id]="headingId" class="section-heading" />
+    <mados-section-heading [headingText]="'addCategoriesForm.heading' | transloco" [id]="headingId" class="section-heading" />
 
     @if (shouldShowCategories()) {
         <button
@@ -12,7 +14,7 @@
             type="button"
             matButton="elevated"
         >
-            <mados-expansion-button-text iconName="expand_less" buttonText="Collapse" />
+            <mados-expansion-button-text [buttonText]="collapseText" iconName="expand_less" />
         </button>
 
         <div [id]="categoriesFormsId" class="categories">
@@ -20,9 +22,9 @@
                 <mados-one-hundred-percent-form (categorySaved)="categoriesSaved.emit()" [category]="oneHundredPercentCategory" />
             }
 
-            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.MAIN" [categories]="mainCategories()" legend="Main categories" />
-            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.LENGTH" [categories]="lengthCategories()" legend="Length categories" />
-            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.DIFFICULTY" [categories]="difficultyCategories()" legend="Difficulty categories" />
+            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.MAIN" [categories]="mainCategories()" />
+            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.LENGTH" [categories]="lengthCategories()" />
+            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.DIFFICULTY" [categories]="difficultyCategories()" />
         </div>
     }
 
@@ -37,9 +39,9 @@
         matButton="elevated"
     >
         @if (shouldShowCategories()) {
-            <mados-expansion-button-text iconName="expand_less" buttonText="Collapse" />
+            <mados-expansion-button-text [buttonText]="collapseText" iconName="expand_less" />
         } @else {
-            <mados-expansion-button-text iconName="expand_more" buttonText="Expand" />
+            <mados-expansion-button-text [buttonText]="'addCategoriesForm.expand' | transloco" iconName="expand_more" />
         }
     </button>
 </section>

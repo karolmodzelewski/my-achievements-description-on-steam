@@ -1,21 +1,12 @@
 <form [formRoot]="categoriesForm">
     <fieldset>
-        <legend class="legend">{{ legend() }}</legend>
+        <legend class="legend">{{ `${kindKeyPrefix()}.legend` | transloco }}</legend>
 
         @let categoryRowsClass = 'category-rows';
 
         <div (cdkDropListDropped)="moveCategory($event)" [class]="categoryRowsClass" cdkDropList cdkDropListLockAxis="y">
             @for (categoryField of categoriesForm.categories; track categoryField) {
-                @let moveCategoryAriaLabel = `Move category ${$index + 1}`;
-                @let nameAriaLabel = `Category name (category ${$index + 1})`;
-                @let descriptionAriaLabel = `Category description (category ${$index + 1})`;
-                @let iconNameAriaLabel = `Icon name (category ${$index + 1})`;
-                @let hideGamesAriaLabel = `Hide games (category ${$index + 1})`;
-                @let clearNameAriaLabel = `Clear category ${$index + 1} name`;
-                @let clearDescriptionAriaLabel = `Clear category ${$index + 1} description`;
-                @let clearIconNameAriaLabel = `Clear category ${$index + 1} icon name`;
-                @let addCategoryAriaLabel = `Add category below category ${$index + 1}`;
-                @let removeCategoryAriaLabel = `Remove category ${$index + 1}`;
+                @let categoryPosition = { index: $index + 1 };
                 @let dragBoundary = `.${categoryRowsClass}`;
 
                 <div [class.without-checkbox]="!canHideGames()" [cdkDragBoundary]="dragBoundary" class="category-row" cdkDrag>
@@ -23,7 +14,7 @@
                         #dragHandle
                         (keydown.arrowUp)="moveCategoryWithKeyboard($event, $index, -1)"
                         (keydown.arrowDown)="moveCategoryWithKeyboard($event, $index, 1)"
-                        [attr.aria-label]="moveCategoryAriaLabel"
+                        [attr.aria-label]="'categoryKindForm.moveCategoryAriaLabel' | transloco: categoryPosition"
                         aria-keyshortcuts="ArrowUp ArrowDown"
                         class="drag-handle icon-category"
                         type="button"
@@ -35,40 +26,40 @@
 
                     <div *cdkDragPreview class="drag-preview">
                         <mat-icon class="drag-preview-icon" fontIcon="drag_indicator"></mat-icon>
-                        {{ categoryField.name().value().trim() || newCategoryName }}
+                        {{ categoryField.name().value().trim() || ('categoryKindForm.newCategory' | transloco) }}
                     </div>
 
                     <mat-form-field class="name-form-field">
-                        <mat-label>Category name:</mat-label>
-                        <input [formField]="categoryField.name" [attr.aria-label]="nameAriaLabel" matInput type="text" />
+                        <mat-label>{{ 'categoryKindForm.nameLabel' | transloco }}</mat-label>
+                        <input [formField]="categoryField.name" [attr.aria-label]="'categoryKindForm.nameAriaLabel' | transloco: categoryPosition" matInput type="text" />
 
                         @if (categoryField.name().value()) {
-                            <button (click)="clearField($event, categoryField.name)" [attr.aria-label]="clearNameAriaLabel" class="icon-clear" type="button" matIconButton matIconSuffix>
+                            <button (click)="clearField($event, categoryField.name)" [attr.aria-label]="'categoryKindForm.clearNameAriaLabel' | transloco: categoryPosition" class="icon-clear" type="button" matIconButton matIconSuffix>
                                 <mat-icon fontIcon="clear"></mat-icon>
                             </button>
                         }
 
                         @if (categoryField.name().getError('required')) {
-                            <mat-error>Category name is required</mat-error>
+                            <mat-error>{{ 'categoryKindForm.nameRequired' | transloco }}</mat-error>
                         }
 
                         @if (categoryField.name().getError('pattern')) {
-                            <mat-error>Category name can't contain only whitespaces</mat-error>
+                            <mat-error>{{ 'categoryKindForm.nameBlank' | transloco }}</mat-error>
                         }
 
                         @if (categoryField.name().getError('unique')) {
-                            <mat-error>Category name has to be unique</mat-error>
+                            <mat-error>{{ 'categoryKindForm.nameUnique' | transloco }}</mat-error>
                         }
                     </mat-form-field>
 
                     <mat-form-field class="description-form-field">
-                        <mat-label>Category description:</mat-label>
-                        <input [formField]="categoryField.description" [attr.aria-label]="descriptionAriaLabel" matInput type="text" />
+                        <mat-label>{{ 'categoryKindForm.descriptionLabel' | transloco }}</mat-label>
+                        <input [formField]="categoryField.description" [attr.aria-label]="'categoryKindForm.descriptionAriaLabel' | transloco: categoryPosition" matInput type="text" />
 
                         @if (categoryField.description().value()) {
                             <button
                                 (click)="clearField($event, categoryField.description)"
-                                [attr.aria-label]="clearDescriptionAriaLabel"
+                                [attr.aria-label]="'categoryKindForm.clearDescriptionAriaLabel' | transloco: categoryPosition"
                                 class="icon-clear"
                                 type="button"
                                 matIconButton
@@ -79,42 +70,44 @@
                         }
 
                         @if (categoryField.description().getError('required')) {
-                            <mat-error>Category description is required</mat-error>
+                            <mat-error>{{ 'categoryKindForm.descriptionRequired' | transloco }}</mat-error>
                         }
 
                         @if (categoryField.description().getError('pattern')) {
-                            <mat-error>Category description can't contain only whitespaces</mat-error>
+                            <mat-error>{{ 'categoryKindForm.descriptionBlank' | transloco }}</mat-error>
                         }
                     </mat-form-field>
 
                     <mat-form-field class="icon-name-form-field">
-                        <mat-label>Icon name:</mat-label>
-                        <input [formField]="categoryField.iconName" [attr.aria-label]="iconNameAriaLabel" matInput type="text" />
+                        <mat-label>{{ 'iconNameField.label' | transloco }}</mat-label>
+                        <input [formField]="categoryField.iconName" [attr.aria-label]="'categoryKindForm.iconNameAriaLabel' | transloco: categoryPosition" matInput type="text" />
 
                         @if (categoryField.iconName().value()) {
-                            <button (click)="clearField($event, categoryField.iconName)" [attr.aria-label]="clearIconNameAriaLabel" class="icon-clear" type="button" matIconButton matIconSuffix>
+                            <button (click)="clearField($event, categoryField.iconName)" [attr.aria-label]="'categoryKindForm.clearIconNameAriaLabel' | transloco: categoryPosition" class="icon-clear" type="button" matIconButton matIconSuffix>
                                 <mat-icon fontIcon="clear"></mat-icon>
                             </button>
                         }
 
                         @if (categoryField.iconName().getError('required')) {
-                            <mat-error>Icon name is required</mat-error>
+                            <mat-error>{{ 'iconNameField.required' | transloco }}</mat-error>
                         }
 
                         @if (categoryField.iconName().getError('pattern')) {
-                            <mat-error>Icon name can't contain only whitespaces</mat-error>
+                            <mat-error>{{ 'iconNameField.blank' | transloco }}</mat-error>
                         }
                     </mat-form-field>
 
                     @if (canHideGames()) {
-                        <mat-checkbox [formField]="categoryField.shouldHideGames" [aria-label]="hideGamesAriaLabel" class="category-checkbox">Hide games</mat-checkbox>
+                        <mat-checkbox [formField]="categoryField.shouldHideGames" [aria-label]="'categoryKindForm.hideGamesAriaLabel' | transloco: categoryPosition" class="category-checkbox">{{
+                            'categoryKindForm.hideGames' | transloco
+                        }}</mat-checkbox>
                     }
 
                     <div class="category-buttons">
-                        <button #addCategoryButton (click)="addCategory($index + 1)" [attr.aria-label]="addCategoryAriaLabel" class="icon-category" type="button" matIconButton>
+                        <button #addCategoryButton (click)="addCategory($index + 1)" [attr.aria-label]="'categoryKindForm.addCategoryAriaLabel' | transloco: categoryPosition" class="icon-category" type="button" matIconButton>
                             <mat-icon fontIcon="add"></mat-icon>
                         </button>
-                        <button (click)="removeCategory($index)" [attr.aria-label]="removeCategoryAriaLabel" class="icon-category" type="button" matIconButton>
+                        <button (click)="removeCategory($index)" [attr.aria-label]="'categoryKindForm.removeCategoryAriaLabel' | transloco: categoryPosition" class="icon-category" type="button" matIconButton>
                             <mat-icon fontIcon="remove"></mat-icon>
                         </button>
                     </div>
@@ -123,7 +116,7 @@
         </div>
 
         @if (hasNoCategories()) {
-            <button #addFirstCategoryButton (click)="addCategory(0)" class="add-category-button" type="button" matButton="outlined">Add category</button>
+            <button #addFirstCategoryButton (click)="addCategory(0)" class="add-category-button" type="button" matButton="outlined">{{ 'categoryKindForm.addCategory' | transloco }}</button>
         }
     </fieldset>
 
@@ -134,6 +127,6 @@
         matButton="outlined"
         disabledInteractive
     >
-        Save {{ lowerCaseLegend() }}
+        {{ `${kindKeyPrefix()}.save` | transloco }}
     </button>
 </form>

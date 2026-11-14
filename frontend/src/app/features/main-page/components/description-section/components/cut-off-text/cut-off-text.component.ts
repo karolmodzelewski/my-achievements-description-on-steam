@@ -1,9 +1,12 @@
 import { Component, computed, input } from '@angular/core';
 
+import { TranslocoPipe } from '@jsverse/transloco';
+
 @Component({
     selector: 'mados-cut-off-text',
     templateUrl: './cut-off-text.component.html',
     styleUrl: './cut-off-text.component.scss',
+    imports: [TranslocoPipe],
 })
 export class CutOffTextComponent {
     public readonly text = input.required<string>();

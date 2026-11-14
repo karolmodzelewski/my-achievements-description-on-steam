@@ -14,6 +14,8 @@ import { MatInput } from '@angular/material/input';
 
 import { catchError, filter, firstValueFrom, of, take, tap } from 'rxjs';
 
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
 import type { CategoryFormModel } from './interfaces/category-form-model.interface';
 import type { CategoryKindFormModel } from './interfaces/category-kind-form-model.interface';
 import { ConfirmationService } from '../../../../../../components/confirmation/confirmation.service';
@@ -31,12 +33,30 @@ import { areJsonEqual } from '../../../../utils/json-equality.util';
     selector: 'mados-category-kind-form',
     templateUrl: './category-kind-form.component.html',
     styleUrl: './category-kind-form.component.scss',
-    imports: [CdkDropList, CdkDrag, CdkDragHandle, CdkDragPreview, FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatCheckbox, MatButton],
+    imports: [
+        CdkDropList,
+        CdkDrag,
+        CdkDragHandle,
+        CdkDragPreview,
+        FormRoot,
+        FormField,
+        MatFormField,
+        MatLabel,
+        MatError,
+        MatSuffix,
+        MatInput,
+        MatIcon,
+        MatIconButton,
+        MatCheckbox,
+        MatButton,
+        TranslocoPipe,
+    ],
 })
 export class CategoryKindFormComponent {
     private readonly httpClient = inject(HttpClient);
     private readonly confirmationService = inject(ConfirmationService);
     private readonly snackbarService = inject(SnackbarService);
+    private readonly translocoService = inject(TranslocoService);
     private readonly liveAnnouncer = inject(LiveAnnouncer);
     private readonly injector = inject(Injector);
 
@@ -45,12 +65,9 @@ export class CategoryKindFormComponent {
     private readonly addFirstCategoryButton = viewChild('addFirstCategoryButton', { read: MatButton });
 
     public readonly kind = input.required<CategoryKind>();
-    public readonly legend = input.required<string>();
     public readonly categories = input.required<Category[]>();
 
     public readonly categoriesSaved = output();
-
-    public readonly newCategoryName = 'New category';
 
     private readonly categoriesModel = linkedSignal<CategoryKindFormModel>(() => this.buildCategoriesModel(this.categories()));
 
@@ -76,7 +93,7 @@ export class CategoryKindFormComponent {
         { submission: { action: () => this.saveCategories() } }
     );
 
-    public readonly lowerCaseLegend = computed<string>(() => this.legend().toLowerCase());
+    public readonly kindKeyPrefix = computed<string>(() => `categoryKind.${this.kind()}`);
     // Only main categories can hide games, length and difficulty categories are always listed with the game
     public readonly canHideGames = computed<boolean>(() => this.kind() === CategoryKind.MAIN);
     public readonly hasNoCategories = computed<boolean>(() => !this.categoriesModel().categories.length);
@@ -116,10 +133,10 @@ export class CategoryKindFormComponent {
             return;
         }
 
-        const categoryName = categories[index].name.trim() || this.newCategoryName;
+        const categoryName = categories[index].name.trim() || this.translocoService.translate('categoryKindForm.newCategory');
 
         this.reorderCategories(index, targetIndex);
-        void this.liveAnnouncer.announce(`${categoryName} moved to position ${targetIndex + 1} of ${categories.length}`);
+        void this.liveAnnouncer.announce(this.translocoService.translate('categoryKindForm.categoryMoved', { name: categoryName, position: targetIndex + 1, total: categories.length }));
         afterNextRender(() => this.dragHandles().at(targetIndex)?.focus(), { injector: this.injector });
     }
 
@@ -136,10 +153,10 @@ export class CategoryKindFormComponent {
 
         this.confirmationService
             .openConfirmation({
-                title: 'Delete category',
-                question: 'Are you sure you want to delete',
+                title: this.translocoService.translate('confirmation.delete.category.title'),
+                questionStart: this.translocoService.translate('confirmation.delete.category.questionStart'),
                 identifier: savedCategory.name,
-                identifierType: 'category',
+                questionEnd: this.translocoService.translate('confirmation.delete.category.questionEnd'),
             })
             .pipe(take(1), filter(Boolean))
             .subscribe(() => this.removeCategoryFromModel(category));
@@ -179,15 +196,14 @@ export class CategoryKindFormComponent {
         return firstValueFrom(
             this.httpClient.put<void>(`categories/${this.kind()}`, this.prepareRequestBody(this.categoriesModel())).pipe(
                 tap(() => {
-                    this.snackbarService.openSnackbar(`Successfully saved ${this.lowerCaseLegend()}`, SnackbarType.SUCCESS);
+                    this.snackbarService.openSnackbar(this.translocoService.translate(`${this.kindKeyPrefix()}.saveSuccess`), SnackbarType.SUCCESS);
                     this.categoriesSaved.emit();
                 }),
                 catchError(({ error }: HttpErrorResponse) => {
                     const errorResponseBody = error as ErrorResponseBody | null;
-                    const message =
-                        errorResponseBody?.errorCode === ErrorCode.DUPLICATED_CATEGORY_NAME ? 'Category names have to be unique' : `An error has occurred while saving ${this.lowerCaseLegend()}`;
+                    const messageKey = errorResponseBody?.errorCode === ErrorCode.DUPLICATED_CATEGORY_NAME ? 'categoryKindForm.namesUnique' : `${this.kindKeyPrefix()}.saveError`;
 
-                    this.snackbarService.openSnackbar(message, SnackbarType.ERROR);
+                    this.snackbarService.openSnackbar(this.translocoService.translate(messageKey), SnackbarType.ERROR);
 
                     return of(undefined);
                 })

@@ -1,6 +1,6 @@
 export interface ConfirmationData {
     title: string;
-    question: string;
+    questionStart: string;
     identifier: string;
-    identifierType: string;
+    questionEnd: string;
 }

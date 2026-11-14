@@ -3,6 +3,8 @@ import { Component, computed, inject, input, output, signal, viewChild } from '@
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
 import { CategoryComponent } from './components/category/category.component';
 import { CutOffTextComponent } from './components/cut-off-text/cut-off-text.component';
 import { GameComponent } from './components/game/game.component';
@@ -22,10 +24,11 @@ import { SectionHeadingComponent } from '../section-heading/section-heading.comp
     selector: 'mados-description-section',
     templateUrl: './description-section.component.html',
     styleUrl: './description-section.component.scss',
-    imports: [SectionHeadingComponent, MatIconButton, MatIcon, CdkCopyToClipboard, CategoryComponent, GameComponent, CutOffTextComponent],
+    imports: [SectionHeadingComponent, MatIconButton, MatIcon, CdkCopyToClipboard, CategoryComponent, GameComponent, CutOffTextComponent, TranslocoPipe],
 })
 export class DescriptionSectionComponent {
     private readonly snackbarService = inject(SnackbarService);
+    private readonly translocoService = inject(TranslocoService);
 
     private readonly editModeButton = viewChild.required('editModeButton', { read: MatIconButton });
 
@@ -36,7 +39,6 @@ export class DescriptionSectionComponent {
     public readonly shouldShowEdition = signal<boolean>(false);
     public readonly maxDescriptionSize = STEAM_DESCRIPTION_MAX_SIZE;
     public readonly sectionSeparator = '_______________________________';
-    public readonly headingText = 'Description';
     public readonly headingId = 'descriptionHeading';
 
     public readonly completedHeading = computed<string>(() => getSectionHeading(COMPLETED_SECTION_TITLE, this.descriptionData().completed));
@@ -60,12 +62,12 @@ export class DescriptionSectionComponent {
 
     public handleDescriptionCopied(isCopied: boolean): void {
         if (isCopied) {
-            this.snackbarService.openSnackbar('Description copied to clipboard', SnackbarType.SUCCESS);
+            this.snackbarService.openSnackbar(this.translocoService.translate('descriptionSection.copySuccess'), SnackbarType.SUCCESS);
 
             return;
         }
 
-        this.snackbarService.openSnackbar('An error has occurred while copying description', SnackbarType.ERROR);
+        this.snackbarService.openSnackbar(this.translocoService.translate('descriptionSection.copyError'), SnackbarType.ERROR);
     }
 
     // The deleted entry takes its focused button with it, so the focus is moved to the always visible edit mode button

@@ -2,6 +2,8 @@ import { ViewportScroller } from '@angular/common';
 import { afterNextRender, Component, inject, Injector, input, output, signal, viewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 
+import { TranslocoPipe } from '@jsverse/transloco';
+
 import { CategoryKindFormComponent } from './components/category-kind-form/category-kind-form.component';
 import { ExpansionButtonTextComponent } from './components/expansion-button-text/expansion-button-text.component';
 import { OneHundredPercentFormComponent } from './components/one-hundred-percent-form/one-hundred-percent-form.component';
@@ -13,7 +15,7 @@ import { SectionHeadingComponent } from '../section-heading/section-heading.comp
     selector: 'mados-add-categories-form',
     templateUrl: './add-categories-form.component.html',
     styleUrl: './add-categories-form.component.scss',
-    imports: [SectionHeadingComponent, OneHundredPercentFormComponent, CategoryKindFormComponent, MatButton, ExpansionButtonTextComponent],
+    imports: [SectionHeadingComponent, OneHundredPercentFormComponent, CategoryKindFormComponent, MatButton, ExpansionButtonTextComponent, TranslocoPipe],
 })
 export class AddCategoriesFormComponent {
     private readonly viewportScroller = inject(ViewportScroller);
@@ -29,7 +31,6 @@ export class AddCategoriesFormComponent {
 
     public readonly categoriesSaved = output();
 
-    public readonly headingText = 'Manage categories';
     public readonly headingId = 'manageCategoriesHeading';
     public readonly categoriesFormsId = 'manageCategoriesForms';
     public readonly CategoryKind = CategoryKind;

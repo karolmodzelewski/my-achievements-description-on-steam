@@ -1,0 +1,18 @@
+<div [attr.aria-label]="'languageSwitcher.label' | transloco" class="language-switcher" role="group">
+    @for (languageOption of languageOptions; track languageOption.language) {
+        @let isActive = activeLanguage() === languageOption.language;
+
+        <button
+            (click)="setLanguage(languageOption.language)"
+            [attr.aria-label]="languageOption.name"
+            [attr.aria-pressed]="isActive"
+            [attr.lang]="languageOption.language"
+            [class.active]="isActive"
+            class="flag-button"
+            type="button"
+            matIconButton
+        >
+            <img [ngSrc]="languageOption.flagPath" class="flag" width="24" height="16" alt="" />
+        </button>
+    }
+</div>

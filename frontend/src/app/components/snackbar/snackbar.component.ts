@@ -3,13 +3,15 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 
+import { TranslocoPipe } from '@jsverse/transloco';
+
 import type { SnackbarData } from './interfaces/snackbar-data.interface';
 
 @Component({
     selector: 'mados-snackbar',
     templateUrl: './snackbar.component.html',
     styleUrl: './snackbar.component.scss',
-    imports: [MatIconButton, MatIcon],
+    imports: [MatIconButton, MatIcon, TranslocoPipe],
 })
 export class SnackbarComponent {
     private readonly data = inject<SnackbarData>(MAT_SNACK_BAR_DATA);

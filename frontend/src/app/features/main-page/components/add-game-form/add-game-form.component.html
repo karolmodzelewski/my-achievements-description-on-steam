@@ -1,29 +1,32 @@
+@let groupNameLabel = 'addGameForm.groupNameLabel' | transloco;
+@let newAchievementsText = 'addGameForm.newAchievements' | transloco;
+
 <section [attr.aria-labelledby]="headingId">
-    <mados-section-heading [headingText]="headingText" [id]="headingId" />
+    <mados-section-heading [headingText]="'addGameForm.heading' | transloco" [id]="headingId" />
 
     <form [formRoot]="gameForm" class="form">
         <div class="form-fields-container">
             <mat-form-field class="game-name-form-field">
-                <mat-label>Game name:</mat-label>
+                <mat-label>{{ 'addGameForm.gameNameLabel' | transloco }}</mat-label>
                 <input [formField]="gameForm.name" matInput type="text" />
 
                 @if (gameForm.name().value()) {
-                    <button (click)="clearField($event, gameForm.name, '')" aria-label="Clear game name" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <button (click)="clearField($event, gameForm.name, '')" [attr.aria-label]="'addGameForm.clearGameNameAriaLabel' | transloco" class="icon-clear" type="button" matIconButton matIconSuffix>
                         <mat-icon fontIcon="clear"></mat-icon>
                     </button>
                 }
 
                 @if (gameForm.name().getError('required')) {
-                    <mat-error>Game name is required</mat-error>
+                    <mat-error>{{ 'addGameForm.gameNameRequired' | transloco }}</mat-error>
                 }
 
                 @if (gameForm.name().getError('pattern')) {
-                    <mat-error>Game name can't contain only whitespaces</mat-error>
+                    <mat-error>{{ 'addGameForm.gameNameBlank' | transloco }}</mat-error>
                 }
             </mat-form-field>
 
             <mat-form-field class="length-form-field">
-                <mat-label>Length:</mat-label>
+                <mat-label>{{ 'addGameForm.lengthLabel' | transloco }}</mat-label>
                 <mat-select [formField]="gameForm.length">
                     @for (category of lengthCategories(); track category.id) {
                         <mat-option [value]="category.id">{{ category.name }}</mat-option>
@@ -31,14 +34,14 @@
                 </mat-select>
 
                 @if (gameForm.length().value() !== null) {
-                    <button (click)="clearField($event, gameForm.length, null)" aria-label="Clear length" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <button (click)="clearField($event, gameForm.length, null)" [attr.aria-label]="'addGameForm.clearLengthAriaLabel' | transloco" class="icon-clear" type="button" matIconButton matIconSuffix>
                         <mat-icon fontIcon="clear"></mat-icon>
                     </button>
                 }
             </mat-form-field>
 
             <mat-form-field class="difficulty-form-field">
-                <mat-label>Difficulty:</mat-label>
+                <mat-label>{{ 'addGameForm.difficultyLabel' | transloco }}</mat-label>
                 <mat-select [formField]="gameForm.difficulty">
                     @for (category of difficultyCategories(); track category.id) {
                         <mat-option [value]="category.id">{{ category.name }}</mat-option>
@@ -46,7 +49,7 @@
                 </mat-select>
 
                 @if (gameForm.difficulty().value() !== null) {
-                    <button (click)="clearField($event, gameForm.difficulty, null)" aria-label="Clear difficulty" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <button (click)="clearField($event, gameForm.difficulty, null)" [attr.aria-label]="'addGameForm.clearDifficultyAriaLabel' | transloco" class="icon-clear" type="button" matIconButton matIconSuffix>
                         <mat-icon fontIcon="clear"></mat-icon>
                     </button>
                 }
@@ -55,7 +58,7 @@
 
         @if (mainCategories().length) {
             <fieldset class="main-categories">
-                <legend class="legend">Main categories</legend>
+                <legend class="legend">{{ 'addGameForm.mainCategories' | transloco }}</legend>
 
                 <div class="checkboxes-container">
                     @for (mainCategoryField of gameForm.mainCategories; track mainCategoryField) {
@@ -66,46 +69,38 @@
         }
 
         <fieldset class="groups">
-            <legend class="legend">Groups</legend>
-
-            @let baseGameNewAchievementsAriaLabel = `New achievements (${baseGameGroupName})`;
-            @let addBaseGameGroupAriaLabel = `Add group below ${baseGameGroupName}`;
-            @let removeBaseGameGroupAriaLabel = `Remove ${baseGameGroupName}`;
+            <legend class="legend">{{ 'addGameForm.groups' | transloco }}</legend>
 
             <div class="group-row">
                 <mat-form-field class="group-name-form-field">
-                    <mat-label>Group name:</mat-label>
-                    <input [value]="baseGameGroupName" matInput type="text" disabled />
+                    <mat-label>{{ groupNameLabel }}</mat-label>
+                    <input [value]="'addGameForm.baseGame' | transloco" matInput type="text" disabled />
                 </mat-form-field>
 
-                <mat-checkbox [formField]="gameForm.hasNewAchievements" [aria-label]="baseGameNewAchievementsAriaLabel" class="group-checkbox">New achievements</mat-checkbox>
+                <mat-checkbox [formField]="gameForm.hasNewAchievements" [aria-label]="'addGameForm.baseGameNewAchievementsAriaLabel' | transloco" class="group-checkbox">{{ newAchievementsText }}</mat-checkbox>
 
                 <div class="group-buttons">
-                    <button #addBaseGameGroupButton (click)="addGroup(0)" [attr.aria-label]="addBaseGameGroupAriaLabel" class="icon-group" type="button" matIconButton>
+                    <button #addBaseGameGroupButton (click)="addGroup(0)" [attr.aria-label]="'addGameForm.addBaseGameGroupAriaLabel' | transloco" class="icon-group" type="button" matIconButton>
                         <mat-icon fontIcon="add"></mat-icon>
                     </button>
-                    <button [attr.aria-label]="removeBaseGameGroupAriaLabel" class="icon-group" type="button" matIconButton disabled>
+                    <button [attr.aria-label]="'addGameForm.removeBaseGameGroupAriaLabel' | transloco" class="icon-group" type="button" matIconButton disabled>
                         <mat-icon fontIcon="remove"></mat-icon>
                     </button>
                 </div>
             </div>
 
             @for (groupField of gameForm.groups; track groupField) {
-                @let groupNameAriaLabel = `Group name (group ${$index + 1})`;
-                @let newAchievementsAriaLabel = `New achievements (group ${$index + 1})`;
-                @let clearGroupNameAriaLabel = `Clear group ${$index + 1} name`;
-                @let addGroupAriaLabel = `Add group below group ${$index + 1}`;
-                @let removeGroupAriaLabel = `Remove group ${$index + 1}`;
+                @let groupPosition = { index: $index + 1 };
 
                 <div class="group-row">
                     <mat-form-field class="group-name-form-field">
-                        <mat-label>Group name:</mat-label>
-                        <input [formField]="groupField.name" [attr.aria-label]="groupNameAriaLabel" matInput type="text" />
+                        <mat-label>{{ groupNameLabel }}</mat-label>
+                        <input [formField]="groupField.name" [attr.aria-label]="'addGameForm.groupNameAriaLabel' | transloco: groupPosition" matInput type="text" />
 
                         @if (groupField.name().value()) {
                             <button
                                 (click)="clearField($event, groupField.name, '')"
-                                [attr.aria-label]="clearGroupNameAriaLabel"
+                                [attr.aria-label]="'addGameForm.clearGroupNameAriaLabel' | transloco: groupPosition"
                                 class="icon-clear"
                                 type="button"
                                 matIconButton
@@ -116,21 +111,21 @@
                         }
 
                         @if (groupField.name().getError('required')) {
-                            <mat-error>Group name is required</mat-error>
+                            <mat-error>{{ 'addGameForm.groupNameRequired' | transloco }}</mat-error>
                         }
 
                         @if (groupField.name().getError('pattern')) {
-                            <mat-error>Group name can't contain only whitespaces</mat-error>
+                            <mat-error>{{ 'addGameForm.groupNameBlank' | transloco }}</mat-error>
                         }
                     </mat-form-field>
 
-                    <mat-checkbox [formField]="groupField.hasNewAchievements" [aria-label]="newAchievementsAriaLabel" class="group-checkbox">New achievements</mat-checkbox>
+                    <mat-checkbox [formField]="groupField.hasNewAchievements" [aria-label]="'addGameForm.newAchievementsAriaLabel' | transloco: groupPosition" class="group-checkbox">{{ newAchievementsText }}</mat-checkbox>
 
                     <div class="group-buttons">
-                        <button #addGroupButton (click)="addGroup($index + 1)" [attr.aria-label]="addGroupAriaLabel" class="icon-group" type="button" matIconButton>
+                        <button #addGroupButton (click)="addGroup($index + 1)" [attr.aria-label]="'addGameForm.addGroupAriaLabel' | transloco: groupPosition" class="icon-group" type="button" matIconButton>
                             <mat-icon fontIcon="add"></mat-icon>
                         </button>
-                        <button (click)="removeGroup($index)" [attr.aria-label]="removeGroupAriaLabel" class="icon-group" type="button" matIconButton>
+                        <button (click)="removeGroup($index)" [attr.aria-label]="'addGameForm.removeGroupAriaLabel' | transloco: groupPosition" class="icon-group" type="button" matIconButton>
                             <mat-icon fontIcon="remove"></mat-icon>
                         </button>
                     </div>
@@ -140,11 +135,11 @@
 
         <div class="buttons-container">
             <button [disabled]="gameForm().invalid() || gameForm().submitting()" class="form-button" type="submit" matButton="outlined" disabledInteractive>
-                {{ isEditing() ? 'Edit game' : 'Add game' }}
+                {{ (isEditing() ? 'addGameForm.editGame' : 'addGameForm.addGame') | transloco }}
             </button>
 
             @if (isEditing()) {
-                <button (click)="resetForm()" class="form-button" type="button" matButton="outlined">Cancel editing</button>
+                <button (click)="resetForm()" class="form-button" type="button" matButton="outlined">{{ 'addGameForm.cancelEditing' | transloco }}</button>
             }
         </div>
     </form>

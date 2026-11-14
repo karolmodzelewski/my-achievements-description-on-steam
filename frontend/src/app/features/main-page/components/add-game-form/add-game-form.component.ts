@@ -14,6 +14,8 @@ import { MatSelect } from '@angular/material/select';
 
 import { catchError, filter, firstValueFrom, of, take, tap } from 'rxjs';
 
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
 import type { GameFormModel } from './interfaces/game-form-model.interface';
 import type { GameFormSource } from './interfaces/game-form-source.interface';
 import type { GameGroupFormModel } from './interfaces/game-group-form-model.interface';
@@ -33,7 +35,7 @@ import { SectionHeadingComponent } from '../section-heading/section-heading.comp
     selector: 'mados-add-game-form',
     templateUrl: './add-game-form.component.html',
     styleUrl: './add-game-form.component.scss',
-    imports: [SectionHeadingComponent, FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatSelect, MatOption, MatCheckbox, MatButton],
+    imports: [SectionHeadingComponent, FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatSelect, MatOption, MatCheckbox, MatButton, TranslocoPipe],
 })
 export class AddGameFormComponent {
     private readonly httpClient = inject(HttpClient);
@@ -41,6 +43,7 @@ export class AddGameFormComponent {
     private readonly confirmationService = inject(ConfirmationService);
     private readonly viewportScroller = inject(ViewportScroller);
     private readonly snackbarService = inject(SnackbarService);
+    private readonly translocoService = inject(TranslocoService);
     private readonly injector = inject(Injector);
 
     private readonly addBaseGameGroupButton = viewChild.required('addBaseGameGroupButton', { read: MatIconButton });
@@ -52,9 +55,7 @@ export class AddGameFormComponent {
 
     public readonly reloadDescription = output();
 
-    public readonly headingText = 'Manage game';
     public readonly headingId = 'manageGameHeading';
-    public readonly baseGameGroupName = 'Base game';
     public readonly isEditing = computed<boolean>(() => this.editGameService.editedGame() !== null);
 
     private readonly gameModel = linkedSignal<GameFormSource, GameFormModel>({
@@ -120,10 +121,10 @@ export class AddGameFormComponent {
 
         this.confirmationService
             .openConfirmation({
-                title: 'Delete group',
-                question: 'Are you sure you want to delete',
+                title: this.translocoService.translate('confirmation.delete.group.title'),
+                questionStart: this.translocoService.translate('confirmation.delete.group.questionStart'),
                 identifier: savedGroup.name,
-                identifierType: 'group',
+                questionEnd: this.translocoService.translate('confirmation.delete.group.questionEnd'),
             })
             .pipe(take(1), filter(Boolean))
             .subscribe(() => this.removeGroupFromModel(group));
@@ -153,15 +154,15 @@ export class AddGameFormComponent {
         return firstValueFrom(
             saveGameRequest.pipe(
                 tap(() => {
-                    this.snackbarService.openSnackbar('Successfully saved game', SnackbarType.SUCCESS);
+                    this.snackbarService.openSnackbar(this.translocoService.translate('addGameForm.saveSuccess'), SnackbarType.SUCCESS);
                     this.resetForm();
                     this.reloadDescription.emit();
                 }),
                 catchError(({ error }: HttpErrorResponse) => {
                     const errorResponseBody = error as ErrorResponseBody | null;
-                    const message = errorResponseBody?.errorCode === ErrorCode.EMPTY_NAME ? 'Game or group name has to be provided' : 'An error has occurred while saving game';
+                    const messageKey = errorResponseBody?.errorCode === ErrorCode.EMPTY_NAME ? 'addGameForm.emptyName' : 'addGameForm.saveError';
 
-                    this.snackbarService.openSnackbar(message, SnackbarType.ERROR);
+                    this.snackbarService.openSnackbar(this.translocoService.translate(messageKey), SnackbarType.ERROR);
 
                     return of(undefined);
                 })

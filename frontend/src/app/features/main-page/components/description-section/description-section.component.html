@@ -1,7 +1,9 @@
 <section [attr.aria-labelledby]="headingId">
     <div class="heading-container">
-        <mados-section-heading [headingText]="headingText" [id]="headingId" />
-        <p [class.limit-reached]="isLimitReached()" aria-live="polite" class="characters-counter">{{ descriptionSize() }} / {{ maxDescriptionSize }} characters</p>
+        <mados-section-heading [headingText]="'descriptionSection.heading' | transloco" [id]="headingId" />
+        <p [class.limit-reached]="isLimitReached()" aria-live="polite" class="characters-counter">
+            {{ 'descriptionSection.charactersCounter' | transloco: { size: descriptionSize(), max: maxDescriptionSize } }}
+        </p>
     </div>
 
     <div class="description">
@@ -10,7 +12,7 @@
                 #editModeButton
                 (click)="handleEditionMode()"
                 [attr.aria-pressed]="shouldShowEdition()"
-                aria-label="Edit mode"
+                [attr.aria-label]="'descriptionSection.editModeAriaLabel' | transloco"
                 class="icon-button"
                 type="button"
                 matIconButton
@@ -20,7 +22,7 @@
             <button
                 (cdkCopyToClipboardCopied)="handleDescriptionCopied($event)"
                 [cdkCopyToClipboard]="descriptionToCopy()"
-                aria-label="Copy description"
+                [attr.aria-label]="'descriptionSection.copyDescriptionAriaLabel' | transloco"
                 class="icon-button"
                 matIconButton
                 type="button"

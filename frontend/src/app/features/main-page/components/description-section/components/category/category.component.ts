@@ -1,5 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 
+import { TranslocoPipe } from '@jsverse/transloco';
+
 import { joinDescriptionParts } from '../../../../utils/description-text.util';
 import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
 
@@ -7,7 +9,7 @@ import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
     selector: 'mados-category',
     templateUrl: './category.component.html',
     styleUrl: './category.component.scss',
-    imports: [CutOffTextComponent],
+    imports: [CutOffTextComponent, TranslocoPipe],
 })
 export class CategoryComponent {
     public readonly iconName = input.required<string>();
