@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.13.0 - 14.11.2026
+
+- Add a confirmation dialog before deleting a group on Edit game mode
+
 ## 1.12.0 - 13.11.2026
 
 - Improve accessibility and semantics on frontend

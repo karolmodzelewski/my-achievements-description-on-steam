@@ -12,12 +12,13 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 
-import { catchError, firstValueFrom, of, tap } from 'rxjs';
+import { catchError, filter, firstValueFrom, of, take, tap } from 'rxjs';
 
 import type { GameFormModel } from './interfaces/game-form-model.interface';
 import type { GameFormSource } from './interfaces/game-form-source.interface';
 import type { GameGroupFormModel } from './interfaces/game-group-form-model.interface';
 import type { GameMainCategoryFormModel } from './interfaces/game-main-category-form-model.interface';
+import { ConfirmationService } from '../../../../components/confirmation/confirmation.service';
 import { SnackbarType } from '../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
 import { ErrorCode } from '../../../../enums/error-code.enum';
@@ -37,6 +38,7 @@ import { SectionHeadingComponent } from '../section-heading/section-heading.comp
 export class AddGameFormComponent {
     private readonly httpClient = inject(HttpClient);
     private readonly editGameService = inject(EditGameService);
+    private readonly confirmationService = inject(ConfirmationService);
     private readonly viewportScroller = inject(ViewportScroller);
     private readonly snackbarService = inject(SnackbarService);
     private readonly injector = inject(Injector);
@@ -98,16 +100,31 @@ export class AddGameFormComponent {
     }
 
     public addGroup(index: number): void {
-        const newGroup: GameGroupFormModel = { name: '', hasNewAchievements: false };
+        const newGroup: GameGroupFormModel = { id: null, name: '', hasNewAchievements: false };
 
         this.gameModel.update((gameModel) => ({ ...gameModel, groups: [...gameModel.groups.slice(0, index), newGroup, ...gameModel.groups.slice(index)] }));
     }
 
+    // A saved group is deleted only after saving the form, so its removal is confirmed first
     public removeGroup(index: number): void {
-        this.gameModel.update((gameModel) => ({ ...gameModel, groups: gameModel.groups.filter((_, groupIndex) => groupIndex !== index) }));
-        // The removed group takes its focused button with it. The add button of the group above restores the same position,
-        // while focusing another remove button would let repeated key presses remove several groups by accident
-        afterNextRender(() => (index === 0 ? this.addBaseGameGroupButton() : this.addGroupButtons().at(index - 1))?.focus(), { injector: this.injector });
+        const group = this.gameModel().groups[index];
+        const savedGroup = this.editGameService.editedGame()?.groups.find(({ id }) => id === group.id);
+
+        if (!savedGroup) {
+            this.removeGroupFromModel(group);
+
+            return;
+        }
+
+        this.confirmationService
+            .openConfirmation({
+                title: 'Delete group',
+                question: 'Are you sure you want to delete',
+                identifier: savedGroup.name,
+                identifierType: 'group',
+            })
+            .pipe(take(1), filter(Boolean))
+            .subscribe(() => this.removeGroupFromModel(group));
     }
 
     public resetForm(): void {
@@ -115,6 +132,15 @@ export class AddGameFormComponent {
         this.editGameService.stopEditing();
         // The cancel button disappears and the submit button gets disabled, so the focus is moved to where the next game starts
         this.gameForm.name().focusBoundControl();
+    }
+
+    private removeGroupFromModel(removedGroup: GameGroupFormModel): void {
+        const removedIndex = this.gameModel().groups.indexOf(removedGroup);
+
+        this.gameModel.update((gameModel) => ({ ...gameModel, groups: gameModel.groups.filter((group) => group !== removedGroup) }));
+        // The removed group takes its focused button with it. The add button of the group above restores the same position,
+        // while focusing another remove button would let repeated key presses remove several groups by accident
+        afterNextRender(() => (removedIndex === 0 ? this.addBaseGameGroupButton() : this.addGroupButtons().at(removedIndex - 1))?.focus(), { injector: this.injector });
     }
 
     private saveGame(): Promise<void> {
@@ -185,7 +211,7 @@ export class AddGameFormComponent {
             difficulty: this.findCategoryId(difficultyCategories, categoriesIds),
             mainCategories: this.mapMainCategories(mainCategories, categoriesIds),
             hasNewAchievements: game?.hasNewAchievements ?? false,
-            groups: game?.groups.map(({ name, hasNewAchievements }) => ({ name, hasNewAchievements })) ?? [],
+            groups: game?.groups.map(({ id, name, hasNewAchievements }) => ({ id, name, hasNewAchievements })) ?? [],
         };
     }
 
