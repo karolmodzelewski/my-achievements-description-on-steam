@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { AddGameFormComponent } from './add-game-form.component';
 import { EditGameService } from '../../services/edit-game.service';
+import { ConfirmationService } from '../../../../components/confirmation/confirmation.service';
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
 
 describe('AddGameFormComponent', () => {
@@ -16,7 +17,7 @@ describe('AddGameFormComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [AddGameFormComponent],
-            providers: [provideHttpClient(), provideHttpClientTesting(), EditGameService, SnackbarService],
+            providers: [provideHttpClient(), provideHttpClientTesting(), EditGameService, SnackbarService, ConfirmationService],
         }).compileComponents();
 
         fixture = TestBed.createComponent(AddGameFormComponent);
