@@ -20,8 +20,8 @@ describe('ErrorStateComponent', () => {
         await fixture.whenStable();
     });
 
-    it('should create', () => {
+    it('should create a component', () => {
         // Assert
-        expect(component, 'Component should be created').toBeTruthy();
+        expect(component).toBeTruthy();
     });
 });

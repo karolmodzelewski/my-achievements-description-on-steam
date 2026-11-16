@@ -20,8 +20,8 @@ describe('HeaderComponent', () => {
         await fixture.whenStable();
     });
 
-    it('Should create a component', () => {
+    it('should create a component', () => {
         // Assert
-        expect(component, 'Component should be created').toBeTruthy();
+        expect(component).toBeTruthy();
     });
 });

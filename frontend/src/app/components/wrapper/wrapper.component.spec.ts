@@ -1,12 +1,12 @@
 import type { DebugElement } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { WrapperFixtureComponent } from './fixtures/wrapper-fixture.component';
 import { WrapperComponent } from './wrapper.component';
+import { getTextByTestId, queryByTestId } from '../../../testing/helpers/dom.helpers';
 
 describe('WrapperComponent', () => {
     let component: WrapperComponent;
@@ -25,19 +25,17 @@ describe('WrapperComponent', () => {
         await fixture.whenStable();
     });
 
-    it('Should create a component', () => {
+    it('should create a component', () => {
         // Assert
-        expect(component, 'Component should be created').toBeTruthy();
+        expect(component).toBeTruthy();
     });
 
-    it('Should have wrapper container', () => {
+    it('should have wrapper container', () => {
         // Assert
-        const wrapper = debugElement.query(By.css('[data-testId="wrapper"]'));
-
-        expect(wrapper, 'There should be a wrapper container').toBeTruthy();
+        expect(queryByTestId(debugElement, 'wrapper')).toBeTruthy();
     });
 
-    it('Should show ng-content content', async () => {
+    it('should show ng-content content', async () => {
         // Arrange
         const componentFixture = TestBed.createComponent(WrapperFixtureComponent);
 
@@ -45,8 +43,6 @@ describe('WrapperComponent', () => {
         await componentFixture.whenStable();
 
         // Assert
-        const wrapperFixtureComponent = componentFixture.debugElement.query(By.css('[data-testId="wrapperHost"]'));
-
-        expect((wrapperFixtureComponent.nativeElement as HTMLElement).textContent, `Should show a text from 'TestComponent' inside a mados-wrapper`).toEqual('Test');
+        expect(getTextByTestId(componentFixture.debugElement, 'wrapperHost')).toEqual('Test');
     });
 });

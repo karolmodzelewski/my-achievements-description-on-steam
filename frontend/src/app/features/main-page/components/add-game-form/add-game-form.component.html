@@ -8,10 +8,10 @@
         <div class="form-fields-container">
             <mat-form-field class="game-name-form-field">
                 <mat-label>{{ 'addGameForm.gameNameLabel' | transloco }}</mat-label>
-                <input [formField]="gameForm.name" matInput type="text" />
+                <input [formField]="gameForm.name" data-testId="gameNameInput" matInput type="text" />
 
                 @if (gameForm.name().value()) {
-                    <button (click)="clearField($event, gameForm.name, '')" [attr.aria-label]="'addGameForm.clearGameNameAriaLabel' | transloco" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <button (click)="clearField($event, gameForm.name, '')" [attr.aria-label]="'addGameForm.clearGameNameAriaLabel' | transloco" class="icon-clear" data-testId="gameNameClearButton" type="button" matIconButton matIconSuffix>
                         <mat-icon fontIcon="clear"></mat-icon>
                     </button>
                 }
@@ -27,14 +27,14 @@
 
             <mat-form-field class="length-form-field">
                 <mat-label>{{ 'addGameForm.lengthLabel' | transloco }}</mat-label>
-                <mat-select [formField]="gameForm.length">
+                <mat-select [formField]="gameForm.length" data-testId="lengthSelect">
                     @for (category of lengthCategories(); track category.id) {
                         <mat-option [value]="category.id">{{ category.name }}</mat-option>
                     }
                 </mat-select>
 
                 @if (gameForm.length().value() !== null) {
-                    <button (click)="clearField($event, gameForm.length, null)" [attr.aria-label]="'addGameForm.clearLengthAriaLabel' | transloco" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <button (click)="clearField($event, gameForm.length, null)" [attr.aria-label]="'addGameForm.clearLengthAriaLabel' | transloco" class="icon-clear" data-testId="lengthClearButton" type="button" matIconButton matIconSuffix>
                         <mat-icon fontIcon="clear"></mat-icon>
                     </button>
                 }
@@ -42,14 +42,14 @@
 
             <mat-form-field class="difficulty-form-field">
                 <mat-label>{{ 'addGameForm.difficultyLabel' | transloco }}</mat-label>
-                <mat-select [formField]="gameForm.difficulty">
+                <mat-select [formField]="gameForm.difficulty" data-testId="difficultySelect">
                     @for (category of difficultyCategories(); track category.id) {
                         <mat-option [value]="category.id">{{ category.name }}</mat-option>
                     }
                 </mat-select>
 
                 @if (gameForm.difficulty().value() !== null) {
-                    <button (click)="clearField($event, gameForm.difficulty, null)" [attr.aria-label]="'addGameForm.clearDifficultyAriaLabel' | transloco" class="icon-clear" type="button" matIconButton matIconSuffix>
+                    <button (click)="clearField($event, gameForm.difficulty, null)" [attr.aria-label]="'addGameForm.clearDifficultyAriaLabel' | transloco" class="icon-clear" data-testId="difficultyClearButton" type="button" matIconButton matIconSuffix>
                         <mat-icon fontIcon="clear"></mat-icon>
                     </button>
                 }
@@ -61,8 +61,10 @@
                 <legend class="legend">{{ 'addGameForm.mainCategories' | transloco }}</legend>
 
                 <div class="checkboxes-container">
-                    @for (mainCategoryField of gameForm.mainCategories; track mainCategoryField) {
-                        <mat-checkbox [formField]="mainCategoryField.isChecked">{{ mainCategoryField.name().value() }}</mat-checkbox>
+                    @for (mainCategory of gameForm.mainCategories().value(); track mainCategory.id) {
+                        @let mainCategoryField = gameForm.mainCategories[$index];
+
+                        <mat-checkbox [formField]="mainCategoryField.isChecked" data-testId="mainCategoryCheckbox">{{ mainCategory.name }}</mat-checkbox>
                     }
                 </div>
             </fieldset>
@@ -77,10 +79,10 @@
                     <input [value]="'addGameForm.baseGame' | transloco" matInput type="text" disabled />
                 </mat-form-field>
 
-                <mat-checkbox [formField]="gameForm.hasNewAchievements" [aria-label]="'addGameForm.baseGameNewAchievementsAriaLabel' | transloco" class="group-checkbox">{{ newAchievementsText }}</mat-checkbox>
+                <mat-checkbox [formField]="gameForm.hasNewAchievements" [aria-label]="'addGameForm.baseGameNewAchievementsAriaLabel' | transloco" class="group-checkbox" data-testId="baseGameNewAchievementsCheckbox">{{ newAchievementsText }}</mat-checkbox>
 
                 <div class="group-buttons">
-                    <button #addBaseGameGroupButton (click)="addGroup(0)" [attr.aria-label]="'addGameForm.addBaseGameGroupAriaLabel' | transloco" class="icon-group" type="button" matIconButton>
+                    <button #addBaseGameGroupButton (click)="addGroup(0)" [attr.aria-label]="'addGameForm.addBaseGameGroupAriaLabel' | transloco" class="icon-group" data-testId="addBaseGameGroupButton" type="button" matIconButton>
                         <mat-icon fontIcon="add"></mat-icon>
                     </button>
                     <button [attr.aria-label]="'addGameForm.removeBaseGameGroupAriaLabel' | transloco" class="icon-group" type="button" matIconButton disabled>
@@ -89,13 +91,14 @@
                 </div>
             </div>
 
-            @for (groupField of gameForm.groups; track groupField) {
+            @for (group of gameForm.groups().value(); track group.id ?? `new-${$index}`) {
+                @let groupField = gameForm.groups[$index];
                 @let groupPosition = { index: $index + 1 };
 
                 <div class="group-row">
                     <mat-form-field class="group-name-form-field">
                         <mat-label>{{ groupNameLabel }}</mat-label>
-                        <input [formField]="groupField.name" [attr.aria-label]="'addGameForm.groupNameAriaLabel' | transloco: groupPosition" matInput type="text" />
+                        <input [formField]="groupField.name" [attr.aria-label]="'addGameForm.groupNameAriaLabel' | transloco: groupPosition" data-testId="groupNameInput" matInput type="text" />
 
                         @if (groupField.name().value()) {
                             <button
@@ -119,13 +122,13 @@
                         }
                     </mat-form-field>
 
-                    <mat-checkbox [formField]="groupField.hasNewAchievements" [aria-label]="'addGameForm.newAchievementsAriaLabel' | transloco: groupPosition" class="group-checkbox">{{ newAchievementsText }}</mat-checkbox>
+                    <mat-checkbox [formField]="groupField.hasNewAchievements" [aria-label]="'addGameForm.newAchievementsAriaLabel' | transloco: groupPosition" class="group-checkbox" data-testId="groupNewAchievementsCheckbox">{{ newAchievementsText }}</mat-checkbox>
 
                     <div class="group-buttons">
-                        <button #addGroupButton (click)="addGroup($index + 1)" [attr.aria-label]="'addGameForm.addGroupAriaLabel' | transloco: groupPosition" class="icon-group" type="button" matIconButton>
+                        <button #addGroupButton (click)="addGroup($index + 1)" [attr.aria-label]="'addGameForm.addGroupAriaLabel' | transloco: groupPosition" class="icon-group" data-testId="addGroupButton" type="button" matIconButton>
                             <mat-icon fontIcon="add"></mat-icon>
                         </button>
-                        <button (click)="removeGroup($index)" [attr.aria-label]="'addGameForm.removeGroupAriaLabel' | transloco: groupPosition" class="icon-group" type="button" matIconButton>
+                        <button (click)="removeGroup($index)" [attr.aria-label]="'addGameForm.removeGroupAriaLabel' | transloco: groupPosition" class="icon-group" data-testId="removeGroupButton" type="button" matIconButton>
                             <mat-icon fontIcon="remove"></mat-icon>
                         </button>
                     </div>
@@ -134,12 +137,12 @@
         </fieldset>
 
         <div class="buttons-container">
-            <button [disabled]="gameForm().invalid() || gameForm().submitting()" class="form-button" type="submit" matButton="outlined" disabledInteractive>
+            <button [disabled]="gameForm().invalid() || gameForm().submitting()" class="form-button" data-testId="gameSubmitButton" type="submit" matButton="outlined" disabledInteractive>
                 {{ (isEditing() ? 'addGameForm.editGame' : 'addGameForm.addGame') | transloco }}
             </button>
 
             @if (isEditing()) {
-                <button (click)="resetForm()" class="form-button" type="button" matButton="outlined">{{ 'addGameForm.cancelEditing' | transloco }}</button>
+                <button (click)="resetForm()" class="form-button" data-testId="cancelEditingButton" type="button" matButton="outlined">{{ 'addGameForm.cancelEditing' | transloco }}</button>
             }
         </div>
     </form>

@@ -1,6 +1,5 @@
 import { ViewportScroller } from '@angular/common';
 import type { HttpErrorResponse } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';
 import { afterNextRender, afterRenderEffect, Component, computed, inject, Injector, input, linkedSignal, output, untracked, viewChild, viewChildren } from '@angular/core';
 import type { FieldState } from '@angular/forms/signals';
 import { applyEach, disabled, form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
@@ -29,6 +28,7 @@ import type { Category } from '../../../../interfaces/category.interface';
 import type { ErrorResponseBody } from '../../../../interfaces/error-response-body.interface';
 import { NOT_BLANK_PATTERN } from '../../constants/form.constants';
 import { EditGameService } from '../../services/edit-game.service';
+import { GameApiService } from '../../services/game-api.service';
 import { SectionHeadingComponent } from '../section-heading/section-heading.component';
 
 @Component({
@@ -38,7 +38,7 @@ import { SectionHeadingComponent } from '../section-heading/section-heading.comp
     imports: [SectionHeadingComponent, FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatSelect, MatOption, MatCheckbox, MatButton, TranslocoPipe],
 })
 export class AddGameFormComponent {
-    private readonly httpClient = inject(HttpClient);
+    private readonly gameApiService = inject(GameApiService);
     private readonly editGameService = inject(EditGameService);
     private readonly confirmationService = inject(ConfirmationService);
     private readonly viewportScroller = inject(ViewportScroller);
@@ -149,7 +149,7 @@ export class AddGameFormComponent {
     private saveGame(): Promise<void> {
         const editedGame = this.editGameService.editedGame();
         const requestBody = this.prepareRequestBody();
-        const saveGameRequest = editedGame ? this.httpClient.put<void>(`game/${editedGame.id}`, requestBody) : this.httpClient.post<void>('game', requestBody);
+        const saveGameRequest = editedGame ? this.gameApiService.editGame(editedGame.id, requestBody) : this.gameApiService.addGame(requestBody);
 
         return firstValueFrom(
             saveGameRequest.pipe(

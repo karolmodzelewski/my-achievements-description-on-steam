@@ -1,7 +1,7 @@
 <section [attr.aria-labelledby]="headingId">
     <div class="heading-container">
         <mados-section-heading [headingText]="'descriptionSection.heading' | transloco" [id]="headingId" />
-        <p [class.limit-reached]="isLimitReached()" aria-live="polite" class="characters-counter">
+        <p [class.limit-reached]="isLimitReached()" aria-live="polite" class="characters-counter" data-testId="charactersCounter">
             {{ 'descriptionSection.charactersCounter' | transloco: { size: descriptionSize(), max: maxDescriptionSize } }}
         </p>
     </div>
@@ -14,6 +14,7 @@
                 [attr.aria-pressed]="shouldShowEdition()"
                 [attr.aria-label]="'descriptionSection.editModeAriaLabel' | transloco"
                 class="icon-button"
+                data-testId="editModeButton"
                 type="button"
                 matIconButton
             >
@@ -24,6 +25,7 @@
                 [cdkCopyToClipboard]="descriptionToCopy()"
                 [attr.aria-label]="'descriptionSection.copyDescriptionAriaLabel' | transloco"
                 class="icon-button"
+                data-testId="copyDescriptionButton"
                 matIconButton
                 type="button"
             >
@@ -59,7 +61,7 @@
                 @for (entry of descriptionData().completed.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
                     @let completedEntryKey = `completed-${entry.game.id}-${entry.group?.id ?? 'base'}`;
 
-                    <mados-game (reloadDescription)="handleEntryDeleted()" [cutOffIndex]="cutOffIndexes().get(completedEntryKey)" [entry]="entry" [shouldShowEdition]="shouldShowEdition()" />
+                    <mados-game (reloadDescription)="handleEntryDeleted()" [cutOffIndex]="cutOffIndexes().get(completedEntryKey)" [entry]="entry" [shouldShowEdition]="shouldShowEdition()" data-testId="descriptionGame" />
                 }
 
                 @if (completedHiddenGamesText()) {

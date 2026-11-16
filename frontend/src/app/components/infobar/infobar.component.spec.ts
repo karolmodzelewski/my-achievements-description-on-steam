@@ -1,11 +1,11 @@
 import type { DebugElement } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { InfobarComponent } from './infobar.component';
+import { getTextsByTestId, queryAllByTestId } from '../../../testing/helpers/dom.helpers';
 
 describe('InfobarComponent', () => {
     let component: InfobarComponent;
@@ -20,24 +20,23 @@ describe('InfobarComponent', () => {
         fixture = TestBed.createComponent(InfobarComponent);
         component = fixture.componentInstance;
         debugElement = fixture.debugElement;
+
         fixture.componentRef.setInput('message', '');
 
         await fixture.whenStable();
     });
 
-    it('Should create a component', () => {
+    it('should create a component', () => {
         // Assert
-        expect(component, 'Component should be created').toBeTruthy();
+        expect(component).toBeTruthy();
     });
 
-    it(`Should render 1 'mat-icon' component`, () => {
+    it(`should render 1 'mat-icon' component`, () => {
         // Assert
-        const components = debugElement.queryAll(By.css('[data-testId="infobarIcon"]'));
-
-        expect(components.length, `Should be only 1 'mat-icon' component`).toEqual(1);
+        expect(queryAllByTestId(debugElement, 'infobarIcon').length).toEqual(1);
     });
 
-    it(`Should render paragraph with given message`, async () => {
+    it(`should render paragraph with given message`, async () => {
         // Arrange
         const message = 'Some test message';
 
@@ -47,9 +46,6 @@ describe('InfobarComponent', () => {
         await fixture.whenStable();
 
         // Assert
-        const paragraphs = debugElement.queryAll(By.css('[data-testId="infobarMessage"]'));
-
-        expect(paragraphs.length, `Should be only 1 'message' paragraph`).toEqual(1);
-        expect((paragraphs[0].nativeElement as HTMLElement).textContent, `Should contain given 'message' text`).toEqual(message);
+        expect(getTextsByTestId(debugElement, 'infobarMessage')).toEqual([message]);
     });
 });
