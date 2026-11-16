@@ -19,6 +19,6 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "isolatedModules": true,
-        "types": ["node", "jest"]
+        "types": ["node"]
     }
 }

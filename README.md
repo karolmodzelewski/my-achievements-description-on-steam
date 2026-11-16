@@ -86,6 +86,7 @@ Backend:
 - Cross-env
 - Class-validator
 - Class-transformer
+- Vitest 5
 - ESLint
 - Husky
 - Prettier
