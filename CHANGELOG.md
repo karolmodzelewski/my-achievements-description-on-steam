@@ -2,6 +2,12 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.17.0 - 16.11.2026
+
+- Create services for API calls on frontend and use them in proper places
+- Cover the application with unit tests
+- Fix tracking issues on Add game form
+
 ## 1.16.0 - 14.11.2026
 
 - Add internationalization with Transloco: English (default) and Polish languages, switchable with flags next to the title and remembered in local storage

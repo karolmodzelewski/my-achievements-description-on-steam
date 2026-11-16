@@ -2,7 +2,6 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import type { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { CdkDrag, CdkDragHandle, CdkDragPreview, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import type { HttpErrorResponse } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';
 import { afterNextRender, Component, computed, inject, Injector, input, linkedSignal, output, viewChild, viewChildren } from '@angular/core';
 import type { FieldState } from '@angular/forms/signals';
 import { applyEach, form, FormField, FormRoot, pattern, required, validate } from '@angular/forms/signals';
@@ -27,6 +26,7 @@ import type { CategoryRequestBody } from '../../../../../../interfaces/category-
 import type { Category } from '../../../../../../interfaces/category.interface';
 import type { ErrorResponseBody } from '../../../../../../interfaces/error-response-body.interface';
 import { NOT_BLANK_PATTERN } from '../../../../constants/form.constants';
+import { CategoriesApiService } from '../../../../services/categories-api.service';
 import { areJsonEqual } from '../../../../utils/json-equality.util';
 
 @Component({
@@ -53,7 +53,7 @@ import { areJsonEqual } from '../../../../utils/json-equality.util';
     ],
 })
 export class CategoryKindFormComponent {
-    private readonly httpClient = inject(HttpClient);
+    private readonly categoriesApiService = inject(CategoriesApiService);
     private readonly confirmationService = inject(ConfirmationService);
     private readonly snackbarService = inject(SnackbarService);
     private readonly translocoService = inject(TranslocoService);
@@ -194,7 +194,7 @@ export class CategoryKindFormComponent {
         }
 
         return firstValueFrom(
-            this.httpClient.put<void>(`categories/${this.kind()}`, this.prepareRequestBody(this.categoriesModel())).pipe(
+            this.categoriesApiService.saveCategories(this.kind(), this.prepareRequestBody(this.categoriesModel())).pipe(
                 tap(() => {
                     this.snackbarService.openSnackbar(this.translocoService.translate(`${this.kindKeyPrefix()}.saveSuccess`), SnackbarType.SUCCESS);
                     this.categoriesSaved.emit();

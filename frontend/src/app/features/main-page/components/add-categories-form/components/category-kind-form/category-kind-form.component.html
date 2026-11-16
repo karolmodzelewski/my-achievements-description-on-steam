@@ -4,7 +4,7 @@
 
         @let categoryRowsClass = 'category-rows';
 
-        <div (cdkDropListDropped)="moveCategory($event)" [class]="categoryRowsClass" cdkDropList cdkDropListLockAxis="y">
+        <div (cdkDropListDropped)="moveCategory($event)" [class]="categoryRowsClass" data-testId="categoryRows" cdkDropList cdkDropListLockAxis="y">
             @for (categoryField of categoriesForm.categories; track categoryField) {
                 @let categoryPosition = { index: $index + 1 };
                 @let dragBoundary = `.${categoryRowsClass}`;
@@ -17,6 +17,7 @@
                         [attr.aria-label]="'categoryKindForm.moveCategoryAriaLabel' | transloco: categoryPosition"
                         aria-keyshortcuts="ArrowUp ArrowDown"
                         class="drag-handle icon-category"
+                        data-testId="categoryDragHandle"
                         type="button"
                         matIconButton
                         cdkDragHandle
@@ -31,10 +32,10 @@
 
                     <mat-form-field class="name-form-field">
                         <mat-label>{{ 'categoryKindForm.nameLabel' | transloco }}</mat-label>
-                        <input [formField]="categoryField.name" [attr.aria-label]="'categoryKindForm.nameAriaLabel' | transloco: categoryPosition" matInput type="text" />
+                        <input [formField]="categoryField.name" [attr.aria-label]="'categoryKindForm.nameAriaLabel' | transloco: categoryPosition" data-testId="categoryNameInput" matInput type="text" />
 
                         @if (categoryField.name().value()) {
-                            <button (click)="clearField($event, categoryField.name)" [attr.aria-label]="'categoryKindForm.clearNameAriaLabel' | transloco: categoryPosition" class="icon-clear" type="button" matIconButton matIconSuffix>
+                            <button (click)="clearField($event, categoryField.name)" [attr.aria-label]="'categoryKindForm.clearNameAriaLabel' | transloco: categoryPosition" class="icon-clear" data-testId="categoryNameClearButton" type="button" matIconButton matIconSuffix>
                                 <mat-icon fontIcon="clear"></mat-icon>
                             </button>
                         }
@@ -54,7 +55,7 @@
 
                     <mat-form-field class="description-form-field">
                         <mat-label>{{ 'categoryKindForm.descriptionLabel' | transloco }}</mat-label>
-                        <input [formField]="categoryField.description" [attr.aria-label]="'categoryKindForm.descriptionAriaLabel' | transloco: categoryPosition" matInput type="text" />
+                        <input [formField]="categoryField.description" [attr.aria-label]="'categoryKindForm.descriptionAriaLabel' | transloco: categoryPosition" data-testId="categoryDescriptionInput" matInput type="text" />
 
                         @if (categoryField.description().value()) {
                             <button
@@ -80,7 +81,7 @@
 
                     <mat-form-field class="icon-name-form-field">
                         <mat-label>{{ 'iconNameField.label' | transloco }}</mat-label>
-                        <input [formField]="categoryField.iconName" [attr.aria-label]="'categoryKindForm.iconNameAriaLabel' | transloco: categoryPosition" matInput type="text" />
+                        <input [formField]="categoryField.iconName" [attr.aria-label]="'categoryKindForm.iconNameAriaLabel' | transloco: categoryPosition" data-testId="categoryIconNameInput" matInput type="text" />
 
                         @if (categoryField.iconName().value()) {
                             <button (click)="clearField($event, categoryField.iconName)" [attr.aria-label]="'categoryKindForm.clearIconNameAriaLabel' | transloco: categoryPosition" class="icon-clear" type="button" matIconButton matIconSuffix>
@@ -98,16 +99,16 @@
                     </mat-form-field>
 
                     @if (canHideGames()) {
-                        <mat-checkbox [formField]="categoryField.shouldHideGames" [aria-label]="'categoryKindForm.hideGamesAriaLabel' | transloco: categoryPosition" class="category-checkbox">{{
+                        <mat-checkbox [formField]="categoryField.shouldHideGames" [aria-label]="'categoryKindForm.hideGamesAriaLabel' | transloco: categoryPosition" class="category-checkbox" data-testId="categoryHideGamesCheckbox">{{
                             'categoryKindForm.hideGames' | transloco
                         }}</mat-checkbox>
                     }
 
                     <div class="category-buttons">
-                        <button #addCategoryButton (click)="addCategory($index + 1)" [attr.aria-label]="'categoryKindForm.addCategoryAriaLabel' | transloco: categoryPosition" class="icon-category" type="button" matIconButton>
+                        <button #addCategoryButton (click)="addCategory($index + 1)" [attr.aria-label]="'categoryKindForm.addCategoryAriaLabel' | transloco: categoryPosition" class="icon-category" data-testId="addCategoryButton" type="button" matIconButton>
                             <mat-icon fontIcon="add"></mat-icon>
                         </button>
-                        <button (click)="removeCategory($index)" [attr.aria-label]="'categoryKindForm.removeCategoryAriaLabel' | transloco: categoryPosition" class="icon-category" type="button" matIconButton>
+                        <button (click)="removeCategory($index)" [attr.aria-label]="'categoryKindForm.removeCategoryAriaLabel' | transloco: categoryPosition" class="icon-category" data-testId="removeCategoryButton" type="button" matIconButton>
                             <mat-icon fontIcon="remove"></mat-icon>
                         </button>
                     </div>
@@ -116,13 +117,14 @@
         </div>
 
         @if (hasNoCategories()) {
-            <button #addFirstCategoryButton (click)="addCategory(0)" class="add-category-button" type="button" matButton="outlined">{{ 'categoryKindForm.addCategory' | transloco }}</button>
+            <button #addFirstCategoryButton (click)="addCategory(0)" class="add-category-button" data-testId="addFirstCategoryButton" type="button" matButton="outlined">{{ 'categoryKindForm.addCategory' | transloco }}</button>
         }
     </fieldset>
 
     <button
         [disabled]="!hasChanges() || categoriesForm().invalid() || categoriesForm().submitting()"
         class="save-button"
+        data-testId="categoriesSaveButton"
         type="submit"
         matButton="outlined"
         disabledInteractive

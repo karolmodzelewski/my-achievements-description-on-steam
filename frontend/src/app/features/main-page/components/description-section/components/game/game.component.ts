@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, computed, inject, input, output } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
+import type { Observable } from 'rxjs';
 import { catchError, EMPTY, filter, switchMap, take, tap } from 'rxjs';
 
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -14,6 +14,7 @@ import { SnackbarService } from '../../../../../../components/snackbar/snackbar.
 import type { DescriptionEntry } from '../../../../../../interfaces/description-entry.interface';
 import type { GameGroup } from '../../../../../../interfaces/game-group.interface';
 import { EditGameService } from '../../../../services/edit-game.service';
+import { GameApiService } from '../../../../services/game-api.service';
 import { checkIfGameIsHidden, getEntryLine, getEntryName } from '../../../../utils/description-text.util';
 import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
 
@@ -26,7 +27,7 @@ import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
 export class GameComponent {
     private readonly confirmationService = inject(ConfirmationService);
     private readonly editGameService = inject(EditGameService);
-    private readonly httpClient = inject(HttpClient);
+    private readonly gameApiService = inject(GameApiService);
     private readonly snackbarService = inject(SnackbarService);
     private readonly translocoService = inject(TranslocoService);
 
@@ -53,14 +54,15 @@ export class GameComponent {
             return;
         }
 
-        this.sendDeleteRequest(`game/${this.entry().game.id}`, DeletedEntryType.GAME, this.entryName());
+        this.sendDeleteRequest(() => this.gameApiService.deleteGame(this.entry().game.id), DeletedEntryType.GAME, this.entryName());
     }
 
     public deleteGroup(group: GameGroup): void {
-        this.sendDeleteRequest(`game/${this.entry().game.id}/group/${group.id}`, DeletedEntryType.GROUP, getEntryName({ ...this.entry(), group }));
+        this.sendDeleteRequest(() => this.gameApiService.deleteGroup(this.entry().game.id, group.id), DeletedEntryType.GROUP, getEntryName({ ...this.entry(), group }));
     }
 
-    private sendDeleteRequest(url: string, deletedEntryType: DeletedEntryType, identifier: string): void {
+    // The request is created and sent only after the deletion is confirmed
+    private sendDeleteRequest(deleteRequest: () => Observable<void>, deletedEntryType: DeletedEntryType, identifier: string): void {
         const gameId = this.entry().game.id;
 
         this.confirmationService
@@ -73,7 +75,7 @@ export class GameComponent {
             .pipe(
                 take(1),
                 filter(Boolean),
-                switchMap(() => this.httpClient.delete<void>(url)),
+                switchMap(deleteRequest),
                 tap(() => {
                     // Edited game would be outdated after deleting it or one of its groups
                     if (this.editGameService.editedGame()?.id === gameId) {

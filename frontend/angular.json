@@ -99,7 +99,8 @@
                         "tsConfig": "tsconfig.spec.json",
                         "buildTarget": ":build:testing",
                         "providersFile": "src/test-providers.ts",
-                        "runner": "vitest"
+                        "runner": "vitest",
+                        "coverageExclude": ["src/testing/**"]
                     }
                 },
                 "lint": {

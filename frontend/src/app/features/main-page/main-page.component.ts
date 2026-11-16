@@ -1,5 +1,5 @@
-import { httpResource } from '@angular/common/http';
-import { Component, computed } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -8,13 +8,14 @@ import { AddGameFormComponent } from './components/add-game-form/add-game-form.c
 import { DescriptionSectionComponent } from './components/description-section/description-section.component';
 import { HeaderComponent } from './components/header/header.component';
 import type { MainPageData } from './interfaces/main-page-data.interface';
+import { CategoriesApiService } from './services/categories-api.service';
+import { DescriptionApiService } from './services/description-api.service';
 import { areJsonEqual } from './utils/json-equality.util';
 import { ErrorStateComponent } from '../../components/error-state/error-state.component';
 import { InfobarComponent } from '../../components/infobar/infobar.component';
 import { LoadingStateComponent } from '../../components/loading-state/loading-state.component';
 import { CategoryKind } from '../../enums/category-kind.enum';
 import type { Category } from '../../interfaces/category.interface';
-import type { DescriptionResponseBody } from '../../interfaces/description-response-body.interface';
 
 @Component({
     selector: 'mados-main-page',
@@ -23,8 +24,11 @@ import type { DescriptionResponseBody } from '../../interfaces/description-respo
     imports: [HeaderComponent, AddCategoriesFormComponent, AddGameFormComponent, DescriptionSectionComponent, InfobarComponent, LoadingStateComponent, ErrorStateComponent, TranslocoPipe],
 })
 export class MainPageComponent {
-    private readonly categoriesResource = httpResource<Category[]>(() => 'categories');
-    private readonly descriptionResource = httpResource<DescriptionResponseBody>(() => 'description');
+    private readonly categoriesApiService = inject(CategoriesApiService);
+    private readonly descriptionApiService = inject(DescriptionApiService);
+
+    private readonly categoriesResource = rxResource({ stream: () => this.categoriesApiService.getCategories() });
+    private readonly descriptionResource = rxResource({ stream: () => this.descriptionApiService.getDescription() });
 
     public readonly hasError = computed<boolean>(() => this.categoriesResource.error() !== undefined || this.descriptionResource.error() !== undefined);
     public readonly data = computed<MainPageData | null>(() =>

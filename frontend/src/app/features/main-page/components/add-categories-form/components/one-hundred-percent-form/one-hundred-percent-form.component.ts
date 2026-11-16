@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, computed, inject, input, linkedSignal, output } from '@angular/core';
 import type { FieldState } from '@angular/forms/signals';
 import { form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
@@ -18,6 +17,7 @@ import { CategoryKind } from '../../../../../../enums/category-kind.enum';
 import type { CategoryRequestBody } from '../../../../../../interfaces/category-request-body.interface';
 import type { Category } from '../../../../../../interfaces/category.interface';
 import { NOT_BLANK_PATTERN } from '../../../../constants/form.constants';
+import { CategoriesApiService } from '../../../../services/categories-api.service';
 
 @Component({
     selector: 'mados-one-hundred-percent-form',
@@ -26,7 +26,7 @@ import { NOT_BLANK_PATTERN } from '../../../../constants/form.constants';
     imports: [FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatButton, TranslocoPipe],
 })
 export class OneHundredPercentFormComponent {
-    private readonly httpClient = inject(HttpClient);
+    private readonly categoriesApiService = inject(CategoriesApiService);
     private readonly snackbarService = inject(SnackbarService);
     private readonly translocoService = inject(TranslocoService);
 
@@ -64,7 +64,7 @@ export class OneHundredPercentFormComponent {
         const requestBody: CategoryRequestBody[] = [{ id, name, iconName: this.categoryModel().iconName.trim(), shouldHideGames: false }];
 
         return firstValueFrom(
-            this.httpClient.put<void>(`categories/${CategoryKind.ONE_HUNDRED_PERCENT}`, requestBody).pipe(
+            this.categoriesApiService.saveCategories(CategoryKind.ONE_HUNDRED_PERCENT, requestBody).pipe(
                 tap(() => {
                     this.snackbarService.openSnackbar(this.translocoService.translate('oneHundredPercentForm.saveSuccess'), SnackbarType.SUCCESS);
                     this.categorySaved.emit();

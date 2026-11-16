@@ -16,14 +16,15 @@ describe('ExpansionButtonTextComponent', () => {
 
         fixture = TestBed.createComponent(ExpansionButtonTextComponent);
         component = fixture.componentInstance;
+
         fixture.componentRef.setInput('buttonText', 'Expand');
         fixture.componentRef.setInput('iconName', 'expand_more');
 
         await fixture.whenStable();
     });
 
-    it('Should create a component', () => {
+    it('should create a component', () => {
         // Assert
-        expect(component, 'Component should be created').toBeTruthy();
+        expect(component).toBeTruthy();
     });
 });

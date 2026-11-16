@@ -1,7 +1,7 @@
 <mados-header />
 
 @if (hasError()) {
-    <mados-error-state class="margin-top" />
+    <mados-error-state class="margin-top" data-testId="errorState" />
 } @else if (data(); as pageData) {
     <mados-add-categories-form
         (categoriesSaved)="reloadCategoriesAndDescription()"
@@ -9,6 +9,7 @@
         [mainCategories]="mainCategories()"
         [lengthCategories]="lengthCategories()"
         [difficultyCategories]="difficultyCategories()"
+        data-testId="addCategoriesForm"
     />
 
     @if (isOneHundredPercentIconSet()) {
@@ -17,11 +18,12 @@
             [mainCategories]="mainCategories()"
             [lengthCategories]="lengthCategories()"
             [difficultyCategories]="difficultyCategories()"
+            data-testId="addGameForm"
         />
-        <mados-description-section (reloadDescription)="reloadDescription()" [descriptionData]="pageData.description" />
+        <mados-description-section (reloadDescription)="reloadDescription()" [descriptionData]="pageData.description" data-testId="descriptionSection" />
     } @else {
-        <mados-infobar [message]="'mainPage.infobar' | transloco" class="margin-top" />
+        <mados-infobar [message]="'mainPage.infobar' | transloco" class="margin-top" data-testId="mainPageInfobar" />
     }
 } @else {
-    <mados-loading-state class="margin-top" />
+    <mados-loading-state class="margin-top" data-testId="loadingState" />
 }

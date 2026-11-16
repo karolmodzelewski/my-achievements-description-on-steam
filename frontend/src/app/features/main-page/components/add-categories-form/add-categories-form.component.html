@@ -10,6 +10,7 @@
             [attr.aria-controls]="categoriesFormsId"
             aria-expanded="true"
             class="expansion-button top-expansion-button button"
+            data-testId="topCollapseButton"
             color="primary"
             type="button"
             matButton="elevated"
@@ -19,12 +20,12 @@
 
         <div [id]="categoriesFormsId" class="categories">
             @if (oneHundredPercentCategory(); as oneHundredPercentCategory) {
-                <mados-one-hundred-percent-form (categorySaved)="categoriesSaved.emit()" [category]="oneHundredPercentCategory" />
+                <mados-one-hundred-percent-form (categorySaved)="categoriesSaved.emit()" [category]="oneHundredPercentCategory" data-testId="oneHundredPercentForm" />
             }
 
-            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.MAIN" [categories]="mainCategories()" />
-            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.LENGTH" [categories]="lengthCategories()" />
-            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.DIFFICULTY" [categories]="difficultyCategories()" />
+            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.MAIN" [categories]="mainCategories()" data-testId="categoryKindForm" />
+            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.LENGTH" [categories]="lengthCategories()" data-testId="categoryKindForm" />
+            <mados-category-kind-form (categoriesSaved)="categoriesSaved.emit()" [kind]="CategoryKind.DIFFICULTY" [categories]="difficultyCategories()" data-testId="categoryKindForm" />
         </div>
     }
 
@@ -34,6 +35,7 @@
         [attr.aria-controls]="shouldShowCategories() ? categoriesFormsId : null"
         [attr.aria-expanded]="shouldShowCategories()"
         class="expansion-button button"
+        data-testId="bottomExpansionButton"
         color="primary"
         type="button"
         matButton="elevated"

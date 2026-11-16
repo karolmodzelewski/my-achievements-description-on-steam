@@ -4,10 +4,10 @@
 
         <mat-form-field class="icon-name-form-field">
             <mat-label>{{ 'iconNameField.label' | transloco }}</mat-label>
-            <input [formField]="categoryForm.iconName" matInput type="text" />
+            <input [formField]="categoryForm.iconName" data-testId="oneHundredPercentIconInput" matInput type="text" />
 
             @if (categoryForm.iconName().value()) {
-                <button (click)="clearField($event, categoryForm.iconName)" [attr.aria-label]="'oneHundredPercentForm.clearIconNameAriaLabel' | transloco" class="icon-clear" type="button" matIconButton matIconSuffix>
+                <button (click)="clearField($event, categoryForm.iconName)" [attr.aria-label]="'oneHundredPercentForm.clearIconNameAriaLabel' | transloco" class="icon-clear" data-testId="oneHundredPercentClearButton" type="button" matIconButton matIconSuffix>
                     <mat-icon fontIcon="clear"></mat-icon>
                 </button>
             }
@@ -22,7 +22,7 @@
         </mat-form-field>
     </fieldset>
 
-    <button [disabled]="!hasChanges() || categoryForm().invalid() || categoryForm().submitting()" class="save-button" type="submit" matButton="outlined" disabledInteractive>
+    <button [disabled]="!hasChanges() || categoryForm().invalid() || categoryForm().submitting()" class="save-button" data-testId="oneHundredPercentSaveButton" type="submit" matButton="outlined" disabledInteractive>
         {{ 'oneHundredPercentForm.save' | transloco }}
     </button>
 </form>
