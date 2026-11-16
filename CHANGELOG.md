@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.18.0 - 16.11.2026
+
+- Replace Jest with Vitest on backend
+- Cover backend with unit tests
+
 ## 1.17.0 - 16.11.2026
 
 - Create services for API calls on frontend and use them in proper places
