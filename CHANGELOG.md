@@ -2,6 +2,13 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.19.0 - 18.11.2026
+
+- Add Playwright e2e tests on frontend against the real backend
+- Add `e2e` stage on backend with a dedicated `mados_e2e` database
+- Make backend port configurable with required `APP_PORT` variable, and make `DB_PORT` required too
+- Fix tracking issues on Manage categories form
+
 ## 1.18.0 - 16.11.2026
 
 - Replace Jest with Vitest on backend

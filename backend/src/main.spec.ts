@@ -1,5 +1,6 @@
 import { BadRequestException, Logger } from '@nestjs/common';
 import type { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 
@@ -25,7 +26,7 @@ describe('main', () => {
         vi.resetModules();
         stubEnvironment();
 
-        const module = await Test.createTestingModule({}).compile();
+        const module = await Test.createTestingModule({ providers: [{ provide: ConfigService, useValue: new ConfigService({ APP_PORT: 3001 }) }] }).compile();
 
         app = module.createNestApplication({ logger: false });
 

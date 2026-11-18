@@ -5,7 +5,8 @@
         @let categoryRowsClass = 'category-rows';
 
         <div (cdkDropListDropped)="moveCategory($event)" [class]="categoryRowsClass" data-testId="categoryRows" cdkDropList cdkDropListLockAxis="y">
-            @for (categoryField of categoriesForm.categories; track categoryField) {
+            @for (category of categoriesForm.categories().value(); track category.id ?? `new-${$index}`) {
+                @let categoryField = categoriesForm.categories[$index];
                 @let categoryPosition = { index: $index + 1 };
                 @let dragBoundary = `.${categoryRowsClass}`;
 
