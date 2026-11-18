@@ -1,4 +1,5 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
@@ -11,7 +12,7 @@ const logger = new Logger('Bootstrap');
 async function bootstrap(): Promise<void> {
     const stage = process.env.STAGE;
     const app = await NestFactory.create(AppModule, { logger: getLogLevels(stage) });
-    const port = 3001;
+    const port = app.get(ConfigService).getOrThrow<number>('APP_PORT');
 
     app.setGlobalPrefix('api');
     app.use(httpLoggerMiddleware);
