@@ -2,6 +2,12 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.20.0 - 19.11.2026
+
+- Cover backend with e2e tests (Vitest + supertest) against the `mados_e2e` database
+- Extract the global application setup into `configureApp`, shared by `main.ts` and the e2e tests
+- Add `e2e:coverage` script for backend e2e coverage
+
 ## 1.19.0 - 18.11.2026
 
 - Add Playwright e2e tests on frontend against the real backend
