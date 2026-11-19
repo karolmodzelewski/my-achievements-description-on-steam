@@ -13,6 +13,8 @@
         "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "test": "vitest",
         "test:coverage": "vitest run --coverage",
+        "e2e": "cross-env STAGE=e2e vitest run -c vitest.config.e2e.mts",
+        "e2e:coverage": "cross-env STAGE=e2e vitest run -c vitest.config.e2e.mts --coverage",
         "prepare": "cd .. && husky"
     },
     "lint-staged": {
@@ -44,6 +46,7 @@
         "@stylistic/eslint-plugin": "^6.0.0",
         "@types/express": "^5.0.6",
         "@types/node": "^26.6.6",
+        "@types/supertest": "^7.2.1",
         "@typescript-eslint/eslint-plugin": "^8.72.2",
         "@typescript-eslint/parser": "^8.72.2",
         "@vitest/coverage-v8": "^5.1.0",
@@ -56,6 +59,7 @@
         "husky": "^9.1.7",
         "lint-staged": "^17.6.0",
         "prettier": "^3.10.1",
+        "supertest": "^7.3.2",
         "typescript": "~6.0.3",
         "vitest": "^5.1.0"
     }

@@ -56,13 +56,17 @@ Backend:
 
 ### E2E tests:
 
-Playwright tests live in `frontend/e2e`. They run the real frontend against the real backend on the `e2e` stage, which uses its own `mados_e2e` database, so development and production data are never touched.
+Both frontend and backend e2e tests run on the `e2e` stage, which uses its own `mados_e2e` database, so development and production data are never touched. They share this database, so don't run frontend and backend e2e tests at once.
 
 Setup (once):
 
 1. Create an empty `mados_e2e` database in PostgreSQL (the backend creates its tables on start)
 2. Create `backend/.env.stage.e2e` (ignored by git) with `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE=mados_e2e` and `APP_PORT=3101` (all variables are required, like in `.env.stage.dev` and `.env.stage.prod`)
-3. Go to frontend directory and install the browsers `npx playwright install chromium firefox webkit`
+3. Go to frontend directory and install the browsers `npx playwright install chromium firefox webkit` (frontend tests only)
+
+#### Frontend
+
+Playwright tests live in `frontend/e2e`. They run the real frontend against the real backend.
 
 Commands (frontend directory):
 
@@ -72,6 +76,18 @@ Commands (frontend directory):
 - `npm run e2e:report` - open the report of the last run
 
 Each test creates only the data it needs through the API (in `beforeEach` or as part of the tested flow) and removes it in `afterEach`, which runs even when the test fails. Every test also starts with `resetData` (API only), run by the automatic fixture in `e2e/fixtures/test.fixtures.ts`, so data left by a stopped or interrupted test (also in UI mode) doesn't break the next one. Tests share one database, so don't run two e2e runs at once (e.g. UI mode and `npm run e2e`).
+
+#### Backend
+
+Vitest + supertest tests live in `backend/test` (`*.e2e-spec.ts`). They start the whole application in the process of the tests, set up like in `main.ts` (`configureApp`), with the real `mados_e2e` database, and send real HTTP requests to the API. They don't listen on any port, so they work next to the development servers.
+
+Commands (backend directory):
+
+- `npm run e2e` - run all backend e2e tests (it refuses to run on any stage other than `e2e`)
+- `npm run e2e -- test/game.e2e-spec.ts` - run one spec file
+- `npm run e2e:coverage` - run all backend e2e tests with a coverage report in `coverage-e2e`
+
+Before every test the database is emptied and the 100% category is created again (`resetDatabase` in `test/helpers/database.helpers.ts`)
 
 ### Playwright MCP:
 
