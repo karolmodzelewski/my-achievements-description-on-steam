@@ -1,10 +1,17 @@
-# Visual Studio Code
-.vscode/
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# Claude Code
+.claude/
 
 # Playwright MCP
 .playwright-mcp/
+
+# Visual Studio Code
+.vscode/
+
+# Other IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
