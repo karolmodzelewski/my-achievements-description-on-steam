@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.20.1 - 19.11.2026
+
+- Cleanup in `.gitignore` files
+
 ## 1.20.0 - 19.11.2026
 
 - Cover backend with e2e tests (Vitest + supertest) against the `mados_e2e` database
