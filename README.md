@@ -9,18 +9,56 @@
 
 - [Getting started](#getting-started)
   - [Goal of this application](#goal-of-this-application)
+  - [Features](#features)
+  - [Prerequisites](#prerequisites)
   - [Download application](#download-application)
   - [Run application](#run-application)
   - [Helpful commands](#helpful-commands)
   - [E2E tests](#e2e-tests)
   - [Playwright MCP](#playwright-mcp)
 - [Tools and technologies](#tools-and-technologies)
+- [Quick overview](#quick-overview)
+  - [Main page](#main-page)
+  - [Manage categories](#manage-categories)
+  - [Manage wallpaper](#manage-wallpaper)
+  - [Manage game](#manage-game)
+  - [Edit mode](#edit-mode)
+  - [Description](#description)
+  - [Polish version](#polish-version)
+  - [Mobile view](#mobile-view)
+- [Any questions?](#any-questions)
 
 ## Getting started
 
 ### Goal of this application:
 
-The point of this application was to create an application to help myself handle all the games where I got all achievements or if some games has new achievements by creating dedicated description which can be easily copied and pasted on my Steam profile. It helps manage all the categories amount and sorts alphabetically all the games but the most important, it shortens time and eliminate the risk of a mistake.
+I keep a list of every game where I got all the achievements in the **Custom Info Box** of my Steam profile. The list also covers games that got new achievements later, so they're no longer 100%. Updating that text by hand after every finished game was slow and error-prone: I had to keep the list sorted, recount every category and fit everything within the Steam limit.
+
+MADOS (**M**y **A**chievements **D**escription **O**n **S**team) generates that text for me. I add a game once, mark its categories, and the application builds the whole description, ready to copy and paste into Steam:
+
+- a legend of my categories, each with a Steam emoticon (e.g. `ːHeartPixː`), a description and the number of its games
+- a **COMPLETED** section with the amount of completed games and DLC groups, listed alphabetically with their category emoticons
+- a **NEW ACHIEVEMENTS** section, built the same way, for games and DLCs with new achievements to get
+
+The application also generates a wallpaper with the number of completed games, so my desktop always shows the current score.
+
+### Features:
+
+- **Custom categories**: main, length and difficulty categories with a name, description and Steam emoticon. Their order is changed with drag & drop. Main categories can hide their games, which are then summed up as `... and (N) games` instead of being listed
+- **100% category**: a fixed category whose emoticon starts every completed entry
+- **DLC groups**: every game has a Base game group and optional DLC groups, each with its own New achievements checkbox. Every completed group counts as a finished entry
+- **Edit mode**: edit or delete games and groups straight from the description, with a confirmation before anything is deleted
+- **Steam size counter**: the description is measured the way Steam limits it (8000 bytes of UTF-8, line breaks counting as 2). Above the limit, the counter turns red and the exact part Steam would cut off is highlighted
+- **Hidden information**: categories with 0 games, hidden games and completed groups are presented in the application but never copied
+- **Wallpaper**: upload a GIMP 3 `.xcf` file with one text layer (or keep the default one) and generate its `.png` with the number of completed games and groups. One category can be left out of the number in brackets, e.g. `188 (173)`. The wallpaper is regenerated automatically after changes, and in production on Windows it can also be set as the desktop wallpaper
+- **Internationalization**: English (default) and Polish, switched with the flags next to the title and remembered in local storage
+
+### Prerequisites:
+
+- [Node.js](https://nodejs.org/)
+- [PostgreSQL](https://www.postgresql.org/) with an empty database for each stage you run (e.g. `mados_dev`, `mados_prod`). The backend creates its tables on start outside production
+- `backend/.env.stage.dev` and `backend/.env.stage.prod` files (ignored by git) with `APP_PORT=3001`, `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD` and `DB_DATABASE`. All variables are required
+- [GIMP 3](https://www.gimp.org/) (`gimp-console-3.exe`), only to generate the wallpaper
 
 ### Download application:
 
@@ -32,24 +70,28 @@ The point of this application was to create an application to help myself handle
 
 Frontend:
 
-- `npm run start:dev` - runs on `localhost:4200` with `development` configuration
-- `npm run start:prod` - runs on `localhost:4200` with `production` configuration
+- `npm run start:dev` - runs on `localhost:4200` with `development` configuration. It uses mock data, so it works without the backend
+- `npm run start:prod` - runs on `localhost:4200` with `production` configuration. It sends `/api` requests to the backend on `localhost:3001`
 
 Backend:
 
 - `npm run start:dev` - runs on `localhost:3001` with `development` configuration
-- `npm run start:prod` - runs on `localhost:3001` with `production` configuration
+- `npm run start:prod` - runs on `localhost:3001` with `production` configuration (run `npm run build` first)
 
 ### Helpful commands:
 
 Frontend:
 
+- `npm run test` - run unit tests
+- `npm run test:coverage` - run unit tests with a coverage report
 - `npm run lint` - lint application
 - `npm run lint:fix` - lint application and automatically fixes errors and warnings (if it's supported by specific rules)
 - `npm run format` - prettify application
 
 Backend:
 
+- `npm run test` - run unit tests
+- `npm run test:coverage` - run unit tests with a coverage report
 - `npm run lint` - lint application
 - `npm run lint:fix` - lint application and automatically fixes errors and warnings (if it's supported by specific rules)
 - `npm run format` - prettify application
@@ -107,6 +149,7 @@ Frontend:
 - Angular Material 22
 - RxJS 7
 - TypeScript 6
+- Transloco
 - Vitest 5
 - Playwright
 - ESLint
@@ -124,8 +167,97 @@ Backend:
 - Cross-env
 - Class-validator
 - Class-transformer
+- GIMP 3
 - Vitest 5
 - ESLint
 - Husky
 - Prettier
 - Lint-staged
+
+## Quick overview
+
+All screenshots are taken in the `development` configuration with mock data.
+
+### Main page:
+
+Everything is on one page: the collapsible Manage categories and Manage wallpaper sections, the Manage game form and the generated description.
+
+| Main Page |
+| --- |
+![Main Page](./assets/readme/overview.png)
+
+### Manage categories:
+
+The 100% category and the main, length and difficulty categories, each kind with its own form. Categories are added and removed with the plus and minus buttons and reordered with drag & drop. Deleting a saved category needs a confirmation, and the category is unassigned from its games after saving.
+
+| Manage Categories |
+| --- |
+![Manage Categories](./assets/readme/manage-categories.png)
+
+| Delete Category Confirmation |
+| --- |
+![Delete Category Confirmation](./assets/readme/delete-category-confirmation.png)
+
+### Manage wallpaper:
+
+Upload a GIMP 3 `.xcf` wallpaper or restore the default one, choose the category left out of the number in brackets, and preview, generate or download the `.png`.
+
+| Manage Wallpaper |
+| --- |
+![Manage Wallpaper](./assets/readme/manage-wallpaper.png)
+
+### Manage game:
+
+A game needs only its name. Length, difficulty and main categories are optional. DLC groups are added below the Base game, and each one has its own New achievements checkbox.
+
+| Manage Game Empty Form |
+| --- |
+![Manage Game Empty Form](./assets/readme/manage-game-empty.png)
+
+| Manage Game Filled Form |
+| --- |
+![Manage Game Filled Form](./assets/readme/manage-game-filled.png)
+
+### Edit mode:
+
+The pencil button in the description shows the edit and delete buttons next to every entry. Editing loads the game, with all its groups, into the Manage game form.
+
+| Edit Game |
+| --- |
+![Edit Game](./assets/readme/edit-game-mode.png)
+
+| Delete Game Confirmation |
+| --- |
+![Delete Game Confirmation](./assets/readme/delete-game-confirmation.png)
+
+### Description:
+
+The description is generated on the backend and copied with one click. Hidden information (categories with 0 games, hidden games and completed groups) is greyed out and never copied. The counter shows the Steam size of the copied description.
+
+| Description |
+| --- |
+![Description](./assets/readme/description.png)
+
+| Description Copied |
+| --- |
+![Description Copied](./assets/readme/description-copied.png)
+
+| Description Above The Steam Limit |
+| --- |
+![Description Above The Steam Limit](./assets/readme/description-limit-reached.png)
+
+### Polish version:
+
+| Polish Version |
+| --- |
+![Polish Version](./assets/readme/polish-version.png)
+
+### Mobile view:
+
+| Mobile View |
+| --- |
+![Mobile View](./assets/readme/mobile-view.png)
+
+## Any questions?
+
+If you have any questions or found some bugs or anything, feel free to contact me - I will be happy to answer :)

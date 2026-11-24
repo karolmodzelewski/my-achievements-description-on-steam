@@ -2,6 +2,11 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.22.0 - 24.11.2026
+
+- Rewrite README with a detailed description of the application, its features, prerequisites and missing commands
+- Add Quick overview section to README with screenshots of all functionalities, kept in `assets/readme`
+
 ## 1.21.0 - 24.11.2026
 
 - Add Manage wallpaper functionality:
