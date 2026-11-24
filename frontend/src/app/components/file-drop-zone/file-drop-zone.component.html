@@ -1,0 +1,22 @@
+<div (dragover)="handleDragOver($event)" (dragleave)="isDragging.set(false)" (drop)="handleDrop($event)" [class.dragging]="isDragging()" [class.disabled]="isDisabled()" class="drop-zone" data-testId="fileDropZone">
+    <mat-icon class="icon" fontIcon="upload_file"></mat-icon>
+
+    <p [id]="hintId()" class="hint" data-testId="fileDropZoneHint">{{ isDragging() ? ('fileDropZone.dropHere' | transloco) : hintText() }}</p>
+
+    <input #fileInput (change)="handleInputChange(fileInput)" [accept]="accept()" class="cdk-visually-hidden" data-testId="fileDropZoneInput" type="file" tabindex="-1" aria-hidden="true" />
+
+    <div class="buttons">
+        <button
+            (click)="openFilePicker(fileInput)"
+            [disabled]="isDisabled()"
+            [attr.aria-describedby]="hintId()"
+            data-testId="fileDropZoneButton"
+            type="button"
+            matButton="outlined"
+        >
+            {{ buttonText() }}
+        </button>
+
+        <ng-content />
+    </div>
+</div>

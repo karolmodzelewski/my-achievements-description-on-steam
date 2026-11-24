@@ -20,6 +20,8 @@ import { clickByTestId, emitByTestId, getElementByTestId, getTextByTestId, getTe
 import { spyOnClipboard, spyOnSnackbarService } from '../../../../../testing/helpers/service-spy.helpers';
 import { EditGameService } from '../../services/edit-game.service';
 import { GameApiService } from '../../services/game-api.service';
+import { WallpaperApiService } from '../../services/wallpaper-api.service';
+import { WallpaperStatusService } from '../../services/wallpaper-status.service';
 import { getSteamTextSize, STEAM_DESCRIPTION_MAX_SIZE } from '../../utils/steam-size.util';
 
 describe('DescriptionSectionComponent', () => {
@@ -65,7 +67,7 @@ describe('DescriptionSectionComponent', () => {
     beforeEach(async () => {
         TestBed.configureTestingModule({
             imports: [DescriptionSectionComponent],
-            providers: [provideHttpClient(), EditGameService, GameApiService, SnackbarService, ConfirmationService],
+            providers: [provideHttpClient(), WallpaperApiService, WallpaperStatusService, EditGameService, GameApiService, SnackbarService, ConfirmationService],
         });
 
         reloadDescriptionMock = vi.fn();

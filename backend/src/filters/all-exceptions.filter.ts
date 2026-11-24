@@ -4,7 +4,7 @@ import { BaseExceptionFilter } from '@nestjs/core';
 
 import type { Request } from 'express';
 
-import { isRejectedRequestStatus } from '../utils/http-status.util';
+import { isRejectedRequestStatus, isServerErrorStatus } from '../utils/http-status.util';
 import type { HttpExceptionResponse } from './interfaces/http-exception-response.interface';
 
 @Catch()
@@ -16,6 +16,13 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
             const { method, originalUrl } = host.switchToHttp().getRequest<Request>();
 
             this.logger.warn(`${method} ${originalUrl} rejected with ${exception.getStatus()}: ${this.getReason(exception)}`);
+        }
+
+        // The base filter logs only errors other than HttpExceptions, so server errors thrown on purpose would be returned without a log
+        if (exception instanceof HttpException && isServerErrorStatus(exception.getStatus())) {
+            const { method, originalUrl } = host.switchToHttp().getRequest<Request>();
+
+            this.logger.error(`${method} ${originalUrl} failed with ${exception.getStatus()}: ${this.getReason(exception)}`);
         }
 
         super.catch(exception, host);

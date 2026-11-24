@@ -7,7 +7,8 @@ import type { Category } from '../../src/app/interfaces/category.interface';
 import type { CategoryRequestBody } from '../../src/app/interfaces/category-request-body.interface';
 import type { DescriptionResponseBody } from '../../src/app/interfaces/description-response-body.interface';
 import type { Game } from '../../src/app/interfaces/game.interface';
-import { ONE_HUNDRED_PERCENT_ICON } from '../constants/test-data.constants';
+import type { WallpaperSettings } from '../../src/app/interfaces/wallpaper-settings.interface';
+import { ONE_HUNDRED_PERCENT_ICON, WALLPAPER_SETTINGS } from '../constants/test-data.constants';
 
 export const getCategories = async (request: APIRequestContext): Promise<Category[]> => {
     const response = await request.get('api/categories');
@@ -68,8 +69,16 @@ export const deleteGames = async (request: APIRequestContext, names: string[]): 
 
 const deleteAllGames = async (request: APIRequestContext): Promise<void> => deleteGamesMatching(request, () => true);
 
-// Called before every test, so everything is properly cleaned up before running any test
+export const saveWallpaperSettings = async (request: APIRequestContext, settings: WallpaperSettings): Promise<void> => {
+    const response = await request.put('api/wallpaper/settings', { data: settings });
+
+    await expect(response).toBeOK();
+};
+
+// Called before every test, so everything is properly cleaned up before running any test.
+// The wallpaper settings go first, so the changes that follow never run GIMP in the background
 export const resetData = async (request: APIRequestContext): Promise<void> => {
+    await saveWallpaperSettings(request, WALLPAPER_SETTINGS);
     await deleteAllGames(request);
     await deleteCategories(request, [CategoryKind.MAIN, CategoryKind.LENGTH, CategoryKind.DIFFICULTY]);
     await setOneHundredPercentIcon(request, ONE_HUNDRED_PERCENT_ICON);

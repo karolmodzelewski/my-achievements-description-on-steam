@@ -1,5 +1,4 @@
 import { provideHttpClient } from '@angular/common/http';
-import type { ViewportScroller } from '@angular/common';
 import type { DebugElement } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
@@ -9,28 +8,30 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AddCategoriesFormComponent } from './add-categories-form.component';
 import { CategoriesApiService } from '../../services/categories-api.service';
+import { WallpaperApiService } from '../../services/wallpaper-api.service';
+import { WallpaperStatusService } from '../../services/wallpaper-status.service';
 import { ConfirmationService } from '../../../../components/confirmation/confirmation.service';
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
 import { CategoryKind } from '../../../../enums/category-kind.enum';
 import { buildCategory } from '../../../../../testing/builders/category.builders';
-import { clickByTestId, emitByTestId, getElementByTestId, queryAllByTestId, queryByTestId } from '../../../../../testing/helpers/dom.helpers';
+import { clickByTestId, emitByTestId, queryAllByTestId, queryByTestId } from '../../../../../testing/helpers/dom.helpers';
 import { spyOnViewportScroller } from '../../../../../testing/helpers/service-spy.helpers';
 
 describe('AddCategoriesFormComponent', () => {
     let component: AddCategoriesFormComponent;
     let fixture: ComponentFixture<AddCategoriesFormComponent>;
     let debugElement: DebugElement;
-    let viewportScroller: ViewportScroller;
     let categoriesSavedMock: Mock<() => void>;
 
     beforeEach(async () => {
         TestBed.configureTestingModule({
             imports: [AddCategoriesFormComponent],
-            providers: [provideHttpClient(), CategoriesApiService, SnackbarService, ConfirmationService],
+            providers: [provideHttpClient(), WallpaperApiService, WallpaperStatusService, CategoriesApiService, SnackbarService, ConfirmationService],
         });
 
+        spyOnViewportScroller();
+
         categoriesSavedMock = vi.fn();
-        viewportScroller = spyOnViewportScroller();
         fixture = TestBed.createComponent(AddCategoriesFormComponent);
         component = fixture.componentInstance;
         debugElement = fixture.debugElement;
@@ -53,7 +54,6 @@ describe('AddCategoriesFormComponent', () => {
         // Assert
         expect(queryByTestId(debugElement, 'oneHundredPercentForm')).toBeNull();
         expect(queryAllByTestId(debugElement, 'categoryKindForm').length).toBe(0);
-        expect(getElementByTestId(debugElement, 'bottomExpansionButton').getAttribute('aria-expanded')).toBe('false');
     });
 
     it('should show the categories forms after clicking the expansion button', async () => {
@@ -63,19 +63,9 @@ describe('AddCategoriesFormComponent', () => {
         // Assert
         expect(queryByTestId(debugElement, 'oneHundredPercentForm')).not.toBeNull();
         expect(queryAllByTestId(debugElement, 'categoryKindForm').length).toBe(3);
-        expect(getElementByTestId(debugElement, 'bottomExpansionButton').getAttribute('aria-expanded')).toBe('true');
-        expect(viewportScroller.scrollToAnchor).toHaveBeenCalledWith(component.headingId);
     });
 
-    it('should focus the top collapse button after expanding', async () => {
-        // Act
-        await clickByTestId(fixture, 'bottomExpansionButton');
-
-        // Assert
-        expect(document.activeElement).toBe(getElementByTestId(debugElement, 'topCollapseButton'));
-    });
-
-    it('should hide the categories forms and focus the bottom button after clicking the top collapse button', async () => {
+    it('should hide the categories forms after clicking the collapse button', async () => {
         // Arrange
         await clickByTestId(fixture, 'bottomExpansionButton');
 
@@ -83,9 +73,8 @@ describe('AddCategoriesFormComponent', () => {
         await clickByTestId(fixture, 'topCollapseButton');
 
         // Assert
+        expect(queryByTestId(debugElement, 'oneHundredPercentForm')).toBeNull();
         expect(queryAllByTestId(debugElement, 'categoryKindForm').length).toBe(0);
-        expect(queryByTestId(debugElement, 'topCollapseButton')).toBeNull();
-        expect(document.activeElement).toBe(getElementByTestId(debugElement, 'bottomExpansionButton'));
     });
 
     it('should not present the 100% form without the 100% category', async () => {

@@ -23,8 +23,8 @@ html {
     );
     @include mat.theme-overrides(
         (
-            on-surface: rgba(0, 0, 0, 0.87),
-            on-surface-variant: rgba(0, 0, 0, 0.54),
+            on-surface: rgba($color-black, 0.87),
+            on-surface-variant: rgba($color-black, 0.54),
             error: $color-light-red,
             body-large-tracking: 0.5px,
             body-medium-tracking: 0.25px,
@@ -37,7 +37,7 @@ html {
             protected-container-shape: 4px,
             outlined-container-height: 36px,
             protected-container-height: 36px,
-            outlined-disabled-outline-color: rgba(0, 0, 0, 0.12),
+            outlined-disabled-outline-color: $color-disabled-outline,
             outlined-label-text-tracking: $button-letter-spacing,
             protected-label-text-tracking: $button-letter-spacing,
         )
@@ -66,6 +66,10 @@ body {
     font: var(--mat-sys-body-medium);
     letter-spacing: var(--mat-sys-body-medium-tracking);
     background: $color-light-purple;
+}
+
+.mat-mdc-checkbox-disabled .mdc-checkbox {
+    cursor: default;
 }
 
 .mat-mdc-button-disabled {

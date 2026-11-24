@@ -12,13 +12,15 @@ import { CategoriesApiService } from './services/categories-api.service';
 import { DescriptionApiService } from './services/description-api.service';
 import { EditGameService } from './services/edit-game.service';
 import { GameApiService } from './services/game-api.service';
+import { WallpaperApiService } from './services/wallpaper-api.service';
+import { WallpaperStatusService } from './services/wallpaper-status.service';
 import { ConfirmationService } from '../../components/confirmation/confirmation.service';
 import { SnackbarService } from '../../components/snackbar/snackbar.service';
 import { CategoryKind } from '../../enums/category-kind.enum';
 import { buildCategory } from '../../../testing/builders/category.builders';
 import { emitByTestId, queryByTestId } from '../../../testing/helpers/dom.helpers';
 import { mockErrorResponse } from '../../../testing/mocks/error-response.mocks';
-import { spyOnCategoriesApiService, spyOnDescriptionApiService } from '../../../testing/helpers/service-spy.helpers';
+import { spyOnCategoriesApiService, spyOnDescriptionApiService, spyOnWallpaperApiService } from '../../../testing/helpers/service-spy.helpers';
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
@@ -26,6 +28,7 @@ describe('MainPageComponent', () => {
     let debugElement: DebugElement;
     let categoriesApiService: CategoriesApiService;
     let descriptionApiService: DescriptionApiService;
+    let wallpaperStatusService: WallpaperStatusService;
 
     const oneHundredPercentCategory = buildCategory({ id: 12, kind: CategoryKind.ONE_HUNDRED_PERCENT, name: '100%', description: null, iconName: ':100:' });
 
@@ -38,11 +41,26 @@ describe('MainPageComponent', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [MainPageComponent],
-            providers: [provideHttpClient(), CategoriesApiService, DescriptionApiService, GameApiService, EditGameService, SnackbarService, ConfirmationService],
+            providers: [
+                provideHttpClient(),
+                WallpaperApiService,
+                WallpaperStatusService,
+                CategoriesApiService,
+                DescriptionApiService,
+                GameApiService,
+                EditGameService,
+                SnackbarService,
+                ConfirmationService,
+            ],
         });
+
+        spyOnWallpaperApiService();
 
         categoriesApiService = spyOnCategoriesApiService();
         descriptionApiService = spyOnDescriptionApiService();
+        wallpaperStatusService = TestBed.inject(WallpaperStatusService);
+
+        vi.spyOn(wallpaperStatusService, 'refreshStatus');
         vi.mocked(categoriesApiService.getCategories).mockReturnValue(of([oneHundredPercentCategory]));
     });
 
@@ -61,37 +79,46 @@ describe('MainPageComponent', () => {
         it('should present the game form and the description when the 100% icon is set', () => {
             // Assert
             expect(queryByTestId(debugElement, 'addCategoriesForm')).not.toBeNull();
+            expect(queryByTestId(debugElement, 'manageWallpaper')).not.toBeNull();
             expect(queryByTestId(debugElement, 'addGameForm')).not.toBeNull();
             expect(queryByTestId(debugElement, 'descriptionSection')).not.toBeNull();
             expect(queryByTestId(debugElement, 'mainPageInfobar')).toBeNull();
             expect(queryByTestId(debugElement, 'loadingState')).toBeNull();
         });
 
-        it('should reload the categories and the description after saving categories', async () => {
+        it('should not check the wallpaper status before anything changes', () => {
+            // Assert
+            expect(wallpaperStatusService.refreshStatus).not.toHaveBeenCalled();
+        });
+
+        it('should reload the categories and the description and check the wallpaper updated in the background after saving categories', async () => {
             // Act
             await emitByTestId(fixture, 'addCategoriesForm', 'categoriesSaved');
 
             // Assert
             expect(categoriesApiService.getCategories).toHaveBeenCalledTimes(2);
             expect(descriptionApiService.getDescription).toHaveBeenCalledTimes(2);
+            expect(wallpaperStatusService.refreshStatus).toHaveBeenCalledOnce();
         });
 
-        it('should reload only the description after saving a game', async () => {
+        it('should reload only the description and check the wallpaper updated in the background after saving a game', async () => {
             // Act
             await emitByTestId(fixture, 'addGameForm', 'reloadDescription');
 
             // Assert
             expect(categoriesApiService.getCategories).toHaveBeenCalledTimes(1);
             expect(descriptionApiService.getDescription).toHaveBeenCalledTimes(2);
+            expect(wallpaperStatusService.refreshStatus).toHaveBeenCalledOnce();
         });
 
-        it('should reload only the description after deleting an entry of the description', async () => {
+        it('should reload only the description and check the wallpaper updated in the background after deleting an entry of the description', async () => {
             // Act
             await emitByTestId(fixture, 'descriptionSection', 'reloadDescription');
 
             // Assert
             expect(categoriesApiService.getCategories).toHaveBeenCalledTimes(1);
             expect(descriptionApiService.getDescription).toHaveBeenCalledTimes(2);
+            expect(wallpaperStatusService.refreshStatus).toHaveBeenCalledOnce();
         });
     });
 
@@ -144,6 +171,7 @@ describe('MainPageComponent', () => {
 
             // Assert
             expect(queryByTestId(debugElement, 'addCategoriesForm')).not.toBeNull();
+            expect(queryByTestId(debugElement, 'manageWallpaper')).not.toBeNull();
             expect(queryByTestId(debugElement, 'mainPageInfobar')).not.toBeNull();
             expect(queryByTestId(debugElement, 'addGameForm')).toBeNull();
             expect(queryByTestId(debugElement, 'descriptionSection')).toBeNull();

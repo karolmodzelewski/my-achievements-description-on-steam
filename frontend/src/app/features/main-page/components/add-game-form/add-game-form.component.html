@@ -137,7 +137,15 @@
         </fieldset>
 
         <div class="buttons-container">
-            <button [disabled]="gameForm().invalid() || gameForm().submitting()" class="form-button" data-testId="gameSubmitButton" type="submit" matButton="outlined" disabledInteractive>
+            <button
+                [disabled]="gameForm().invalid() || gameForm().submitting() || isWallpaperGenerating()"
+                [matTooltip]="isWallpaperGenerating() ? ('common.wallpaperGenerating' | transloco) : ''"
+                class="form-button"
+                data-testId="gameSubmitButton"
+                type="submit"
+                matButton="outlined"
+                disabledInteractive
+            >
                 {{ (isEditing() ? 'addGameForm.editGame' : 'addGameForm.addGame') | transloco }}
             </button>
 

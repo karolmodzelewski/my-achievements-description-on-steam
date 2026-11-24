@@ -62,9 +62,14 @@ describe('AppModule', () => {
         const dataSource = (await compileAppModule()).get(DataSource);
 
         // Assert
-        const [{ Category }, { Game }, { GameGroup }] = await Promise.all([import('./entities/category.entity.js'), import('./entities/game.entity.js'), import('./entities/game-group.entity.js')]);
+        const [{ Category }, { Game }, { GameGroup }, { Wallpaper }] = await Promise.all([
+            import('./entities/category.entity.js'),
+            import('./entities/game.entity.js'),
+            import('./entities/game-group.entity.js'),
+            import('./entities/wallpaper.entity.js'),
+        ]);
 
-        expect(dataSource.options.entities).toEqual(expect.arrayContaining([Category, Game, GameGroup]));
+        expect(dataSource.options.entities).toEqual(expect.arrayContaining([Category, Game, GameGroup, Wallpaper]));
     });
 
     it('should create the 100% category once connected when it is missing', async () => {
@@ -84,14 +89,16 @@ describe('AppModule', () => {
         const appModule = await compileAppModule();
 
         // Assert
-        const [{ CategoriesController }, { DescriptionController }, { GameController }] = await Promise.all([
+        const [{ CategoriesController }, { DescriptionController }, { GameController }, { WallpaperController }] = await Promise.all([
             import('./modules/categories/categories.controller.js'),
             import('./modules/description/description.controller.js'),
             import('./modules/game/game.controller.js'),
+            import('./modules/wallpaper/wallpaper.controller.js'),
         ]);
 
         expect(appModule.get(CategoriesController)).toBeInstanceOf(CategoriesController);
         expect(appModule.get(DescriptionController)).toBeInstanceOf(DescriptionController);
         expect(appModule.get(GameController)).toBeInstanceOf(GameController);
+        expect(appModule.get(WallpaperController)).toBeInstanceOf(WallpaperController);
     });
 });

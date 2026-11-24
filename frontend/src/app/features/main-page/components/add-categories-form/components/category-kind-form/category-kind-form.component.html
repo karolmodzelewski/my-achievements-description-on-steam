@@ -123,7 +123,8 @@
     </fieldset>
 
     <button
-        [disabled]="!hasChanges() || categoriesForm().invalid() || categoriesForm().submitting()"
+        [disabled]="!hasChanges() || categoriesForm().invalid() || categoriesForm().submitting() || isWallpaperGenerating()"
+        [matTooltip]="isWallpaperGenerating() ? ('common.wallpaperGenerating' | transloco) : ''"
         class="save-button"
         data-testId="categoriesSaveButton"
         type="submit"

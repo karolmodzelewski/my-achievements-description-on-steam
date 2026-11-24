@@ -11,6 +11,7 @@ import { seedOneHundredPercentCategory } from './seeds/one-hundred-percent-categ
 import { GameModule } from './modules/game/game.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { DescriptionModule } from './modules/description/description.module';
+import { WallpaperModule } from './modules/wallpaper/wallpaper.module';
 import { isProductionStage } from './utils/stage.util';
 
 const databaseLogger = new Logger('Database', { timestamp: true });
@@ -52,6 +53,7 @@ const databaseLogger = new Logger('Database', { timestamp: true });
         CategoriesModule,
         GameModule,
         DescriptionModule,
+        WallpaperModule,
     ],
 })
 export class AppModule {}

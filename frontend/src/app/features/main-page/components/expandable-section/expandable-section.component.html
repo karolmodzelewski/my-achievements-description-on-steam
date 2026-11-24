@@ -1,0 +1,43 @@
+@let collapseText = 'expandableSection.collapse' | transloco;
+
+<section [attr.aria-labelledby]="headingId()" data-testId="expandableSection">
+    <mados-section-heading [headingText]="headingText()" [id]="headingId()" data-testId="expandableSectionHeading" />
+
+    @if (isExpanded()) {
+        <button
+            #topCollapseButton
+            (click)="toggle()"
+            [attr.aria-controls]="contentId()"
+            aria-expanded="true"
+            class="expansion-button top-expansion-button button"
+            data-testId="topCollapseButton"
+            color="primary"
+            type="button"
+            matButton="elevated"
+        >
+            <mados-expansion-button-text [buttonText]="collapseText" iconName="expand_less" />
+        </button>
+
+        <div [id]="contentId()" class="content" data-testId="expandableSectionContent">
+            <ng-container [ngTemplateOutlet]="content()" />
+        </div>
+    }
+
+    <button
+        #bottomExpansionButton
+        (click)="toggle()"
+        [attr.aria-controls]="isExpanded() ? contentId() : null"
+        [attr.aria-expanded]="isExpanded()"
+        class="expansion-button button"
+        data-testId="bottomExpansionButton"
+        color="primary"
+        type="button"
+        matButton="elevated"
+    >
+        @if (isExpanded()) {
+            <mados-expansion-button-text [buttonText]="collapseText" iconName="expand_less" />
+        } @else {
+            <mados-expansion-button-text [buttonText]="'expandableSection.expand' | transloco" iconName="expand_more" />
+        }
+    </button>
+</section>

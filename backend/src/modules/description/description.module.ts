@@ -10,5 +10,6 @@ import { DescriptionService } from './services/description.service';
     imports: [TypeOrmModule.forFeature([Category, Game])],
     controllers: [DescriptionController],
     providers: [DescriptionService],
+    exports: [DescriptionService],
 })
 export class DescriptionModule {}
