@@ -12,11 +12,14 @@ import { TranslocoService } from '@jsverse/transloco';
 import { GameComponent } from './game.component';
 import { EditGameService } from '../../../../services/edit-game.service';
 import { GameApiService } from '../../../../services/game-api.service';
+import { WallpaperApiService } from '../../../../services/wallpaper-api.service';
+import { WallpaperStatusService } from '../../../../services/wallpaper-status.service';
 import { ConfirmationService } from '../../../../../../components/confirmation/confirmation.service';
 import { SnackbarType } from '../../../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
+import { ErrorCode } from '../../../../../../enums/error-code.enum';
 import { buildDescriptionEntry, buildGame, buildGameGroup } from '../../../../../../../testing/builders/description.builders';
-import { clickByTestId, getTextByTestId, queryByTestId } from '../../../../../../../testing/helpers/dom.helpers';
+import { clickByTestId, getTextByTestId, isDisabledByTestId, queryByTestId } from '../../../../../../../testing/helpers/dom.helpers';
 import { mockErrorResponse } from '../../../../../../../testing/mocks/error-response.mocks';
 import { spyOnConfirmationService, spyOnGameApiService, spyOnSnackbarService } from '../../../../../../../testing/helpers/service-spy.helpers';
 
@@ -29,6 +32,7 @@ describe('GameComponent', () => {
     let snackbarService: SnackbarService;
     let confirmationService: ConfirmationService;
     let translocoService: TranslocoService;
+    let wallpaperStatusService: WallpaperStatusService;
     let reloadDescriptionMock: Mock<() => void>;
 
     const game = buildGame({ id: 1, name: 'Game' });
@@ -37,7 +41,7 @@ describe('GameComponent', () => {
     beforeEach(async () => {
         TestBed.configureTestingModule({
             imports: [GameComponent],
-            providers: [provideHttpClient(), EditGameService, GameApiService, SnackbarService, ConfirmationService],
+            providers: [provideHttpClient(), WallpaperApiService, WallpaperStatusService, EditGameService, GameApiService, SnackbarService, ConfirmationService],
         });
 
         reloadDescriptionMock = vi.fn();
@@ -46,6 +50,7 @@ describe('GameComponent', () => {
         confirmationService = spyOnConfirmationService();
         editGameService = TestBed.inject(EditGameService);
         translocoService = TestBed.inject(TranslocoService);
+        wallpaperStatusService = TestBed.inject(WallpaperStatusService);
 
         fixture = TestBed.createComponent(GameComponent);
         component = fixture.componentInstance;
@@ -150,6 +155,45 @@ describe('GameComponent', () => {
         // Assert
         expect(snackbarService.openSnackbar).toHaveBeenCalledWith(translocoService.translate('game.deleteError.game'), SnackbarType.ERROR);
         expect(reloadDescriptionMock).not.toHaveBeenCalled();
+    });
+
+    it('should inform about the generated wallpaper rejecting the deletion', async () => {
+        // Arrange
+        vi.mocked(gameApiService.deleteGame).mockReturnValue(mockErrorResponse({ message: 'The wallpaper is being generated', errorCode: ErrorCode.WALLPAPER_GENERATING }));
+
+        // Act
+        await clickByTestId(fixture, 'gameDeleteButton');
+
+        // Assert
+        expect(snackbarService.openSnackbar).toHaveBeenCalledWith(translocoService.translate('common.wallpaperGenerating'), SnackbarType.ERROR);
+        expect(reloadDescriptionMock).not.toHaveBeenCalled();
+    });
+
+    it('should not allow deleting the game nor its listed groups while the wallpaper is generated', async () => {
+        // Arrange
+        fixture.componentRef.setInput('entry', buildDescriptionEntry({ game, listedGroups: [group] }));
+        wallpaperStatusService.setGeneratingInSection(true);
+
+        // Act
+        await fixture.whenStable();
+
+        // Assert
+        expect(isDisabledByTestId(debugElement, 'gameDeleteButton')).toBe(true);
+        expect(isDisabledByTestId(debugElement, 'listedGroupDeleteButton')).toBe(true);
+        expect(isDisabledByTestId(debugElement, 'gameEditButton')).toBe(false);
+    });
+
+    it('should neither ask for confirmation nor delete while the wallpaper is generated', async () => {
+        // Arrange
+        wallpaperStatusService.setGeneratingInSection(true);
+        await fixture.whenStable();
+
+        // Act
+        await clickByTestId(fixture, 'gameDeleteButton');
+
+        // Assert
+        expect(confirmationService.openConfirmation).not.toHaveBeenCalled();
+        expect(gameApiService.deleteGame).not.toHaveBeenCalled();
     });
 
     it('should stop editing the deleted game', async () => {

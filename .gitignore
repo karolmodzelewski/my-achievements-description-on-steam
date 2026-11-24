@@ -15,3 +15,8 @@
 *.launch
 .settings/
 *.sublime-workspace
+
+# Generated wallpapers of each stage
+/wallpaper/prod/*
+/wallpaper/dev/*
+/wallpaper/e2e/*

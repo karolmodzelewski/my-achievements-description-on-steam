@@ -22,7 +22,15 @@
         </mat-form-field>
     </fieldset>
 
-    <button [disabled]="!hasChanges() || categoryForm().invalid() || categoryForm().submitting()" class="save-button" data-testId="oneHundredPercentSaveButton" type="submit" matButton="outlined" disabledInteractive>
+    <button
+        [disabled]="!hasChanges() || categoryForm().invalid() || categoryForm().submitting() || isWallpaperGenerating()"
+        [matTooltip]="isWallpaperGenerating() ? ('common.wallpaperGenerating' | transloco) : ''"
+        class="save-button"
+        data-testId="oneHundredPercentSaveButton"
+        type="submit"
+        matButton="outlined"
+        disabledInteractive
+    >
         {{ 'oneHundredPercentForm.save' | transloco }}
     </button>
 </form>

@@ -1,10 +1,5 @@
 @use 'src/styles/colors' as *;
 
-.categories,
-.top-expansion-button {
-    margin-bottom: 40px;
-}
-
 .categories {
     display: flex;
     gap: 40px;
@@ -12,13 +7,4 @@
     background: $color-magnolia-white;
     padding: 20px;
     border-radius: 4px;
-}
-
-.button {
-    width: 100%;
-}
-
-.expansion-button {
-    height: 65px;
-    font-size: 24px;
 }

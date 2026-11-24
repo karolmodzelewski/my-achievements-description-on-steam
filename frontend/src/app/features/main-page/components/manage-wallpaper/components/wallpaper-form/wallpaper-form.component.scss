@@ -1,0 +1,111 @@
+@use 'src/styles/colors' as *;
+@use 'src/styles/icon-button' as *;
+@use 'src/styles/form' as *;
+@use 'src/styles/hidden-information' as *;
+
+.form {
+    @include form-panel;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.icon-clear {
+    @include icon-button(24px, 40px);
+
+    margin: 0 4px;
+}
+
+.legend {
+    @include legend;
+}
+
+.checkboxes-container {
+    @include checkboxes-container;
+}
+
+.preview {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.preview-heading {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.preview-figure {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.preview-frame {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid rgba($color-purple, 0.3);
+    border-radius: 4px;
+    background: $color-light-purple;
+
+    > * {
+        grid-area: 1 / 1;
+    }
+}
+
+.preview-spacer {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+}
+
+.loaded-image {
+    opacity: 1;
+}
+
+.preview-loading,
+.no-preview {
+    place-self: center;
+}
+
+.no-preview {
+    @include hidden-information;
+
+    padding: 0 20px;
+    text-align: center;
+}
+
+.caption {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+}
+
+.preview-details {
+    @include hidden-information;
+}
+
+.buttons-container {
+    @include buttons-container;
+
+    margin-top: 0;
+}
+
+.form-button {
+    @include form-button;
+}
+
+@media (width <= 600px) {
+    .form-button {
+        font-size: 16px;
+    }
+}

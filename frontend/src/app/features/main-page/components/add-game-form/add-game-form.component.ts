@@ -10,6 +10,7 @@ import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/f
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
 
 import { catchError, filter, firstValueFrom, of, take, tap } from 'rxjs';
 
@@ -29,13 +30,31 @@ import type { ErrorResponseBody } from '../../../../interfaces/error-response-bo
 import { NOT_BLANK_PATTERN } from '../../constants/form.constants';
 import { EditGameService } from '../../services/edit-game.service';
 import { GameApiService } from '../../services/game-api.service';
+import { WallpaperStatusService } from '../../services/wallpaper-status.service';
 import { SectionHeadingComponent } from '../section-heading/section-heading.component';
 
 @Component({
     selector: 'mados-add-game-form',
     templateUrl: './add-game-form.component.html',
     styleUrl: './add-game-form.component.scss',
-    imports: [SectionHeadingComponent, FormRoot, FormField, MatFormField, MatLabel, MatError, MatSuffix, MatInput, MatIcon, MatIconButton, MatSelect, MatOption, MatCheckbox, MatButton, TranslocoPipe],
+    imports: [
+        SectionHeadingComponent,
+        FormRoot,
+        FormField,
+        MatFormField,
+        MatLabel,
+        MatError,
+        MatSuffix,
+        MatInput,
+        MatIcon,
+        MatIconButton,
+        MatSelect,
+        MatOption,
+        MatCheckbox,
+        MatButton,
+        MatTooltip,
+        TranslocoPipe,
+    ],
 })
 export class AddGameFormComponent {
     private readonly gameApiService = inject(GameApiService);
@@ -44,6 +63,7 @@ export class AddGameFormComponent {
     private readonly viewportScroller = inject(ViewportScroller);
     private readonly snackbarService = inject(SnackbarService);
     private readonly translocoService = inject(TranslocoService);
+    private readonly wallpaperStatusService = inject(WallpaperStatusService);
     private readonly injector = inject(Injector);
 
     private readonly addBaseGameGroupButton = viewChild.required('addBaseGameGroupButton', { read: MatIconButton });
@@ -56,6 +76,8 @@ export class AddGameFormComponent {
     public readonly reloadDescription = output();
 
     public readonly headingId = 'manageGameHeading';
+    public readonly isWallpaperGenerating = this.wallpaperStatusService.isGenerating;
+
     public readonly isEditing = computed<boolean>(() => this.editGameService.editedGame() !== null);
 
     private readonly gameModel = linkedSignal<GameFormSource, GameFormModel>({
@@ -147,6 +169,12 @@ export class AddGameFormComponent {
     }
 
     private saveGame(): Promise<void> {
+        if (this.isWallpaperGenerating()) {
+            this.snackbarService.openSnackbar(this.translocoService.translate('common.wallpaperGenerating'), SnackbarType.ERROR);
+
+            return Promise.resolve();
+        }
+
         const editedGame = this.editGameService.editedGame();
         const requestBody = this.prepareRequestBody();
         const saveGameRequest = editedGame ? this.gameApiService.editGame(editedGame.id, requestBody) : this.gameApiService.addGame(requestBody);
@@ -159,15 +187,23 @@ export class AddGameFormComponent {
                     this.reloadDescription.emit();
                 }),
                 catchError(({ error }: HttpErrorResponse) => {
-                    const errorResponseBody = error as ErrorResponseBody | null;
-                    const messageKey = errorResponseBody?.errorCode === ErrorCode.EMPTY_NAME ? 'addGameForm.emptyName' : 'addGameForm.saveError';
-
-                    this.snackbarService.openSnackbar(this.translocoService.translate(messageKey), SnackbarType.ERROR);
+                    this.snackbarService.openSnackbar(this.translocoService.translate(this.getSaveErrorKey(error)), SnackbarType.ERROR);
 
                     return of(undefined);
                 })
             )
         );
+    }
+
+    private getSaveErrorKey(error: unknown): string {
+        switch ((error as ErrorResponseBody | null)?.errorCode) {
+            case ErrorCode.EMPTY_NAME:
+                return 'addGameForm.emptyName';
+            case ErrorCode.WALLPAPER_GENERATING:
+                return 'common.wallpaperGenerating';
+            default:
+                return 'addGameForm.saveError';
+        }
     }
 
     private prepareRequestBody(): AddGameRequestBody {

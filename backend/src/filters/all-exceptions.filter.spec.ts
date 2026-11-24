@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, HttpException, HttpStatus, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpException, HttpStatus, InternalServerErrorException, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host.js';
 
@@ -17,6 +17,7 @@ describe('AllExceptionsFilter', () => {
     beforeEach(() => {
         vi.spyOn(BaseExceptionFilter.prototype, 'catch').mockImplementation(() => undefined);
         vi.spyOn(Logger.prototype, 'warn');
+        vi.spyOn(Logger.prototype, 'error');
 
         filter = new AllExceptionsFilter();
         host = new ExecutionContextHost([request, {} as Response]);
@@ -57,6 +58,32 @@ describe('AllExceptionsFilter', () => {
 
         // Assert
         expect(Logger.prototype.warn).not.toHaveBeenCalled();
+    });
+
+    it.each([
+        { reason: 'the message', exception: new InternalServerErrorException('The wallpaper source does not exist'), log: 'failed with 500: The wallpaper source does not exist' },
+        {
+            reason: 'the message and the error code',
+            exception: new ServiceUnavailableException({ message: 'GIMP is busy', errorCode: ErrorCode.WALLPAPER_GENERATING, statusCode: HttpStatus.SERVICE_UNAVAILABLE }),
+            log: 'failed with 503: GIMP is busy (WALLPAPER_GENERATING)',
+        },
+    ])('should log the server error thrown on purpose with $reason', ({ exception, log }) => {
+        // Act
+        filter.catch(exception, host);
+
+        // Assert
+        expect(Logger.prototype.error).toHaveBeenCalledWith(`PUT /api/categories/MAIN ${log}`);
+    });
+
+    it.each([
+        { reason: 'a rejected request', exception: new BadRequestException() },
+        { reason: 'an unexpected error', exception: new Error('Connection lost') },
+    ])('should not log $reason as a server error thrown on purpose', ({ exception }) => {
+        // Act
+        filter.catch(exception, host);
+
+        // Assert
+        expect(Logger.prototype.error).not.toHaveBeenCalled();
     });
 
     it.each([

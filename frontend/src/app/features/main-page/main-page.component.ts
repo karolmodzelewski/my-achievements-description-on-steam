@@ -7,9 +7,11 @@ import { AddCategoriesFormComponent } from './components/add-categories-form/add
 import { AddGameFormComponent } from './components/add-game-form/add-game-form.component';
 import { DescriptionSectionComponent } from './components/description-section/description-section.component';
 import { HeaderComponent } from './components/header/header.component';
+import { ManageWallpaperComponent } from './components/manage-wallpaper/manage-wallpaper.component';
 import type { MainPageData } from './interfaces/main-page-data.interface';
 import { CategoriesApiService } from './services/categories-api.service';
 import { DescriptionApiService } from './services/description-api.service';
+import { WallpaperStatusService } from './services/wallpaper-status.service';
 import { areJsonEqual } from './utils/json-equality.util';
 import { ErrorStateComponent } from '../../components/error-state/error-state.component';
 import { InfobarComponent } from '../../components/infobar/infobar.component';
@@ -21,11 +23,22 @@ import type { Category } from '../../interfaces/category.interface';
     selector: 'mados-main-page',
     templateUrl: './main-page.component.html',
     styleUrl: './main-page.component.scss',
-    imports: [HeaderComponent, AddCategoriesFormComponent, AddGameFormComponent, DescriptionSectionComponent, InfobarComponent, LoadingStateComponent, ErrorStateComponent, TranslocoPipe],
+    imports: [
+        HeaderComponent,
+        AddCategoriesFormComponent,
+        ManageWallpaperComponent,
+        AddGameFormComponent,
+        DescriptionSectionComponent,
+        InfobarComponent,
+        LoadingStateComponent,
+        ErrorStateComponent,
+        TranslocoPipe,
+    ],
 })
 export class MainPageComponent {
     private readonly categoriesApiService = inject(CategoriesApiService);
     private readonly descriptionApiService = inject(DescriptionApiService);
+    private readonly wallpaperStatusService = inject(WallpaperStatusService);
 
     private readonly categoriesResource = rxResource({ stream: () => this.categoriesApiService.getCategories() });
     private readonly descriptionResource = rxResource({ stream: () => this.descriptionApiService.getDescription() });
@@ -43,13 +56,16 @@ export class MainPageComponent {
     // Every game belongs to the 100% category, so games can't be presented without its icon
     public readonly isOneHundredPercentIconSet = computed<boolean>(() => (this.oneHundredPercentCategory()?.iconName ?? '') !== '');
 
-    public reloadDescription(): void {
+    // Changes of games, groups and categories update the wallpaper in the background
+    public handleGamesChange(): void {
         this.descriptionResource.reload();
+        this.wallpaperStatusService.refreshStatus();
     }
 
-    public reloadCategoriesAndDescription(): void {
+    public handleCategoriesChange(): void {
         this.categoriesResource.reload();
         this.descriptionResource.reload();
+        this.wallpaperStatusService.refreshStatus();
     }
 
     private getCategoriesOfKind(kind: CategoryKind): Category[] {

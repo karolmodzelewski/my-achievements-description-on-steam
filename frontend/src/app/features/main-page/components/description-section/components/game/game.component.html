@@ -1,3 +1,5 @@
+@let wallpaperGeneratingText = 'common.wallpaperGenerating' | transloco;
+
 <div class="game-container">
     <p [class.hidden-information]="isHidden()" class="game-data" data-testId="gameLine">
         <mados-cut-off-text [text]="entryLine()" [cutOffIndex]="cutOffIndex()" />
@@ -12,7 +14,17 @@
             <button (click)="editGame()" [attr.aria-label]="'game.editAriaLabel' | transloco: { name: entryName() }" class="icon-button" data-testId="gameEditButton" matIconButton type="button">
                 <mat-icon fontIcon="edit"></mat-icon>
             </button>
-            <button (click)="deleteEntry()" [attr.aria-label]="'game.deleteAriaLabel' | transloco: { name: entryName() }" class="icon-button" data-testId="gameDeleteButton" matIconButton type="button">
+            <button
+                (click)="deleteEntry()"
+                [disabled]="isWallpaperGenerating()"
+                [matTooltip]="isWallpaperGenerating() ? wallpaperGeneratingText : ''"
+                [attr.aria-label]="'game.deleteAriaLabel' | transloco: { name: entryName() }"
+                class="icon-button"
+                data-testId="gameDeleteButton"
+                matIconButton
+                type="button"
+                disabledInteractive
+            >
                 <mat-icon fontIcon="delete"></mat-icon>
             </button>
         </div>
@@ -30,7 +42,17 @@
             @let deleteGroupAriaLabel = 'game.deleteAriaLabel' | transloco: { name: `${entry().game.name} - ${group.name}` };
 
             <div class="icon-container">
-                <button (click)="deleteGroup(group)" [attr.aria-label]="deleteGroupAriaLabel" class="icon-button" data-testId="listedGroupDeleteButton" matIconButton type="button">
+                <button
+                    (click)="deleteGroup(group)"
+                    [disabled]="isWallpaperGenerating()"
+                    [matTooltip]="isWallpaperGenerating() ? wallpaperGeneratingText : ''"
+                    [attr.aria-label]="deleteGroupAriaLabel"
+                    class="icon-button"
+                    data-testId="listedGroupDeleteButton"
+                    matIconButton
+                    type="button"
+                    disabledInteractive
+                >
                     <mat-icon fontIcon="delete"></mat-icon>
                 </button>
             </div>

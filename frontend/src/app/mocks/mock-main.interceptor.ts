@@ -2,9 +2,9 @@ import type { HttpEvent, HttpInterceptorFn } from '@angular/common/http';
 import { HttpResponse } from '@angular/common/http';
 
 import type { Observable } from 'rxjs';
-import { delay, of } from 'rxjs';
+import { delay, from, of, switchMap } from 'rxjs';
 
-import { categoriesResponseBody, descriptionResponseBody } from './mock-main.data';
+import { categoriesResponseBody, createWallpaperPngResponseBody, descriptionResponseBody, wallpaperResponseBody } from './mock-main.data';
 import { HttpRequestMethod } from '../enums/http-request-method.enum';
 
 const categories = /categories\/[A-Z_]+$/;
@@ -22,11 +22,20 @@ export const mockMainInterceptor: HttpInterceptorFn = (request, next) => {
             return mockSuccess(categoriesResponseBody);
         case url.endsWith('description') && method === HttpRequestMethod.GET:
             return mockSuccess(descriptionResponseBody);
+        case url.endsWith('wallpaper') && method === HttpRequestMethod.GET:
+        case url.endsWith('wallpaper/updated') && method === HttpRequestMethod.GET:
+            return mockSuccess(wallpaperResponseBody);
+        case url.endsWith('wallpaper/png') && method === HttpRequestMethod.GET:
+            return from(createWallpaperPngResponseBody()).pipe(switchMap((body) => mockSuccess(body)));
         case categories.test(url) && method === HttpRequestMethod.PUT:
         case url.endsWith('game') && method === HttpRequestMethod.POST:
         case gameWithIdUrlPattern.test(url) && method === HttpRequestMethod.PUT:
         case gameWithIdUrlPattern.test(url) && method === HttpRequestMethod.DELETE:
         case gameGroupWithIdUrlPattern.test(url) && method === HttpRequestMethod.DELETE:
+        case url.endsWith('wallpaper/settings') && method === HttpRequestMethod.PUT:
+        case url.endsWith('wallpaper/xcf') && method === HttpRequestMethod.PUT:
+        case url.endsWith('wallpaper/restore') && method === HttpRequestMethod.POST:
+        case url.endsWith('wallpaper/generate') && method === HttpRequestMethod.POST:
             return mockSuccess();
         default:
             return next(request);

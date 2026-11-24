@@ -10,6 +10,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
 
 import { catchError, filter, firstValueFrom, of, take, tap } from 'rxjs';
 
@@ -27,6 +28,7 @@ import type { Category } from '../../../../../../interfaces/category.interface';
 import type { ErrorResponseBody } from '../../../../../../interfaces/error-response-body.interface';
 import { NOT_BLANK_PATTERN } from '../../../../constants/form.constants';
 import { CategoriesApiService } from '../../../../services/categories-api.service';
+import { WallpaperStatusService } from '../../../../services/wallpaper-status.service';
 import { areJsonEqual } from '../../../../utils/json-equality.util';
 
 @Component({
@@ -49,6 +51,7 @@ import { areJsonEqual } from '../../../../utils/json-equality.util';
         MatIconButton,
         MatCheckbox,
         MatButton,
+        MatTooltip,
         TranslocoPipe,
     ],
 })
@@ -58,6 +61,7 @@ export class CategoryKindFormComponent {
     private readonly snackbarService = inject(SnackbarService);
     private readonly translocoService = inject(TranslocoService);
     private readonly liveAnnouncer = inject(LiveAnnouncer);
+    private readonly wallpaperStatusService = inject(WallpaperStatusService);
     private readonly injector = inject(Injector);
 
     private readonly dragHandles = viewChildren('dragHandle', { read: MatIconButton });
@@ -71,6 +75,7 @@ export class CategoryKindFormComponent {
 
     private readonly categoriesModel = linkedSignal<CategoryKindFormModel>(() => this.buildCategoriesModel(this.categories()));
 
+    public readonly isWallpaperGenerating = this.wallpaperStatusService.isGenerating;
     public readonly categoriesForm = form(
         this.categoriesModel,
         (path) => {
@@ -193,6 +198,12 @@ export class CategoryKindFormComponent {
             return Promise.resolve();
         }
 
+        if (this.isWallpaperGenerating()) {
+            this.snackbarService.openSnackbar(this.translocoService.translate('common.wallpaperGenerating'), SnackbarType.ERROR);
+
+            return Promise.resolve();
+        }
+
         return firstValueFrom(
             this.categoriesApiService.saveCategories(this.kind(), this.prepareRequestBody(this.categoriesModel())).pipe(
                 tap(() => {
@@ -200,15 +211,23 @@ export class CategoryKindFormComponent {
                     this.categoriesSaved.emit();
                 }),
                 catchError(({ error }: HttpErrorResponse) => {
-                    const errorResponseBody = error as ErrorResponseBody | null;
-                    const messageKey = errorResponseBody?.errorCode === ErrorCode.DUPLICATED_CATEGORY_NAME ? 'categoryKindForm.namesUnique' : `${this.kindKeyPrefix()}.saveError`;
-
-                    this.snackbarService.openSnackbar(this.translocoService.translate(messageKey), SnackbarType.ERROR);
+                    this.snackbarService.openSnackbar(this.translocoService.translate(this.getSaveErrorKey(error)), SnackbarType.ERROR);
 
                     return of(undefined);
                 })
             )
         );
+    }
+
+    private getSaveErrorKey(error: unknown): string {
+        switch ((error as ErrorResponseBody | null)?.errorCode) {
+            case ErrorCode.DUPLICATED_CATEGORY_NAME:
+                return 'categoryKindForm.namesUnique';
+            case ErrorCode.WALLPAPER_GENERATING:
+                return 'common.wallpaperGenerating';
+            default:
+                return `${this.kindKeyPrefix()}.saveError`;
+        }
     }
 
     // The order of categories in the request is their order in the description

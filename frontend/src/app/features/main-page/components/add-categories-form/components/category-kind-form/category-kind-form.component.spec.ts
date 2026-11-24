@@ -13,6 +13,8 @@ import { TranslocoService } from '@jsverse/transloco';
 
 import { CategoryKindFormComponent } from './category-kind-form.component';
 import { CategoriesApiService } from '../../../../services/categories-api.service';
+import { WallpaperApiService } from '../../../../services/wallpaper-api.service';
+import { WallpaperStatusService } from '../../../../services/wallpaper-status.service';
 import { ConfirmationService } from '../../../../../../components/confirmation/confirmation.service';
 import { SnackbarType } from '../../../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../../../components/snackbar/snackbar.service';
@@ -43,6 +45,7 @@ describe('CategoryKindFormComponent', () => {
     let confirmationService: ConfirmationService;
     let liveAnnouncer: LiveAnnouncer;
     let translocoService: TranslocoService;
+    let wallpaperStatusService: WallpaperStatusService;
     let categoriesSavedMock: Mock<() => void>;
 
     const lovedCategory = buildCategory({ id: 1, name: 'Loved', description: 'Loved game', iconName: ':loved:', position: 0 });
@@ -59,7 +62,7 @@ describe('CategoryKindFormComponent', () => {
     beforeEach(async () => {
         TestBed.configureTestingModule({
             imports: [CategoryKindFormComponent],
-            providers: [provideHttpClient(), CategoriesApiService, SnackbarService, ConfirmationService],
+            providers: [provideHttpClient(), WallpaperApiService, WallpaperStatusService, CategoriesApiService, SnackbarService, ConfirmationService],
         });
 
         categoriesSavedMock = vi.fn();
@@ -68,6 +71,7 @@ describe('CategoryKindFormComponent', () => {
         confirmationService = spyOnConfirmationService();
         liveAnnouncer = spyOnLiveAnnouncer();
         translocoService = TestBed.inject(TranslocoService);
+        wallpaperStatusService = TestBed.inject(WallpaperStatusService);
         fixture = TestBed.createComponent(CategoryKindFormComponent);
         component = fixture.componentInstance;
         debugElement = fixture.debugElement;
@@ -331,6 +335,45 @@ describe('CategoryKindFormComponent', () => {
 
         // Assert
         expect(snackbarService.openSnackbar).toHaveBeenCalledWith(translocoService.translate(`categoryKind.${CategoryKind.MAIN}.saveError`), SnackbarType.ERROR);
+        expect(categoriesSavedMock).not.toHaveBeenCalled();
+    });
+
+    it('should not allow saving categories while the wallpaper is generated', async () => {
+        // Arrange
+        await pressKeyByTestId(fixture, 'categoryDragHandle', 'ArrowDown', 0);
+        wallpaperStatusService.setGeneratingInSection(true);
+
+        // Act
+        await fixture.whenStable();
+
+        // Assert
+        expect(isDisabledByTestId(debugElement, 'categoriesSaveButton')).toBe(true);
+    });
+
+    it('should inform about the generated wallpaper instead of saving categories', async () => {
+        // Arrange
+        await pressKeyByTestId(fixture, 'categoryDragHandle', 'ArrowDown', 0);
+        wallpaperStatusService.setGeneratingInSection(true);
+        await fixture.whenStable();
+
+        // Act
+        await clickByTestId(fixture, 'categoriesSaveButton');
+
+        // Assert
+        expect(categoriesApiService.saveCategories).not.toHaveBeenCalled();
+        expect(snackbarService.openSnackbar).toHaveBeenCalledWith(translocoService.translate('common.wallpaperGenerating'), SnackbarType.ERROR);
+    });
+
+    it('should inform about the generated wallpaper rejecting categories while saving', async () => {
+        // Arrange
+        vi.mocked(categoriesApiService.saveCategories).mockReturnValue(mockErrorResponse({ message: 'The wallpaper is being generated', errorCode: ErrorCode.WALLPAPER_GENERATING }));
+        await pressKeyByTestId(fixture, 'categoryDragHandle', 'ArrowDown', 0);
+
+        // Act
+        await clickByTestId(fixture, 'categoriesSaveButton');
+
+        // Assert
+        expect(snackbarService.openSnackbar).toHaveBeenCalledWith(translocoService.translate('common.wallpaperGenerating'), SnackbarType.ERROR);
         expect(categoriesSavedMock).not.toHaveBeenCalled();
     });
 });

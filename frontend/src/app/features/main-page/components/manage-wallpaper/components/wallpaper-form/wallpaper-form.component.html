@@ -1,0 +1,147 @@
+@let desktopUnavailableText = 'manageWallpaper.desktopUnavailable' | transloco;
+
+@if (wallpaperResource.error()) {
+    <mados-error-state data-testId="wallpaperErrorState" />
+} @else if (wallpaper(); as wallpaper) {
+    <div [attr.aria-busy]="isBusy()" class="form" data-testId="wallpaperFormContent">
+        @if (isGimpInstalled()) {
+            <mados-infobar [message]="'manageWallpaper.infobar' | transloco" data-testId="wallpaperInfobar" />
+        } @else {
+            <mados-warnbar [message]="'manageWallpaper.warnbar' | transloco" data-testId="wallpaperWarnbar" />
+        }
+
+        <mados-file-drop-zone
+            (fileSelected)="uploadXcf($event)"
+            (fileRejected)="rejectFile()"
+            [buttonText]="(isUploading() ? 'manageWallpaper.uploading' : 'manageWallpaper.chooseFile') | transloco"
+            [hintText]="'manageWallpaper.dropHint' | transloco"
+            [isDisabled]="!canReplaceWallpaper()"
+            hintId="wallpaperDropHint"
+            accept=".xcf"
+            data-testId="wallpaperDropZone"
+        >
+            <button
+                (click)="restoreDefaultWallpaper()"
+                [disabled]="!canReplaceWallpaper()"
+                data-testId="restoreWallpaperButton"
+                type="button"
+                matButton="outlined"
+            >
+                {{ (isRestoring() ? 'manageWallpaper.restoring' : 'manageWallpaper.restoreDefault') | transloco }}
+            </button>
+        </mados-file-drop-zone>
+
+        <mat-form-field subscriptSizing="dynamic">
+            <mat-label>{{ 'manageWallpaper.categoryLabel' | transloco }}</mat-label>
+            <mat-select (selectionChange)="saveSettings()" [formField]="settingsForm.excludedCategoryId" data-testId="excludedCategorySelect">
+                @for (group of categoryGroups(); track group.kind) {
+                    <mat-optgroup [label]="`categoryKind.${group.kind}.legend` | transloco">
+                        @for (category of group.categories; track category.id) {
+                            <mat-option [value]="category.id">{{ category.name }}</mat-option>
+                        }
+                    </mat-optgroup>
+                }
+            </mat-select>
+
+            @if (settingsForm.excludedCategoryId().value() !== null) {
+                <button (click)="clearExcludedCategory($event)" [disabled]="settingsForm.excludedCategoryId().disabled()" [attr.aria-label]="'manageWallpaper.clearCategoryAriaLabel' | transloco" class="icon-clear" data-testId="clearExcludedCategoryButton" type="button" matIconButton matIconSuffix>
+                    <mat-icon fontIcon="clear"></mat-icon>
+                </button>
+            }
+
+            <mat-hint>{{ 'manageWallpaper.categoryHint' | transloco }}</mat-hint>
+        </mat-form-field>
+
+        <fieldset>
+            <legend class="legend">{{ 'manageWallpaper.options' | transloco }}</legend>
+
+            <div class="checkboxes-container">
+                <mat-checkbox
+                    (change)="saveSettings()"
+                    [formField]="settingsForm.isAutoGenerateEnabled"
+                    data-testId="autoGenerateCheckbox"
+                >
+                    {{ 'manageWallpaper.autoGenerate' | transloco }}
+                </mat-checkbox>
+
+                <mat-checkbox
+                    (change)="saveSettings()"
+                    [formField]="settingsForm.isDesktopUpdateEnabled"
+                    [matTooltip]="canUpdateDesktop() ? '' : desktopUnavailableText"
+                    [aria-describedby]="canUpdateDesktop() ? '' : 'wallpaperDesktopUnavailable'"
+                    data-testId="desktopUpdateCheckbox"
+                    disabledInteractive
+                >
+                    {{ 'manageWallpaper.desktopUpdate' | transloco }}
+                </mat-checkbox>
+            </div>
+
+            <!-- The tooltip isn't read with the disabled checkbox, so its text describes it for screen readers -->
+            @if (!canUpdateDesktop()) {
+                <span id="wallpaperDesktopUnavailable" class="cdk-visually-hidden">{{ desktopUnavailableText }}</span>
+            }
+        </fieldset>
+
+        <section [attr.aria-labelledby]="previewHeadingId" class="preview">
+            <h3 [id]="previewHeadingId" class="preview-heading">{{ 'manageWallpaper.previewHeading' | transloco }}</h3>
+
+            <figure class="preview-figure">
+                <div class="preview-frame">
+                    <svg [attr.viewBox]="previewViewBox()" class="preview-spacer" aria-hidden="true"></svg>
+
+                    @if (previewUrl(); as previewUrl) {
+                        <!-- eslint-disable-next-line @angular-eslint/template/prefer-ngsrc -- NgOptimizedImage doesn't support the blob URL of the fetched PNG -->
+                        <img (load)="isPreviewLoaded.set(true)" [src]="previewUrl" [alt]="'manageWallpaper.previewAlt' | transloco: { text: wallpaper.text }" [class.loaded-image]="!isPreviewLoading()" class="preview-image" data-testId="wallpaperPreviewImage" />
+                    }
+
+                    @if (isPreviewLoading()) {
+                        <mados-loading-state class="preview-loading" data-testId="wallpaperPreviewLoading" />
+                    } @else if (!previewUrl()) {
+                        <p class="no-preview" data-testId="wallpaperNoPreview">{{ 'manageWallpaper.noPreview' | transloco }}</p>
+                    }
+                </div>
+
+                @if (wallpaper.png; as png) {
+                    <figcaption class="caption">
+                        <span data-testId="wallpaperPreviewCaption">{{ 'manageWallpaper.previewCaption' | transloco: { text: wallpaper.text } }}</span>
+                        <span class="preview-details" data-testId="wallpaperPreviewDetails">{{ 'manageWallpaper.previewDetails' | transloco: { width: png.width, height: png.height, size: pngSize() } }}</span>
+                    </figcaption>
+                }
+            </figure>
+        </section>
+
+        <div class="buttons-container">
+            <button
+                (click)="generateWallpaper()"
+                [disabled]="!canGenerate()"
+                [matTooltip]="isAutoGenerated() ? ('manageWallpaper.autoGenerated' | transloco) : ''"
+                data-testId="generateWallpaperButton"
+                class="form-button"
+                type="button"
+                matButton="outlined"
+                disabledInteractive
+            >
+                @if (isGenerating()) {
+                    {{ 'manageWallpaper.generating' | transloco }}
+                } @else {
+                    {{ (isDesktopUpdated() ? 'manageWallpaper.generateAndUpdate' : 'manageWallpaper.generate') | transloco }}
+                }
+            </button>
+
+            <button
+                (click)="downloadPng()"
+                [disabled]="!canDownload()"
+                [matTooltip]="png() ? '' : ('manageWallpaper.noPreview' | transloco)"
+                data-testId="downloadWallpaperButton"
+                class="form-button"
+                type="button"
+                matButton="outlined"
+                disabledInteractive
+            >
+                {{ 'manageWallpaper.download' | transloco }}
+            </button>
+        </div>
+    </div>
+} @else {
+    <mados-loading-state data-testId="wallpaperLoadingState" />
+}

@@ -2,6 +2,15 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 1.21.0 - 24.11.2026
+
+- Add Manage wallpaper functionality:
+  - Possibility to upload a GIMP 3 `.xcf` wallpaper with one text layer or restore the default one, generate its `.png` with the number of completed games and groups (optionally followed in brackets by the number without a selected category), preview and download it
+  - Generate the wallpaper automatically after changes of games, groups and categories, and block these changes while it's being generated
+  - Optionally update the desktop wallpaper after generating, available only in production on Windows
+  - Keep the generated XCF and PNG files of every stage in its own folder of `wallpaper`
+- Extract the expandable section shared by Manage categories and Manage wallpaper
+
 ## 1.20.1 - 19.11.2026
 
 - Cleanup in `.gitignore` files

@@ -3,18 +3,27 @@ import type { DataSource } from 'typeorm';
 import { Category } from '../../src/entities/category.entity';
 import { Game } from '../../src/entities/game.entity';
 import { GameGroup } from '../../src/entities/game-group.entity';
+import { Wallpaper } from '../../src/entities/wallpaper.entity';
 import { CategoryKind } from '../../src/enums/category-kind.enum';
 import { seedOneHundredPercentCategory } from '../../src/seeds/one-hundred-percent-category.seed';
 import { buildCategory } from '../../src/testing/builders/category.builders';
 import { buildGame, buildGameGroup } from '../../src/testing/builders/game.builders';
+import { buildWallpaper } from '../../src/testing/builders/wallpaper.builders';
 
-// Empties every table, including the join table of games and categories, and creates the 100% category like on application start
+// Empties every table, including the join table of games and categories, and creates the 100% category like on application start.
+// The wallpaper settings turn off automatic generation, so changes made by the tests never run GIMP in the background
 export const resetDatabase = async (dataSource: DataSource): Promise<void> => {
     const tables = dataSource.entityMetadatas.map(({ tablePath }) => `"${tablePath}"`).join(', ');
 
     await dataSource.query(`TRUNCATE ${tables} RESTART IDENTITY CASCADE`);
     await seedOneHundredPercentCategory(dataSource);
+    await dataSource.getRepository(Wallpaper).save(buildWallpaper({ id: undefined, isAutoGenerateEnabled: false }));
 };
+
+export const findWallpaper = (dataSource: DataSource): Promise<Wallpaper> => dataSource.getRepository(Wallpaper).findOneOrFail({ where: {}, order: { id: 'ASC' } });
+
+export const updateWallpaper = async (dataSource: DataSource, overrides: Partial<Wallpaper>): Promise<Wallpaper> =>
+    dataSource.getRepository(Wallpaper).save(Object.assign(await findWallpaper(dataSource), overrides));
 
 export const getOneHundredPercentCategory = (dataSource: DataSource): Promise<Category> => dataSource.getRepository(Category).findOneByOrFail({ kind: CategoryKind.ONE_HUNDRED_PERCENT });
 

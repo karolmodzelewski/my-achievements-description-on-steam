@@ -15,6 +15,8 @@ import { TranslocoService } from '@jsverse/transloco';
 import { AddGameFormComponent } from './add-game-form.component';
 import { EditGameService } from '../../services/edit-game.service';
 import { GameApiService } from '../../services/game-api.service';
+import { WallpaperApiService } from '../../services/wallpaper-api.service';
+import { WallpaperStatusService } from '../../services/wallpaper-status.service';
 import { ConfirmationService } from '../../../../components/confirmation/confirmation.service';
 import { SnackbarType } from '../../../../components/snackbar/enums/snackbar-type.enum';
 import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
@@ -38,6 +40,7 @@ describe('AddGameFormComponent', () => {
     let snackbarService: SnackbarService;
     let confirmationService: ConfirmationService;
     let viewportScroller: ViewportScroller;
+    let wallpaperStatusService: WallpaperStatusService;
     let reloadDescriptionMock: Mock<() => void>;
 
     const lovedCategory = buildCategory({ id: 7, name: 'Loved' });
@@ -87,7 +90,7 @@ describe('AddGameFormComponent', () => {
     beforeEach(async () => {
         TestBed.configureTestingModule({
             imports: [AddGameFormComponent],
-            providers: [provideHttpClient(), EditGameService, GameApiService, SnackbarService, ConfirmationService],
+            providers: [provideHttpClient(), WallpaperApiService, WallpaperStatusService, EditGameService, GameApiService, SnackbarService, ConfirmationService],
         });
 
         reloadDescriptionMock = vi.fn();
@@ -97,6 +100,7 @@ describe('AddGameFormComponent', () => {
         confirmationService = spyOnConfirmationService();
         editGameService = TestBed.inject(EditGameService);
         translocoService = TestBed.inject(TranslocoService);
+        wallpaperStatusService = TestBed.inject(WallpaperStatusService);
         fixture = TestBed.createComponent(AddGameFormComponent);
         component = fixture.componentInstance;
         debugElement = fixture.debugElement;
@@ -204,6 +208,46 @@ describe('AddGameFormComponent', () => {
         // Assert
         expect(snackbarService.openSnackbar).toHaveBeenCalledWith(translocoService.translate('addGameForm.saveError'), SnackbarType.ERROR);
         expect(reloadDescriptionMock).not.toHaveBeenCalled();
+    });
+
+    it('should not allow saving the game while the wallpaper is generated', async () => {
+        // Arrange
+        await typeByTestId(fixture, 'gameNameInput', 'Game');
+        wallpaperStatusService.setGeneratingInSection(true);
+
+        // Act
+        await fixture.whenStable();
+
+        // Assert
+        expect(isDisabledByTestId(debugElement, 'gameSubmitButton')).toBe(true);
+    });
+
+    it('should inform about the generated wallpaper instead of saving the game', async () => {
+        // Arrange
+        await typeByTestId(fixture, 'gameNameInput', 'Game');
+        wallpaperStatusService.setGeneratingInSection(true);
+        await fixture.whenStable();
+
+        // Act
+        await clickByTestId(fixture, 'gameSubmitButton');
+
+        // Assert
+        expect(gameApiService.addGame).not.toHaveBeenCalled();
+        expect(snackbarService.openSnackbar).toHaveBeenCalledWith(translocoService.translate('common.wallpaperGenerating'), SnackbarType.ERROR);
+    });
+
+    it('should inform about the generated wallpaper rejecting the game while saving', async () => {
+        // Arrange
+        vi.mocked(gameApiService.addGame).mockReturnValue(mockErrorResponse({ message: 'The wallpaper is being generated', errorCode: ErrorCode.WALLPAPER_GENERATING }));
+        await typeByTestId(fixture, 'gameNameInput', 'Game');
+
+        // Act
+        await clickByTestId(fixture, 'gameSubmitButton');
+
+        // Assert
+        expect(snackbarService.openSnackbar).toHaveBeenCalledWith(translocoService.translate('common.wallpaperGenerating'), SnackbarType.ERROR);
+        expect(reloadDescriptionMock).not.toHaveBeenCalled();
+        expect(getGameName()).toBe('Game');
     });
 
     it('should fill the form with the edited game', async () => {
