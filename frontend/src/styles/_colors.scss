@@ -1,10 +1,16 @@
+$color-black: #000000;
 $color-black-russian: #14161a;
 $color-dark-white: #f5f5f5;
 $color-magnolia-white: #f1edf8;
 $color-light-purple: #e9e2f4;
 $color-purple: #6d42ba;
 $color-red: #c0392b;
+$color-light-red: #f44336;
 $color-green: #20bf6b;
 $color-light-blue: #edf5fd;
 $color-blue: #3498db;
+$color-light-orange: #fdf2e9;
+$color-orange: #a65400;
 $color-gray-61: #9c9c9c;
+$color-disabled-outline: rgba($color-black, 0.12);
+$color-disabled-text: color-mix(in srgb, var(--mat-sys-on-surface) 38%, transparent);

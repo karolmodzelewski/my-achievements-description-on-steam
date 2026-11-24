@@ -1,10 +1,8 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "baseUrl": "./",
         "outDir": "./dist/out-tsc",
-        "forceConsistentCasingInFileNames": true,
+        "rootDir": "./src",
         "strict": true,
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,
@@ -12,15 +10,13 @@
         "noFallthroughCasesInSwitch": true,
         "sourceMap": true,
         "declaration": false,
-        "downlevelIteration": true,
         "experimentalDecorators": true,
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
         "importHelpers": true,
         "target": "ES2022",
-        "module": "ES2022",
-        "useDefineForClassFields": false,
-        "lib": ["ES2022", "dom"],
-        "strictPropertyInitialization": false
+        "module": "preserve",
+        "useDefineForClassFields": false
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,

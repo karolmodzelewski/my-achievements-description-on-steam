@@ -1,0 +1,33 @@
+@use 'src/styles/icon-button' as *;
+@use 'src/styles/colors' as *;
+
+.language-switcher {
+    display: flex;
+    gap: 4px;
+}
+
+.flag-button {
+    @include icon-button(24px, 40px);
+
+    opacity: 0.5;
+    transition: opacity 0.2s;
+
+    &:hover,
+    &:focus-visible,
+    &.active {
+        opacity: 1;
+    }
+}
+
+.flag {
+    display: block;
+    width: 24px;
+    height: 16px;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba($color-black-russian, 0.15);
+}
+
+.active .flag {
+    outline: 2px solid $color-purple;
+    outline-offset: 2px;
+}

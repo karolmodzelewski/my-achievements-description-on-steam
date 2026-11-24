@@ -1,9 +1,9 @@
+@use 'src/styles/icon-button' as *;
 @use 'src/styles/colors' as *;
+@use 'src/styles/form' as *;
 
 .form {
-    background: $color-magnolia-white;
-    padding: 20px;
-    border-radius: 4px;
+    @include form-panel;
 }
 
 .form-fields-container {
@@ -25,24 +25,61 @@
 }
 
 .icon-clear {
-    cursor: pointer;
+    @include icon-button(24px, 40px);
+
+    margin: 0 4px;
+}
+
+.main-categories {
+    margin-top: 5px;
 }
 
 .checkboxes-container {
+    @include checkboxes-container;
+}
+
+.groups {
+    margin-top: 20px;
+}
+
+.legend {
+    @include legend;
+}
+
+.group-row {
     display: flex;
-    flex-wrap: wrap;
-    margin-top: 5px;
+    align-items: flex-start;
     gap: 0 20px;
 }
 
-.add-game-button {
-    width: 100%;
-    height: 50px;
-    font-size: 20px;
-    margin-top: 40px;
+.group-name-form-field {
+    flex: 1;
 }
 
-@media screen and (max-width: 480px) {
+// Centres the 40px checkbox and buttons against the 56px input
+.group-checkbox,
+.group-buttons {
+    margin-top: 8px;
+}
+
+.group-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.icon-group {
+    @include icon-button(24px, 40px);
+}
+
+.buttons-container {
+    @include buttons-container;
+}
+
+.form-button {
+    @include form-button;
+}
+
+@media (width <= 600px) {
     .form-fields-container {
         grid-template-columns: 1fr;
     }
@@ -51,5 +88,28 @@
     .length-form-field,
     .difficulty-form-field {
         grid-column: auto;
+    }
+
+    .group-row {
+        flex-wrap: wrap;
+    }
+
+    .group-row + .group-row {
+        margin-top: 4px;
+        border-top: 1px solid rgba($color-purple, 0.2);
+        padding-top: 16px;
+    }
+
+    .group-name-form-field {
+        flex-basis: 100%;
+    }
+
+    .group-checkbox,
+    .group-buttons {
+        margin-top: 0;
+    }
+
+    .group-buttons {
+        margin-left: auto;
     }
 }

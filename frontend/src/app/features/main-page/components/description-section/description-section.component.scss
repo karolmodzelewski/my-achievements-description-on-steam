@@ -1,3 +1,4 @@
+@use 'src/styles/icon-button' as *;
 @use 'src/styles/colors' as *;
 
 .description {
@@ -18,38 +19,57 @@
     }
 }
 
-.no-description-info {
+.heading-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+}
+
+.characters-counter {
     margin: 0;
+    white-space: nowrap;
+    font-size: 14px;
+    color: $color-gray-61;
+
+    &.limit-reached {
+        color: $color-red;
+    }
 }
 
 .margin-top {
     margin-top: 30px;
 }
 
+.section-line {
+    margin-bottom: 12px;
+}
+
+// Mirrors the empty line before the hidden games summary in the copied description
+.hidden-games-text {
+    margin: 24px 0 12px;
+}
+
 .icons-container {
     display: flex;
     justify-content: flex-end;
+    align-items: flex-start;
+    height: 0;
     position: sticky;
-    top: 15px;
-    right: 15px;
+    top: 0;
 }
 
-.icon {
-    width: 42px;
-    height: 42px;
-    font-size: 42px;
-    color: $color-dark-white;
-    cursor: pointer;
+.icon-button {
+    @include icon-button(
+        42px,
+        72px,
+        (
+            state-layer-color: $color-dark-white,
+            ripple-color: rgba($color-dark-white, 0.12),
+        )
+    );
 
-    &:hover {
+    &:hover .mat-icon {
         transform: scale(1.05);
     }
-
-    &:nth-of-type(n + 1) {
-        margin-left: 10px;
-    }
-}
-
-.categories {
-    margin-top: -20px;
 }

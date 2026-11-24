@@ -1,0 +1,142 @@
+@use 'src/styles/icon-button' as *;
+@use 'src/styles/colors' as *;
+
+.legend {
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.category-rows {
+    display: grid;
+    grid-template-columns: max-content 2fr 3fr 2fr minmax(130px, max-content) max-content;
+    gap: 0 20px;
+}
+
+.category-row {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: flex-start;
+
+    &.cdk-drag-placeholder {
+        opacity: 0.3;
+    }
+}
+
+.drag-preview {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: $color-magnolia-white;
+    padding: 8px 16px 8px 8px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba($color-purple, 0.3);
+    font-weight: 500;
+}
+
+// Moves the other categories smoothly while dragging and the dropped category to its new place
+.cdk-drop-list-dragging .category-row:not(.cdk-drag-placeholder),
+.category-row.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging {
+    cursor: grabbing;
+}
+
+.drag-handle,
+.drag-preview-icon {
+    color: $color-purple;
+}
+
+.drag-handle {
+    cursor: grab;
+}
+
+.category-buttons {
+    display: flex;
+    grid-column: -2;
+    gap: 5px;
+}
+
+.without-checkbox .icon-name-form-field {
+    grid-column: span 2;
+}
+
+// Centres the 40px drag handle, checkbox and buttons against the 56px input
+.drag-handle,
+.category-checkbox,
+.category-buttons {
+    margin-top: 8px;
+}
+
+.icon-clear,
+.icon-category {
+    @include icon-button(24px, 40px);
+}
+
+.icon-clear {
+    margin: 0 4px;
+}
+
+.add-category-button,
+.save-button {
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+}
+
+.save-button {
+    margin-top: 20px;
+}
+
+@media (width <= 1024px) {
+    .category-row + .category-row {
+        margin-top: 4px;
+        border-top: 1px solid rgba($color-purple, 0.2);
+        padding-top: 16px;
+    }
+}
+
+@media (600px < width <= 1024px) {
+    .category-rows {
+        grid-template-columns: max-content 1fr 1fr minmax(130px, max-content) max-content;
+    }
+
+    .drag-handle {
+        grid-row: 1 / span 2;
+    }
+
+    .description-form-field {
+        grid-column: span 3;
+    }
+
+    .icon-name-form-field {
+        grid-column: span 2;
+    }
+
+    .without-checkbox .icon-name-form-field {
+        grid-column: span 3;
+    }
+}
+
+@media (width <= 600px) {
+    .category-rows {
+        grid-template-columns: max-content 1fr max-content;
+    }
+
+    .drag-handle {
+        grid-row: 1 / span 4;
+    }
+
+    .category-row .name-form-field,
+    .category-row .description-form-field,
+    .category-row .icon-name-form-field {
+        grid-column: 2 / -1;
+    }
+
+    .category-checkbox,
+    .category-buttons {
+        margin-top: 0;
+    }
+}

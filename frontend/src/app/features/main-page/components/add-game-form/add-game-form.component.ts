@@ -1,183 +1,264 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ViewportScroller } from '@angular/common';
+import type { HttpErrorResponse } from '@angular/common/http';
+import { afterNextRender, afterRenderEffect, Component, computed, inject, Injector, input, linkedSignal, output, untracked, viewChild, viewChildren } from '@angular/core';
+import type { FieldState } from '@angular/forms/signals';
+import { applyEach, disabled, form, FormField, FormRoot, pattern, required } from '@angular/forms/signals';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatOption } from '@angular/material/core';
+import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
 
-import { catchError, EMPTY, filter, take, takeUntil } from 'rxjs';
+import { catchError, filter, firstValueFrom, of, take, tap } from 'rxjs';
 
-import { AddGameRequestBody } from '../../../../interfaces/add-game-request-body.interface';
-import { CategoryType } from '../../../../enums/category-type.enum';
-import { AddGameFormControl } from './enums/add-game-form-control.enum';
-import { Destroyable } from '../../../../utils/destroyable.util';
-import { GameCategory } from './../../../../interfaces/game-category.interface';
-import { Game } from './../../../../interfaces/game.interface';
-import { EditGameService } from './../../services/edit-game.service';
-import { DescriptionResponseBody } from '../../../../interfaces/description-response-body.interface';
-import { AddGameFormGroup } from './enums/add-game-form-group.enum';
-import { ViewState } from './../../../../enums/view-state.enum';
-import { SnackbarService } from './../../../../components/snackbar/snackbar.service';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import type { GameFormModel } from './interfaces/game-form-model.interface';
+import type { GameFormSource } from './interfaces/game-form-source.interface';
+import type { GameGroupFormModel } from './interfaces/game-group-form-model.interface';
+import type { GameMainCategoryFormModel } from './interfaces/game-main-category-form-model.interface';
+import { ConfirmationService } from '../../../../components/confirmation/confirmation.service';
+import { SnackbarType } from '../../../../components/snackbar/enums/snackbar-type.enum';
+import { SnackbarService } from '../../../../components/snackbar/snackbar.service';
+import { ErrorCode } from '../../../../enums/error-code.enum';
+import type { AddGameRequestBody } from '../../../../interfaces/add-game-request-body.interface';
+import type { Category } from '../../../../interfaces/category.interface';
+import type { ErrorResponseBody } from '../../../../interfaces/error-response-body.interface';
+import { NOT_BLANK_PATTERN } from '../../constants/form.constants';
+import { EditGameService } from '../../services/edit-game.service';
+import { GameApiService } from '../../services/game-api.service';
+import { WallpaperStatusService } from '../../services/wallpaper-status.service';
+import { SectionHeadingComponent } from '../section-heading/section-heading.component';
 
 @Component({
     selector: 'mados-add-game-form',
     templateUrl: './add-game-form.component.html',
-    styleUrls: ['./add-game-form.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrl: './add-game-form.component.scss',
+    imports: [
+        SectionHeadingComponent,
+        FormRoot,
+        FormField,
+        MatFormField,
+        MatLabel,
+        MatError,
+        MatSuffix,
+        MatInput,
+        MatIcon,
+        MatIconButton,
+        MatSelect,
+        MatOption,
+        MatCheckbox,
+        MatButton,
+        MatTooltip,
+        TranslocoPipe,
+    ],
 })
-export class AddGameFormComponent extends Destroyable implements OnInit {
-    @Input()
-    public description: DescriptionResponseBody;
+export class AddGameFormComponent {
+    private readonly gameApiService = inject(GameApiService);
+    private readonly editGameService = inject(EditGameService);
+    private readonly confirmationService = inject(ConfirmationService);
+    private readonly viewportScroller = inject(ViewportScroller);
+    private readonly snackbarService = inject(SnackbarService);
+    private readonly translocoService = inject(TranslocoService);
+    private readonly wallpaperStatusService = inject(WallpaperStatusService);
+    private readonly injector = inject(Injector);
 
-    @Output()
-    public reloadDescription: EventEmitter<void> = new EventEmitter<void>();
+    private readonly addBaseGameGroupButton = viewChild.required('addBaseGameGroupButton', { read: MatIconButton });
+    private readonly addGroupButtons = viewChildren('addGroupButton', { read: MatIconButton });
 
-    public headingText: string = 'Add game';
-    public form: FormGroup;
-    public AddGameFormControl: typeof AddGameFormControl = AddGameFormControl;
-    public AddGameFormGroup: typeof AddGameFormGroup = AddGameFormGroup;
-    public CategoryType: typeof CategoryType = CategoryType;
-    public ViewState: typeof ViewState = ViewState;
-    public viewState: ViewState;
-    public headingId: string = 'addGameHeading';
+    public readonly mainCategories = input.required<Category[]>();
+    public readonly lengthCategories = input.required<Category[]>();
+    public readonly difficultyCategories = input.required<Category[]>();
 
-    private get gameCategoriesFormGroup(): FormGroup {
-        return this.form.get(AddGameFormGroup.GAME_CATEGORIES) as FormGroup;
+    public readonly reloadDescription = output();
+
+    public readonly headingId = 'manageGameHeading';
+    public readonly isWallpaperGenerating = this.wallpaperStatusService.isGenerating;
+
+    public readonly isEditing = computed<boolean>(() => this.editGameService.editedGame() !== null);
+
+    private readonly gameModel = linkedSignal<GameFormSource, GameFormModel>({
+        source: () => ({
+            game: this.editGameService.editedGame(),
+            mainCategories: this.mainCategories(),
+            lengthCategories: this.lengthCategories(),
+            difficultyCategories: this.difficultyCategories(),
+        }),
+        computation: (source, previous) => this.computeGameModel(source, previous),
+    });
+
+    public readonly gameForm = form(
+        this.gameModel,
+        (path) => {
+            required(path.name);
+            pattern(path.name, NOT_BLANK_PATTERN);
+            disabled(path.length, { when: () => !this.lengthCategories().length });
+            disabled(path.difficulty, { when: () => !this.difficultyCategories().length });
+            applyEach(path.groups, (groupPath) => {
+                required(groupPath.name);
+                pattern(groupPath.name, NOT_BLANK_PATTERN);
+            });
+        },
+        { submission: { action: () => this.saveGame() } }
+    );
+
+    constructor() {
+        afterRenderEffect(() => {
+            if (!this.editGameService.editedGame()) {
+                return;
+            }
+
+            untracked(() => {
+                this.viewportScroller.scrollToAnchor(this.headingId);
+                this.gameForm.name().focusBoundControl({ preventScroll: true });
+            });
+        });
     }
 
-    constructor(
-        private httpClient: HttpClient,
-        private editGameService: EditGameService,
-        private viewportScroller: ViewportScroller,
-        private formBuilder: FormBuilder,
-        private snackbarService: SnackbarService,
-    ) {
-        super();
+    public clearField<T>(event: MouseEvent, field: () => FieldState<T>, emptyValue: T): void {
+        event.stopPropagation();
+        field().reset(emptyValue);
+        field().focusBoundControl();
     }
 
-    public ngOnInit(): void {
-        this.initForm();
-        this.handleGameEdition();
+    public addGroup(index: number): void {
+        const newGroup: GameGroupFormModel = { id: null, name: '', hasNewAchievements: false };
+
+        this.gameModel.update((gameModel) => ({ ...gameModel, groups: [...gameModel.groups.slice(0, index), newGroup, ...gameModel.groups.slice(index)] }));
     }
 
-    public addGame(): void {
-        if (this.form.invalid) {
+    // A saved group is deleted only after saving the form, so its removal is confirmed first
+    public removeGroup(index: number): void {
+        const group = this.gameModel().groups[index];
+        const savedGroup = this.editGameService.editedGame()?.groups.find(({ id }) => id === group.id);
+
+        if (!savedGroup) {
+            this.removeGroupFromModel(group);
+
             return;
         }
 
-        this.viewState = ViewState.LOADING;
-
-        const requestBody: AddGameRequestBody = this.prepareAddGameDataForRequest();
-
-        this.httpClient.post<AddGameRequestBody>('game', requestBody)
-            .pipe(
-                take(1),
-                catchError(() => {
-                    this.viewState = ViewState.ERROR;
-                    this.snackbarService.openSnackbar('An error has occurred while saving game', 'error');
-
-                    return EMPTY;
-                })
-            ).subscribe(() => {
-                this.viewState = ViewState.SUCCESS;
-                this.snackbarService.openSnackbar('Successfully saved game', 'success');
-                this.initForm();
-                this.reloadDescription.emit();
-            });
+        this.confirmationService
+            .openConfirmation({
+                title: this.translocoService.translate('confirmation.delete.group.title'),
+                questionStart: this.translocoService.translate('confirmation.delete.group.questionStart'),
+                identifier: savedGroup.name,
+                questionEnd: this.translocoService.translate('confirmation.delete.group.questionEnd'),
+            })
+            .pipe(take(1), filter(Boolean))
+            .subscribe(() => this.removeGroupFromModel(group));
     }
 
-    public resetInputField(control: FormControl | any): void {
-        control.reset();
-        control.updateValueAndValidity();
+    public resetForm(): void {
+        this.gameForm().reset();
+        this.editGameService.stopEditing();
+        // The cancel button disappears and the submit button gets disabled, so the focus is moved to where the next game starts
+        this.gameForm.name().focusBoundControl();
     }
 
-    private prepareAddGameDataForRequest(): AddGameRequestBody {
-        const requestBody: AddGameRequestBody = {
-            name: this.form.get(AddGameFormControl.NAME)?.value,
-            hasNewAchievements: this.form.get(AddGameFormControl.HAS_NEW_ACHIEVEMENTS)?.value,
-            categories: [],
-        };
+    private removeGroupFromModel(removedGroup: GameGroupFormModel): void {
+        const removedIndex = this.gameModel().groups.indexOf(removedGroup);
 
-        for (const categoryType in this.gameCategoriesFormGroup?.value) {
-            if (this.gameCategoriesFormGroup.value[categoryType]) {
-                switch (categoryType) {
-                    case AddGameFormControl.LENGTH:
-                    case AddGameFormControl.DIFFICULTY:
-                        requestBody.categories.push(this.gameCategoriesFormGroup.value[categoryType])
-                        break;
-                    default:
-                        requestBody.categories.push(categoryType as CategoryType);
-                }
-            }
+        this.gameModel.update((gameModel) => ({ ...gameModel, groups: gameModel.groups.filter((group) => group !== removedGroup) }));
+        // The removed group takes its focused button with it. The add button of the group above restores the same position,
+        // while focusing another remove button would let repeated key presses remove several groups by accident
+        afterNextRender(() => (removedIndex === 0 ? this.addBaseGameGroupButton() : this.addGroupButtons().at(removedIndex - 1))?.focus(), { injector: this.injector });
+    }
+
+    private saveGame(): Promise<void> {
+        if (this.isWallpaperGenerating()) {
+            this.snackbarService.openSnackbar(this.translocoService.translate('common.wallpaperGenerating'), SnackbarType.ERROR);
+
+            return Promise.resolve();
         }
 
-        return requestBody;
+        const editedGame = this.editGameService.editedGame();
+        const requestBody = this.prepareRequestBody();
+        const saveGameRequest = editedGame ? this.gameApiService.editGame(editedGame.id, requestBody) : this.gameApiService.addGame(requestBody);
+
+        return firstValueFrom(
+            saveGameRequest.pipe(
+                tap(() => {
+                    this.snackbarService.openSnackbar(this.translocoService.translate('addGameForm.saveSuccess'), SnackbarType.SUCCESS);
+                    this.resetForm();
+                    this.reloadDescription.emit();
+                }),
+                catchError(({ error }: HttpErrorResponse) => {
+                    this.snackbarService.openSnackbar(this.translocoService.translate(this.getSaveErrorKey(error)), SnackbarType.ERROR);
+
+                    return of(undefined);
+                })
+            )
+        );
     }
 
-    private handleGameEdition(): void {
-        this.editGameService.editingGameName$.pipe(filter(Boolean), takeUntil(this.destroyed$)).subscribe((gameName: string) => this.updateFormWhenEditingGame(gameName));
+    private getSaveErrorKey(error: unknown): string {
+        switch ((error as ErrorResponseBody | null)?.errorCode) {
+            case ErrorCode.EMPTY_NAME:
+                return 'addGameForm.emptyName';
+            case ErrorCode.WALLPAPER_GENERATING:
+                return 'common.wallpaperGenerating';
+            default:
+                return 'addGameForm.saveError';
+        }
     }
 
-    private updateFormWhenEditingGame(gameName: string): void {
-        this.form.reset();
+    private prepareRequestBody(): AddGameRequestBody {
+        const { name, length, difficulty, mainCategories, hasNewAchievements, groups } = this.gameModel();
+        const checkedMainCategoriesIds = mainCategories.filter(({ isChecked }) => isChecked).map(({ id }) => id);
 
-        const { completedGames, gamesWithNewAchievements } = this.description;
-        const game: Game = this.findGameByName(completedGames, gameName) || this.findGameByName(gamesWithNewAchievements, gameName);
-
-        this.form.get(AddGameFormControl.NAME)?.setValue(gameName);
-        this.form.get(AddGameFormControl.HAS_NEW_ACHIEVEMENTS)?.setValue(game.hasNewAchievements);
-        this.updateFormCategoriesWhenEditingGame(game);
-        this.form.updateValueAndValidity();
-        this.viewportScroller.scrollToAnchor(this.headingId);
+        return {
+            name: name.trim(),
+            hasNewAchievements,
+            groups: groups.map((group) => ({ name: group.name.trim(), hasNewAchievements: group.hasNewAchievements })),
+            categories: [...checkedMainCategoriesIds, length, difficulty].filter((categoryId) => categoryId !== null),
+        };
     }
 
-    private updateFormCategoriesWhenEditingGame(game: Game): void {
-        game.categories?.forEach((gameCategory: GameCategory) => {
-            if (gameCategory.type === CategoryType.LONG_GAME || gameCategory.type === CategoryType.VERY_LONG_GAME || gameCategory.type === CategoryType.ULTRA_LONG_GAME) {
-                this.gameCategoriesFormGroup.get(AddGameFormControl.LENGTH)?.setValue(gameCategory.type);
-            }
+    // Categories saved while filling the form keep the filled values, only deleted categories are dropped from them
+    private computeGameModel(source: GameFormSource, previous?: { source: GameFormSource; value: GameFormModel }): GameFormModel {
+        const haveOnlyCategoriesChanged =
+            previous?.source.game === source.game &&
+            (previous.source.mainCategories !== source.mainCategories ||
+                previous.source.lengthCategories !== source.lengthCategories ||
+                previous.source.difficultyCategories !== source.difficultyCategories);
 
-            if (gameCategory.type === CategoryType.HARD_GAME || gameCategory.type === CategoryType.VERY_HARD_GAME || gameCategory.type === CategoryType.ULTRA_HARD_GAME) {
-                this.gameCategoriesFormGroup.get(AddGameFormControl.DIFFICULTY)?.setValue(gameCategory.type);
-            }
+        if (!haveOnlyCategoriesChanged) {
+            return this.mapGameToFormModel(source);
+        }
 
-            if (gameCategory.type === CategoryType.LOVED_GAME) {
-                this.gameCategoriesFormGroup.get(AddGameFormControl.LOVED_GAME)?.setValue(true);
-            }
+        const { length, difficulty, mainCategories } = previous.value;
+        const checkedMainCategoriesIds = mainCategories.filter(({ isChecked }) => isChecked).map(({ id }) => id);
 
-            if (gameCategory.type === CategoryType.BAD_GAME) {
-                this.gameCategoriesFormGroup.get(AddGameFormControl.BAD_GAME)?.setValue(true);
-            }
-
-            if (gameCategory.type === CategoryType.DOESNT_COUNT) {
-                this.gameCategoriesFormGroup.get(AddGameFormControl.DOESNT_COUNT)?.setValue(true);
-            }
-
-            if (gameCategory.type === CategoryType.BUGGED_GAME) {
-                this.gameCategoriesFormGroup.get(AddGameFormControl.BUGGED_GAME)?.setValue(true);
-            }
-
-            if (gameCategory.type === CategoryType.ADULT_GAME) {
-                this.gameCategoriesFormGroup.get(AddGameFormControl.ADULT_GAME)?.setValue(true);
-            }
-        });
+        return {
+            ...previous.value,
+            length: this.findCategoryId(source.lengthCategories, length === null ? [] : [length]),
+            difficulty: this.findCategoryId(source.difficultyCategories, difficulty === null ? [] : [difficulty]),
+            mainCategories: this.mapMainCategories(source.mainCategories, checkedMainCategoriesIds),
+        };
     }
 
-    private findGameByName(games: Game[], gameName: string): Game {
-        return games.find((game: Game) => game.name === gameName) as Game;
+    private mapGameToFormModel({ game, mainCategories, lengthCategories, difficultyCategories }: GameFormSource): GameFormModel {
+        const categoriesIds = game?.categories?.map(({ id }) => id) ?? [];
+
+        return {
+            name: game?.name ?? '',
+            length: this.findCategoryId(lengthCategories, categoriesIds),
+            difficulty: this.findCategoryId(difficultyCategories, categoriesIds),
+            mainCategories: this.mapMainCategories(mainCategories, categoriesIds),
+            hasNewAchievements: game?.hasNewAchievements ?? false,
+            groups: game?.groups.map(({ id, name, hasNewAchievements }) => ({ id, name, hasNewAchievements })) ?? [],
+        };
     }
 
-    private initForm(): void {
-        this.form = this.formBuilder.group({
-            [AddGameFormControl.NAME]: ['', Validators.required],
-            [AddGameFormControl.HAS_NEW_ACHIEVEMENTS]: [false],
-            [AddGameFormGroup.GAME_CATEGORIES]: this.formBuilder.group({
-                [AddGameFormControl.LENGTH]: [null],
-                [AddGameFormControl.DIFFICULTY]: [null],
-                [AddGameFormControl.LOVED_GAME]: [false],
-                [AddGameFormControl.BAD_GAME]: [false],
-                [AddGameFormControl.DOESNT_COUNT]: [false],
-                [AddGameFormControl.BUGGED_GAME]: [false],
-                [AddGameFormControl.ADULT_GAME]: [false],
-            }),
-        });
+    private mapMainCategories(mainCategories: Category[], checkedCategoriesIds: number[]): GameMainCategoryFormModel[] {
+        return mainCategories.map(({ id, name }) => ({ id, name, isChecked: checkedCategoriesIds.includes(id) }));
+    }
+
+    private findCategoryId(categories: Category[], categoriesIds: number[]): number | null {
+        return categories.find(({ id }) => categoriesIds.includes(id))?.id ?? null;
     }
 }

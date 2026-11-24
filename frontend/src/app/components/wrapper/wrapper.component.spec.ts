@@ -1,41 +1,48 @@
-import { DebugElement } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
+import type { DebugElement } from '@angular/core';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import { WrapperComponent } from './wrapper.component';
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { WrapperFixtureComponent } from './fixtures/wrapper-fixture.component';
+import { WrapperComponent } from './wrapper.component';
+import { getTextByTestId, queryByTestId } from '../../../testing/helpers/dom.helpers';
 
 describe('WrapperComponent', () => {
     let component: WrapperComponent;
     let fixture: ComponentFixture<WrapperComponent>;
     let debugElement: DebugElement;
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(async () => {
         TestBed.configureTestingModule({
-            imports: [WrapperComponent],
-        }).compileComponents();
+            imports: [WrapperComponent, WrapperFixtureComponent],
+        });
 
         fixture = TestBed.createComponent(WrapperComponent);
         component = fixture.componentInstance;
         debugElement = fixture.debugElement;
 
-        fixture.detectChanges();
-    }));
-
-    it('Should create a component', () => {
-        expect(component).withContext('Component should be created').toBeTruthy();
+        await fixture.whenStable();
     });
 
-    it('Should have wrapper container', () => {
-        const wrapper: DebugElement = debugElement.query(By.css('.wrapper'));
-
-        expect(wrapper).withContext('There should be a wrapper container').toBeTruthy();
+    it('should create a component', () => {
+        // Assert
+        expect(component).toBeTruthy();
     });
 
-    it('Should show ng-content content', () => {
-        const componentFixture: ComponentFixture<WrapperFixtureComponent> = TestBed.createComponent(WrapperFixtureComponent);
-        const wrapperFixtureComponent: DebugElement = componentFixture.debugElement.query(By.css('mados-wrapper'));
+    it('should have wrapper container', () => {
+        // Assert
+        expect(queryByTestId(debugElement, 'wrapper')).toBeTruthy();
+    });
 
-        expect(wrapperFixtureComponent.nativeElement.textContent).withContext(`Should show a text from 'TestComponent' inside a mados-wrapper`).toEqual('Test');
+    it('should show ng-content content', async () => {
+        // Arrange
+        const componentFixture = TestBed.createComponent(WrapperFixtureComponent);
+
+        // Act
+        await componentFixture.whenStable();
+
+        // Assert
+        expect(getTextByTestId(componentFixture.debugElement, 'wrapperHost')).toEqual('Test');
     });
 });

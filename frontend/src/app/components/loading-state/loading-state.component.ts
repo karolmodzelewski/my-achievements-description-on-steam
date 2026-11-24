@@ -1,11 +1,13 @@
-import { MatIconModule } from '@angular/material/icon';
 import { Component } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
+
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
     selector: 'mados-loading-state',
     templateUrl: './loading-state.component.html',
-    styleUrls: ['./loading-state.component.scss'],
-    standalone: true,
-    imports: [MatIconModule],
+    styleUrl: './loading-state.component.scss',
+    imports: [MatIcon, TranslocoPipe],
+    host: { role: 'status' },
 })
 export class LoadingStateComponent {}

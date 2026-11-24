@@ -1,21 +1,37 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
+import type { INestApplication } from '@nestjs/common';
 
-import * as request from 'supertest';
+import request from 'supertest';
+import type { App } from 'supertest/types';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { AppModule } from './../src/app.module';
+import { createE2eApplication } from './helpers/app.helpers';
 
-describe('AppController (e2e)', () => {
-    let app: INestApplication;
+describe('application', () => {
+    let app: INestApplication<App>;
 
-    beforeEach(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
-
-        app = moduleFixture.createNestApplication();
-        await app.init();
+    beforeAll(async () => {
+        app = await createE2eApplication();
     });
 
-    it('/ (GET)', () => request(app.getHttpServer()).get('/').expect(200).expect('Hello World!'));
+    afterAll(async () => {
+        await app.close();
+    });
+
+    it('should respond with not found to an unknown route', async () => {
+        // Act
+        const response = await request(app.getHttpServer()).get('/api/achievements');
+
+        // Assert
+        expect(response.status).toBe(HttpStatus.NOT_FOUND);
+        expect(response.body).toEqual({ message: 'Cannot GET /api/achievements', error: 'Not Found', statusCode: HttpStatus.NOT_FOUND });
+    });
+
+    it('should serve the routes only under the api prefix', async () => {
+        // Act
+        const response = await request(app.getHttpServer()).get('/categories');
+
+        // Assert
+        expect(response.status).toBe(HttpStatus.NOT_FOUND);
+    });
 });

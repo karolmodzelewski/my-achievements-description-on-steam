@@ -1,4 +1,6 @@
 <div class="snackbar">
-    <p class="message">{{ snackbarMessage }}</p>
-    <mat-icon (click)="closeSnackbar()" class="icon-clear" fontIcon="clear"></mat-icon>
+    <p class="message" data-testId="snackbarMessage">{{ snackbarMessage }}</p>
+    <button (click)="closeSnackbar()" [attr.aria-label]="'snackbar.close' | transloco" class="close-button" data-testId="snackbarCloseButton" type="button" matIconButton>
+        <mat-icon fontIcon="clear"></mat-icon>
+    </button>
 </div>

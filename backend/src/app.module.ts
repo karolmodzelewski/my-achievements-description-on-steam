@@ -1,13 +1,20 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { DataSource } from 'typeorm';
+import type { DataSourceOptions } from 'typeorm';
+import type { PostgresDataSourceOptions } from 'typeorm/driver/postgres/PostgresDataSourceOptions';
 
 import { validationSchemaConfig } from './configs/validation-schema.config';
+import { seedOneHundredPercentCategory } from './seeds/one-hundred-percent-category.seed';
 import { GameModule } from './modules/game/game.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { DescriptionModule } from './modules/description/description.module';
+import { WallpaperModule } from './modules/wallpaper/wallpaper.module';
+import { isProductionStage } from './utils/stage.util';
+
+const databaseLogger = new Logger('Database', { timestamp: true });
 
 @Module({
     imports: [
@@ -18,21 +25,35 @@ import { DescriptionModule } from './modules/description/description.module';
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
+            useFactory: (configService: ConfigService) => ({
                 type: 'postgres',
-                host: configService.get('DB_HOST'),
-                port: configService.get('DB_PORT'),
-                username: configService.get('DB_USERNAME'),
-                password: configService.get('DB_PASSWORD'),
-                database: configService.get('DB_DATABASE'),
+                host: configService.getOrThrow<string>('DB_HOST'),
+                port: configService.getOrThrow<number>('DB_PORT'),
+                username: configService.getOrThrow<string>('DB_USERNAME'),
+                password: configService.getOrThrow<string>('DB_PASSWORD'),
+                database: configService.getOrThrow<string>('DB_DATABASE'),
                 autoLoadEntities: true,
-                synchronize: true,
+                synchronize: !isProductionStage(configService.getOrThrow<string>('STAGE')),
             }),
-            dataSourceFactory: async (options: DataSourceOptions) => await new DataSource(options).initialize(),
+            dataSourceFactory: async (options?: DataSourceOptions) => {
+                if (!options) {
+                    throw new Error('Database options are missing');
+                }
+
+                const dataSource = await new DataSource(options).initialize();
+                const { host, port, database } = options as PostgresDataSourceOptions;
+
+                databaseLogger.log(`Connected to database '${database}' at ${host}:${port}`);
+
+                await seedOneHundredPercentCategory(dataSource);
+
+                return dataSource;
+            },
         }),
         CategoriesModule,
         GameModule,
         DescriptionModule,
+        WallpaperModule,
     ],
 })
 export class AppModule {}

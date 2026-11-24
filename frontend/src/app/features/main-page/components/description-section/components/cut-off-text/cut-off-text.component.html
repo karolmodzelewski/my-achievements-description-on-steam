@@ -1,0 +1,6 @@
+<ng-container>{{ keptText() }}</ng-container>
+
+@if (cutOffText()) {
+    <span class="cut-off" data-testId="cutOffText">{{ cutOffText() }}</span>
+    <span class="cdk-visually-hidden"> {{ 'cutOffText.exceedsLimit' | transloco }}</span>
+}

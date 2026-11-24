@@ -1,3 +1,13 @@
+@use 'src/styles/hidden-information' as *;
+
+.category-line {
+    margin-bottom: 12px;
+}
+
 .margin-top {
     margin-top: 30px;
+}
+
+.hidden-information {
+    @include hidden-information;
 }

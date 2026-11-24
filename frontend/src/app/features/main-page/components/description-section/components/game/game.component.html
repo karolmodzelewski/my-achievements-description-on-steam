@@ -1,22 +1,61 @@
+@let wallpaperGeneratingText = 'common.wallpaperGenerating' | transloco;
+
 <div class="game-container">
-    <p [class.adult-game]="isAdultGame" class="game-data">
-        {{ oneHundredPercentIconName }} {{ name }}
-        <ng-container *ngIf="categories?.length">
-            <ng-container *ngFor="let category of categories">{{ category.iconName }} </ng-container>
-        </ng-container>
+    <p [class.hidden-information]="isHidden()" class="game-data" data-testId="gameLine">
+        <mados-cut-off-text [text]="entryLine()" [cutOffIndex]="cutOffIndex()" />
+
+        @if (isHidden()) {
+            <span class="cdk-visually-hidden"> {{ 'common.notCopied' | transloco }}</span>
+        }
     </p>
-    <div *ngIf="shouldShowEdition" class="icon-container">
-        <mat-icon
-            (click)="editGame()"
-            fontIcon="edit"
-            class="icon"
-        ></mat-icon>
-        <mat-icon
-            (click)="deleteGame()"
-            fontIcon="delete"
-            class="icon"
-        ></mat-icon>
-    </div>
+
+    @if (shouldShowEdition()) {
+        <div class="icon-container">
+            <button (click)="editGame()" [attr.aria-label]="'game.editAriaLabel' | transloco: { name: entryName() }" class="icon-button" data-testId="gameEditButton" matIconButton type="button">
+                <mat-icon fontIcon="edit"></mat-icon>
+            </button>
+            <button
+                (click)="deleteEntry()"
+                [disabled]="isWallpaperGenerating()"
+                [matTooltip]="isWallpaperGenerating() ? wallpaperGeneratingText : ''"
+                [attr.aria-label]="'game.deleteAriaLabel' | transloco: { name: entryName() }"
+                class="icon-button"
+                data-testId="gameDeleteButton"
+                matIconButton
+                type="button"
+                disabledInteractive
+            >
+                <mat-icon fontIcon="delete"></mat-icon>
+            </button>
+        </div>
+    }
 </div>
 
-<!-- TODO: Automatize generating wallpaper -->
+@for (group of entry().listedGroups; track group.id) {
+    <div class="game-container">
+        <p class="game-data hidden-information">
+            - {{ group.name }}
+            <span class="cdk-visually-hidden"> {{ 'common.notCopied' | transloco }}</span>
+        </p>
+
+        @if (shouldShowEdition()) {
+            @let deleteGroupAriaLabel = 'game.deleteAriaLabel' | transloco: { name: `${entry().game.name} - ${group.name}` };
+
+            <div class="icon-container">
+                <button
+                    (click)="deleteGroup(group)"
+                    [disabled]="isWallpaperGenerating()"
+                    [matTooltip]="isWallpaperGenerating() ? wallpaperGeneratingText : ''"
+                    [attr.aria-label]="deleteGroupAriaLabel"
+                    class="icon-button"
+                    data-testId="listedGroupDeleteButton"
+                    matIconButton
+                    type="button"
+                    disabledInteractive
+                >
+                    <mat-icon fontIcon="delete"></mat-icon>
+                </button>
+            </div>
+        }
+    </div>
+}

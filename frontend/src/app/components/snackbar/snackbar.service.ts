@@ -1,21 +1,19 @@
-
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { SnackbarType } from './enums/snackbar-type.enum';
+import type { SnackbarData } from './interfaces/snackbar-data.interface';
 import { SnackbarComponent } from './snackbar.component';
-import { SnackbarData } from './interfaces/snackbar-data.interface';
 
 @Injectable()
 export class SnackbarService {
-    constructor(private matSnackBar: MatSnackBar) { }
+    private readonly matSnackBar = inject(MatSnackBar);
 
-    public openSnackbar(snackbarMessage: string, panelClass: string): void {
-        const data: SnackbarData = { snackbarMessage };
-
+    public openSnackbar(snackbarMessage: string, snackbarType: SnackbarType): void {
         this.matSnackBar.openFromComponent(SnackbarComponent, {
-            duration: 3000,
-            panelClass,
-            data,
+            duration: snackbarType === SnackbarType.ERROR ? undefined : 6000,
+            panelClass: snackbarType,
+            data: { snackbarMessage } satisfies SnackbarData,
         });
     }
 }

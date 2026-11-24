@@ -1,0 +1,6 @@
+export enum CategoryKind {
+    ONE_HUNDRED_PERCENT = 'ONE_HUNDRED_PERCENT',
+    MAIN = 'MAIN',
+    LENGTH = 'LENGTH',
+    DIFFICULTY = 'DIFFICULTY',
+}

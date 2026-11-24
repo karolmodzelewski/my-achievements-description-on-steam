@@ -1,26 +1,31 @@
-<mados-header></mados-header>
+<mados-header />
 
-<ng-container *ngIf="viewState === ViewState.SUCCESS">
+@if (hasError()) {
+    <mados-error-state class="margin-top" data-testId="errorState" />
+} @else if (data(); as pageData) {
     <mados-add-categories-form
-        (reloadDescription)="getDescriptionData()"
-        [categories]="(categories$ | async)!"
-    ></mados-add-categories-form>
-    <ng-container *ngIf="(description$ | async)?.categories?.length">
-        <mados-add-game-form
-            (reloadDescription)="getDescriptionData()"
-            [description]="(description$ | async)!"
-        ></mados-add-game-form>
-        <mados-description-section
-            (reloadDescription)="getDescriptionData()"
-            [descriptionData]="(description$ | async)!"
-        ></mados-description-section>
-    </ng-container>
-    <mados-infobar
-        *ngIf="!(description$ | async)?.categories?.length"
-        [message]="infobarMessage"
-        class="margin-top"
-    ></mados-infobar>
-</ng-container>
+        (categoriesSaved)="handleCategoriesChange()"
+        [oneHundredPercentCategory]="oneHundredPercentCategory()"
+        [mainCategories]="mainCategories()"
+        [lengthCategories]="lengthCategories()"
+        [difficultyCategories]="difficultyCategories()"
+        data-testId="addCategoriesForm"
+    />
 
-<mados-loading-state *ngIf="viewState === ViewState.LOADING" class="margin-top"></mados-loading-state>
-<mados-error-state *ngIf="viewState === ViewState.ERROR" class="margin-top"></mados-error-state>
+    <mados-manage-wallpaper [mainCategories]="mainCategories()" [lengthCategories]="lengthCategories()" [difficultyCategories]="difficultyCategories()" data-testId="manageWallpaper" />
+
+    @if (isOneHundredPercentIconSet()) {
+        <mados-add-game-form
+            (reloadDescription)="handleGamesChange()"
+            [mainCategories]="mainCategories()"
+            [lengthCategories]="lengthCategories()"
+            [difficultyCategories]="difficultyCategories()"
+            data-testId="addGameForm"
+        />
+        <mados-description-section (reloadDescription)="handleGamesChange()" [descriptionData]="pageData.description" data-testId="descriptionSection" />
+    } @else {
+        <mados-infobar [message]="'mainPage.infobar' | transloco" class="margin-top" data-testId="mainPageInfobar" />
+    }
+} @else {
+    <mados-loading-state class="margin-top" data-testId="loadingState" />
+}

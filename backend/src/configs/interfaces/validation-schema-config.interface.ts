@@ -1,7 +1,8 @@
-import Joi from 'joi';
+import type Joi from 'joi';
 
 export interface ValidationSchemaConfig {
     STAGE: Joi.SchemaLike;
+    APP_PORT: Joi.SchemaLike;
     DB_HOST: Joi.SchemaLike;
     DB_PORT: Joi.SchemaLike;
     DB_USERNAME: Joi.SchemaLike;

@@ -2,6 +2,160 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 2.0.0 - 24.11.2026
+
+- Release MADOS 2.0.0 version
+
+## 1.22.0 - 24.11.2026
+
+- Rewrite README with a detailed description of the application, its features, prerequisites and missing commands
+- Add Quick overview section to README with screenshots of all functionalities, kept in `assets/readme`
+
+## 1.21.0 - 24.11.2026
+
+- Add Manage wallpaper functionality:
+  - Possibility to upload a GIMP 3 `.xcf` wallpaper with one text layer or restore the default one, generate its `.png` with the number of completed games and groups (optionally followed in brackets by the number without a selected category), preview and download it
+  - Generate the wallpaper automatically after changes of games, groups and categories, and block these changes while it's being generated
+  - Optionally update the desktop wallpaper after generating, available only in production on Windows
+  - Keep the generated XCF and PNG files of every stage in its own folder of `wallpaper`
+- Extract the expandable section shared by Manage categories and Manage wallpaper
+
+## 1.20.1 - 19.11.2026
+
+- Cleanup in `.gitignore` files
+
+## 1.20.0 - 19.11.2026
+
+- Cover backend with e2e tests (Vitest + supertest) against the `mados_e2e` database
+- Extract the global application setup into `configureApp`, shared by `main.ts` and the e2e tests
+
+## 1.19.0 - 18.11.2026
+
+- Add Playwright e2e tests on frontend against the real backend
+- Add `e2e` stage on backend with a dedicated `mados_e2e` database
+- Make backend port configurable with required `APP_PORT` variable, and make `DB_PORT` required too
+- Fix tracking issues on Manage categories form
+
+## 1.18.0 - 16.11.2026
+
+- Replace Jest with Vitest on backend
+- Cover backend with unit tests
+
+## 1.17.0 - 16.11.2026
+
+- Create services for API calls on frontend and use them in proper places
+- Cover the application with unit tests
+- Fix tracking issues on Add game form
+
+## 1.16.0 - 14.11.2026
+
+- Add internationalization with Transloco: English (default) and Polish languages, switchable with flags next to the title and remembered in local storage
+
+## 1.15.0 - 14.11.2026
+
+- Improve overall security in the application
+
+## 1.14.0 - 14.11.2026
+
+- Bump dependencies to the newest compatible versions, including @stylistic/eslint-plugin 6 and @types/node 26
+- Switch frontend to Material 3 theming with palettes generated from the application purple and matButton variants, keeping the previous look of buttons, form fields and texts
+- Switch frontend HttpClient to the default Fetch backend
+- Replace RxJS with async/await on backend and remove unused backend dependencies
+- Make backend TypeScript config strict and aligned with frontend, and drop options deprecated in TypeScript 6
+- Modernize frontend unit tests for zoneless change detection
+
+## 1.13.0 - 14.11.2026
+
+- Add a confirmation dialog before deleting a group on Edit game mode
+
+## 1.12.0 - 13.11.2026
+
+- Improve accessibility and semantics on frontend
+
+## 1.11.0 - 13.11.2026
+
+- Improve logs on backend
+
+## 1.10.0 - 13.11.2026
+
+- Allow changing the order of main, length and difficulty categories with drag & drop
+
+## 1.9.0 - 12.11.2026
+
+- Replace predefined categories with user-defined main, length and difficulty categories stored on backend
+- Rename 'Add categories' section to 'Manage categories'
+- Rebuild 'Manage categories' section to a form per kind: category name, description, icon name and, for main categories only, an optional 'Hide games' checkbox, with adding and removing categories like groups
+- Keep 100% as a fixed category of its own kind in a separate '100% category' section, with only its icon editable
+- Replace the Adult game logic with 'Hide games'
+- Confirm deleting a saved category and unassign it from games after saving
+- Fix group buttons sticking out of the Manage game form on mobile
+- Fix GameService unit test missing the GameGroup repository
+
+## 1.8.0 - 11.11.2026
+
+- Add a description size counter next to the Description heading, measured the way Steam limits descriptions (8000 bytes of UTF-8, line breaks counting as 2), colored red when the limit is reached
+- Highlight the part of the description Steam would cut off, from the exact cut-off character, without trimming the copied description or blocking the copy
+
+## 1.7.0 - 10.11.2026
+
+- Add a confirmation dialog before deleting a game or group
+
+## 1.6.1 - 10.11.2026
+
+- Simplify media queries syntax
+
+## 1.6.0 - 10.11.2026
+
+- Replace the empty (...) option in Length and Difficulty dropdowns with a clear button to remove selected value, consistent with game and group names
+
+## 1.5.1 - 10.11.2026
+
+- Trim game, group and category texts everywhere, so the copied description has no leading or trailing spaces
+- Block blank game and group names in the form and on backend
+- Improve error messages when saving a game fails due to blank names
+
+## 1.5.0 - 09.11.2026
+
+- Hide categories with 0 games: presented as hidden information in the application and never copied
+
+## 1.4.0 - 09.11.2026
+
+- Add Steam achievement groups (DLCs): Base Game and DLC groups in the Manage game section, each with its own New achievements checkbox
+- Count every completed group as a finished game and split COMPLETED and NEW ACHIEVEMENTS headings into GAMES and GROUPS amounts, calculated on backend
+- Present completed groups below their game as hidden information, never copied, and groups with new achievements as separate entries
+- Rename adult game styling to generic hidden information
+- Show the adult games summary (... and (N) games) in the application description, not only in the copied one
+- Swap Cancel editing and Edit game buttons
+
+## 1.3.0 - 09.11.2026
+
+- Add AAA pattern and data-testId selectors to unit tests, remove broken e2e test
+- Add Cancel editing button and change the submit button text to 'Edit game' while editing
+- Bump dependencies to the newest compatible versions
+- Fix copied description ending with whitespaces
+- Fix description endpoint failing when a category is missing in the database
+- Fix duplicated game after renaming it during edition
+- Fix games with all categories selected being rejected and add validation of the categories request
+- Fix icon buttons sizes and description layout shifts
+- Fix new categories not being configurable when some categories are already saved
+- Fix production dev server warnings and lint-staged formatting all files
+- Fix snackbar colors
+- Improve accessibility: icon buttons with labels, labelled checkboxes, heading order, ARIA states
+- Rename 'Add game' section to 'Manage game'
+- Replace reactive forms with signal forms and load main page data with httpResource
+- Show game name clear button only when the name is provided
+- Update and delete games by id (PUT/DELETE /game/:id)
+- Use standalone Material imports, default OnPush change detection and type inference
+- Remove Destroyable util and switch to takeUntilDestroyed
+
+## 1.2.0 - 02.11.2026
+
+- Update frontend to Angular 22 and backend to NestJS 12, bump all dependencies to the newest versions
+- Switch frontend to standalone components, signals and zoneless change detection
+- Replace Karma and Jasmine with Vitest
+- Migrate ESLint configs to flat configs with stricter rules and fix all related issues
+- Fix unit tests
+
 ## 1.1.0 - 25.11.2024
 
 - Update description
@@ -167,7 +321,7 @@ Both frontend and backend changes and the final version of the application will 
 ## 0.3.0 - 28.01.2022 [FE]
 
 - Create 'Add categories' view and logic
-- Add ignore *html rule to prettier
+- Add ignore \*html rule to prettier
 - Improve colors and margins in app
 - Add states standalone components
 - Delete categories endpoint and its data from mocks

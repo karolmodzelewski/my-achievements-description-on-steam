@@ -1,0 +1,22 @@
+# Claude Code
+.claude/
+
+# Playwright MCP
+.playwright-mcp/
+
+# Visual Studio Code
+.vscode/
+
+# Other IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Generated wallpapers of each stage
+/wallpaper/prod/*
+/wallpaper/dev/*
+/wallpaper/e2e/*

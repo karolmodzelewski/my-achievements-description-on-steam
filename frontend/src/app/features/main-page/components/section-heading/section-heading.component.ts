@@ -1,12 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
     selector: 'mados-section-heading',
     templateUrl: './section-heading.component.html',
-    styleUrls: ['./section-heading.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrl: './section-heading.component.scss',
 })
 export class SectionHeadingComponent {
-    @Input()
-    public headingText: string;
+    public readonly headingText = input.required<string>();
 }

@@ -1,1 +1,7 @@
-<p [ngClass]="{ 'margin-top': type === CategoryType.LONG_GAME || type === CategoryType.HARD_GAME }">{{ iconName }} {{ description }} ({{ amount }})</p>
+<p [class.margin-top]="isBlockStart()" [class.hidden-information]="isHidden()" class="category-line" data-testId="categoryLine">
+    <mados-cut-off-text [text]="categoryLine()" [cutOffIndex]="cutOffIndex()" />
+
+    @if (isHidden()) {
+        <span class="cdk-visually-hidden" data-testId="categoryNotCopied"> {{ 'common.notCopied' | transloco }}</span>
+    }
+</p>

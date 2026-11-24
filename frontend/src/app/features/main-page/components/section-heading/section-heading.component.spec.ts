@@ -1,4 +1,7 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { SectionHeadingComponent } from './section-heading.component';
 
@@ -6,18 +9,21 @@ describe('SectionHeadingComponent', () => {
     let component: SectionHeadingComponent;
     let fixture: ComponentFixture<SectionHeadingComponent>;
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(async () => {
         TestBed.configureTestingModule({
-            declarations: [SectionHeadingComponent],
-        }).compileComponents();
+            imports: [SectionHeadingComponent],
+        });
 
         fixture = TestBed.createComponent(SectionHeadingComponent);
         component = fixture.componentInstance;
 
-        fixture.detectChanges();
-    }));
+        fixture.componentRef.setInput('headingText', 'Heading');
 
-    it('Should create a component', () => {
-        expect(component).withContext('Component should be created').toBeTruthy();
+        await fixture.whenStable();
+    });
+
+    it('should create a component', () => {
+        // Assert
+        expect(component).toBeTruthy();
     });
 });

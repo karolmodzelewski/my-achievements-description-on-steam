@@ -1,7 +1,9 @@
-import { CategoryType } from '../enums/category-type.enum';
+import type { AddGameGroupRequestBody } from './add-game-group-request-body.interface';
 
 export interface AddGameRequestBody {
     name: string;
-    categories: CategoryType[];
+    // Ids of the categories
+    categories: number[];
     hasNewAchievements: boolean;
+    groups: AddGameGroupRequestBody[];
 }

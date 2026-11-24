@@ -1,4 +1,7 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { LoadingStateComponent } from './loading-state.component';
 
@@ -6,18 +9,19 @@ describe('LoadingStateComponent', () => {
     let component: LoadingStateComponent;
     let fixture: ComponentFixture<LoadingStateComponent>;
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(async () => {
         TestBed.configureTestingModule({
             imports: [LoadingStateComponent],
-        }).compileComponents();
+        });
 
         fixture = TestBed.createComponent(LoadingStateComponent);
         component = fixture.componentInstance;
 
-        fixture.detectChanges();
-    }));
+        await fixture.whenStable();
+    });
 
-    it('should create', () => {
+    it('should create a component', () => {
+        // Assert
         expect(component).toBeTruthy();
     });
 });

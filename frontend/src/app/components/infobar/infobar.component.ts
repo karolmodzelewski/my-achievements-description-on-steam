@@ -1,15 +1,12 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, input } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
     selector: 'mados-infobar',
     templateUrl: './infobar.component.html',
-    styleUrls: ['./infobar.component.scss'],
-    standalone: true,
-    imports: [MatIconModule],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrl: './infobar.component.scss',
+    imports: [MatIcon],
 })
 export class InfobarComponent {
-    @Input()
-    public message: string;
+    public readonly message = input.required<string>();
 }

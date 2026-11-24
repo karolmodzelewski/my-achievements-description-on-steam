@@ -1,23 +1,26 @@
-import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
+import { configureApp } from './configs/app.config';
+import { getLogLevels } from './utils/stage.util';
+
+const logger = new Logger('Bootstrap');
 
 async function bootstrap(): Promise<void> {
-    const logger: Logger = new Logger();
-    const app: INestApplication = await NestFactory.create(AppModule);
-    const port: number = 3001;
+    const stage = process.env.STAGE;
+    const app = await NestFactory.create(AppModule, { logger: getLogLevels(stage) });
+    const port = app.get(ConfigService).getOrThrow<number>('APP_PORT');
 
-    app.setGlobalPrefix('api');
-    app.useGlobalPipes(
-        new ValidationPipe({
-            forbidUnknownValues: false,
-        })
-    );
+    configureApp(app);
 
     await app.listen(port);
 
-    logger.log(`Starts listening on port: ${port}`);
+    logger.log(`Listening on port ${port} (stage: ${stage})`);
 }
 
-bootstrap();
+void bootstrap().catch((error: unknown) => {
+    logger.fatal('Failed to start application', error instanceof Error ? error.stack : error);
+    process.exit(1);
+});

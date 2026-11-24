@@ -1,0 +1,9 @@
+<mados-expandable-section
+    [headingText]="'manageWallpaper.heading' | transloco"
+    [headingId]="headingId"
+    [contentId]="wallpaperFormId"
+>
+    <ng-template>
+        <mados-wallpaper-form [mainCategories]="mainCategories()" [lengthCategories]="lengthCategories()" [difficultyCategories]="difficultyCategories()" data-testId="wallpaperForm" />
+    </ng-template>
+</mados-expandable-section>

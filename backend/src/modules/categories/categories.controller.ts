@@ -1,29 +1,25 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
-
-import { Observable } from 'rxjs';
-
-import { InsertResult } from 'typeorm';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseArrayPipe, ParseEnumPipe, Put } from '@nestjs/common';
 
 import { CategoryDto } from './dtos/category.dto';
+import { Category } from '../../entities/category.entity';
+import { CategoryKind } from '../../enums/category-kind.enum';
 import { CategoriesService } from './services/categories.service';
 
 @Controller('categories')
 export class CategoriesController {
-    private readonly logger: Logger = new Logger(CategoriesController.name, { timestamp: true });
-
-    constructor(private categoriesService: CategoriesService) {}
+    constructor(private readonly categoriesService: CategoriesService) {}
 
     @Get()
-    public getCategories(): Observable<CategoryDto[]> {
-        this.logger.log(`GET Request: Categories`);
-
+    public getCategories(): Promise<Category[]> {
         return this.categoriesService.getCategories();
     }
 
-    @Post()
-    public upsertCategories(@Body() categoriesDto: CategoryDto[]): Observable<InsertResult> {
-        this.logger.log(`POST Request: Upsert '${JSON.stringify(categoriesDto)}' categories`);
-
-        return this.categoriesService.upsertCategories(categoriesDto);
+    @Put(':kind')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    public saveCategories(
+        @Param('kind', new ParseEnumPipe(CategoryKind)) kind: CategoryKind,
+        @Body(new ParseArrayPipe({ items: CategoryDto, whitelist: true, forbidNonWhitelisted: true })) categoriesDto: CategoryDto[]
+    ): Promise<void> {
+        return this.categoriesService.saveCategories(kind, categoriesDto);
     }
 }

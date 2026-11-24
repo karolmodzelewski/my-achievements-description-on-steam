@@ -1,0 +1,36 @@
+<form [formRoot]="categoryForm">
+    <fieldset>
+        <legend class="legend">{{ 'oneHundredPercentForm.legend' | transloco }}</legend>
+
+        <mat-form-field class="icon-name-form-field">
+            <mat-label>{{ 'iconNameField.label' | transloco }}</mat-label>
+            <input [formField]="categoryForm.iconName" data-testId="oneHundredPercentIconInput" matInput type="text" />
+
+            @if (categoryForm.iconName().value()) {
+                <button (click)="clearField($event, categoryForm.iconName)" [attr.aria-label]="'oneHundredPercentForm.clearIconNameAriaLabel' | transloco" class="icon-clear" data-testId="oneHundredPercentClearButton" type="button" matIconButton matIconSuffix>
+                    <mat-icon fontIcon="clear"></mat-icon>
+                </button>
+            }
+
+            @if (categoryForm.iconName().getError('required')) {
+                <mat-error>{{ 'iconNameField.required' | transloco }}</mat-error>
+            }
+
+            @if (categoryForm.iconName().getError('pattern')) {
+                <mat-error>{{ 'iconNameField.blank' | transloco }}</mat-error>
+            }
+        </mat-form-field>
+    </fieldset>
+
+    <button
+        [disabled]="!hasChanges() || categoryForm().invalid() || categoryForm().submitting() || isWallpaperGenerating()"
+        [matTooltip]="isWallpaperGenerating() ? ('common.wallpaperGenerating' | transloco) : ''"
+        class="save-button"
+        data-testId="oneHundredPercentSaveButton"
+        type="submit"
+        matButton="outlined"
+        disabledInteractive
+    >
+        {{ 'oneHundredPercentForm.save' | transloco }}
+    </button>
+</form>

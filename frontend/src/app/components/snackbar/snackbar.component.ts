@@ -1,27 +1,23 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBarRef, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { Component, inject } from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 
-import { SnackbarData } from './interfaces/snackbar-data.interface';
+import { TranslocoPipe } from '@jsverse/transloco';
+
+import type { SnackbarData } from './interfaces/snackbar-data.interface';
 
 @Component({
-  selector: 'mados-snackbar',
-  templateUrl: './snackbar.component.html',
-  styleUrls: ['./snackbar.component.scss'],
-  standalone: true,
-  imports: [MatIconModule],
+    selector: 'mados-snackbar',
+    templateUrl: './snackbar.component.html',
+    styleUrl: './snackbar.component.scss',
+    imports: [MatIconButton, MatIcon, TranslocoPipe],
 })
-export class SnackbarComponent implements OnInit {
-    public snackbarMessage: string;
+export class SnackbarComponent {
+    private readonly data = inject<SnackbarData>(MAT_SNACK_BAR_DATA);
+    private readonly matSnackBarRef = inject<MatSnackBarRef<SnackbarComponent>>(MatSnackBarRef);
 
-    constructor(
-        @Inject(MAT_SNACK_BAR_DATA) private data: SnackbarData,
-        private matSnackBarRef: MatSnackBarRef<SnackbarComponent>,
-    ) { }
-
-    public ngOnInit(): void {
-        this.snackbarMessage = this.data.snackbarMessage;
-    }
+    public readonly snackbarMessage = this.data.snackbarMessage;
 
     public closeSnackbar(): void {
         this.matSnackBarRef.dismiss();

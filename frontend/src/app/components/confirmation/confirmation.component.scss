@@ -1,0 +1,62 @@
+@use 'src/styles/icon-button' as *;
+@use 'src/styles/colors' as *;
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 16px 0 24px;
+}
+
+.title {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: $color-black-russian;
+
+    &::before {
+        content: none;
+    }
+}
+
+.close-button {
+    @include icon-button(24px, 40px);
+}
+
+.message {
+    line-height: 1.5;
+    color: $color-black-russian;
+}
+
+.identifier {
+    font-weight: 500;
+    word-break: break-word;
+}
+
+.action-buttons-container {
+    gap: 20px;
+}
+
+.action-button {
+    flex: 1;
+
+    // Replaced by the container gap, Material's margin would misalign the stacked buttons on mobile
+    & + & {
+        margin: 0;
+    }
+}
+
+@media (width <= 480px) {
+    .action-buttons-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    // A column with flex: 1 would collapse the buttons' height
+    .action-button {
+        flex: none;
+    }
+}

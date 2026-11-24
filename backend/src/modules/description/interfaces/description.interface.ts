@@ -1,8 +1,8 @@
-import { CategoryWithAmount } from './category-with-amount.interface';
-import { MappedGame } from './mapped-game.interface';
+import type { CategoryWithAmount } from './category-with-amount.interface';
+import type { DescriptionSection } from './description-section.interface';
 
 export interface Description {
     categories: CategoryWithAmount[];
-    completedGames: MappedGame[];
-    gamesWithNewAchievements: MappedGame[];
+    completed: DescriptionSection;
+    newAchievements: DescriptionSection;
 }

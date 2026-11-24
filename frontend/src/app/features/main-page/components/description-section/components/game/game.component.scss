@@ -1,12 +1,24 @@
+@use 'src/styles/icon-button' as *;
 @use 'src/styles/colors' as *;
+@use 'src/styles/hidden-information' as *;
 
-.game-container, .icon-container {
+:host {
+    display: block;
+    margin-bottom: 12px;
+}
+
+.game-container,
+.icon-container {
     display: flex;
 }
 
 .game-container {
     align-items: center;
-    margin-bottom: 12px;
+
+    // Keeps the listed groups visually attached to their game
+    & + & {
+        margin-top: 4px;
+    }
 }
 
 .game-data {
@@ -14,19 +26,33 @@
     word-break: break-all;
 }
 
-.adult-game {
-    color: $color-gray-61;
-    font-style: italic;
+.hidden-information {
+    @include hidden-information;
 }
 
-.icon {
-    width: 16px;
-    height: 16px;
-    font-size: 16px;
+.icon-container {
     margin-left: 5px;
-    cursor: pointer;
+}
 
-    &:hover {
+.icon-button {
+    @include icon-button(
+        16px,
+        24px,
+        (
+            state-layer-color: $color-dark-white,
+            ripple-color: rgba($color-dark-white, 0.12),
+            touch-target-display: none,
+        )
+    );
+
+    // Keeps the 24px circle from making the row taller than the 20px game title line
+    margin: -2px 0;
+
+    &:hover .mat-icon {
         transform: scale(1.05);
+    }
+
+    & + & {
+        margin-left: 5px;
     }
 }

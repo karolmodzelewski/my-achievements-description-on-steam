@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIcon } from '@angular/material/icon';
+
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
     selector: 'mados-error-state',
     templateUrl: './error-state.component.html',
-    styleUrls: ['./error-state.component.scss'],
-    standalone: true,
-    imports: [MatIconModule],
+    styleUrl: './error-state.component.scss',
+    imports: [MatIcon, TranslocoPipe],
+    host: { role: 'alert' },
 })
 export class ErrorStateComponent {}

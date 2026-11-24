@@ -1,34 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { map, Observable, take, tap, zip } from 'rxjs';
-
 import { Repository } from 'typeorm';
 
-import { Description } from './../interfaces/description.interface';
+import { Description } from '../interfaces/description.interface';
 import { Category } from '../../../entities/category.entity';
 import { Game } from '../../../entities/game.entity';
-import { CategoryType } from '../../../enums/category-type.enum';
+import { GameGroup } from '../../../entities/game-group.entity';
+import { CategoryKind } from '../../../enums/category-kind.enum';
+import { compareCategories } from '../../../utils/category-order.util';
 import { CategoryWithAmount } from '../interfaces/category-with-amount.interface';
+import { DescriptionEntry } from '../interfaces/description-entry.interface';
+import { DescriptionSection } from '../interfaces/description-section.interface';
 import { MappedGame } from '../interfaces/mapped-game.interface';
+import { MappedGroup } from '../interfaces/mapped-group.interface';
 import { GameCategory } from '../interfaces/game-category.interface';
 
 @Injectable()
 export class DescriptionService {
-    private readonly logger: Logger = new Logger(DescriptionService.name, { timestamp: true });
-    private categoriesSortOrder: CategoryType[] = [
-        CategoryType.LOVED_GAME,
-        CategoryType.BAD_GAME,
-        CategoryType.DOESNT_COUNT,
-        CategoryType.BUGGED_GAME,
-        CategoryType.ADULT_GAME,
-        CategoryType.LONG_GAME,
-        CategoryType.VERY_LONG_GAME,
-        CategoryType.ULTRA_LONG_GAME,
-        CategoryType.HARD_GAME,
-        CategoryType.VERY_HARD_GAME,
-        CategoryType.ULTRA_HARD_GAME,
-    ];
+    private readonly logger = new Logger(DescriptionService.name, { timestamp: true });
 
     constructor(
         @InjectRepository(Game)
@@ -37,83 +27,97 @@ export class DescriptionService {
         private readonly categoriesRepository: Repository<Category>
     ) {}
 
-    public getDescription(): Observable<Description> {
-        return zip(this.categoriesRepository.find(), this.gameRepository.find()).pipe(
-            take(1),
-            tap(() => this.logger.log(`Get description`)),
-            map((data: [Category[], Game[]]) => this.getMappedDescription(data))
-        );
-    }
+    public async getDescription(): Promise<Description> {
+        const [categories, games] = await Promise.all([this.categoriesRepository.find(), this.gameRepository.find({ relations: { groups: true, categories: true } })]);
+        const description = this.getMappedDescription(categories.sort(compareCategories), games);
+        const { completed, newAchievements } = description;
 
-    private getMappedDescription(data: [Category[], Game[]]): Description {
-        const [categories, games] = data;
-
-        let description: Description = {
-            categories: [],
-            completedGames: [],
-            gamesWithNewAchievements: [],
-        };
-
-        if (!categories.length) {
-            return description;
-        }
-
-        const completedGames: Game[] = games.filter((game: Game) => !game.hasNewAchievements);
-        const gamesWithNewAchievements: Game[] = games.filter((game: Game) => game.hasNewAchievements);
-
-        const mappedCategories: CategoryWithAmount[] = this.getMappedCategories(categories, games);
-        const mappedCompletedGames: MappedGame[] = this.getMappedGames(categories, completedGames);
-        const mappedGamesWithNewAchievements: MappedGame[] = this.getMappedGames(categories, gamesWithNewAchievements);
-
-        description = {
-            categories: mappedCategories,
-            completedGames: mappedCompletedGames,
-            gamesWithNewAchievements: mappedGamesWithNewAchievements,
-        };
+        this.logger.debug(`Built description: ${description.categories.length} categories, ${completed.amount} completed and ${newAchievements.amount} with new achievements`);
 
         return description;
     }
 
-    private getMappedCategories(categories: Category[], games: Game[]): CategoryWithAmount[] {
-        const categoriesWithAmount: CategoryWithAmount[] = categories
-            .filter((category: Category) => category.type !== CategoryType.ONE_HUNDRED_PERCENT)
-            .map((category: Category) => ({ ...category, amount: 0 }));
+    // Categories are sorted, so both the listed categories and the icons of every game go from the first main to the last difficulty category
+    private getMappedDescription(sortedCategories: Category[], games: Game[]): Description {
+        const mappedGames = this.getMappedGames(sortedCategories, games);
 
-        return Object.keys(CategoryType)
-            .filter((categoryType: string) => categoryType !== CategoryType.ONE_HUNDRED_PERCENT)
-            .map((categoryType: string) => {
-                let categoryFound: CategoryWithAmount = categoriesWithAmount.find((category: CategoryWithAmount) => category.type === categoryType);
-
-                games
-                    .flatMap((game: Game) => game.categories)
-                    .forEach((category) => {
-                        if (category === categoryType) {
-                            categoryFound = { ...categoryFound, amount: (categoryFound.amount += 1) };
-                        }
-                    });
-
-                return categoryFound;
-            })
-            .sort((a: CategoryWithAmount, b: CategoryWithAmount) => this.categoriesSortOrder.indexOf(a.type) - this.categoriesSortOrder.indexOf(b.type));
+        return {
+            categories: this.getMappedCategories(sortedCategories, games),
+            completed: this.getSection(mappedGames.flatMap((game) => this.getCompletedEntries(game))),
+            newAchievements: this.getSection(mappedGames.flatMap((game) => this.getNewAchievementsEntries(game))),
+        };
     }
 
-    private getMappedGames(categories: Category[], games: Game[]): MappedGame[] {
-        const oneHundredPercentIconName: string = categories.find((category: Category) => category.type === CategoryType.ONE_HUNDRED_PERCENT).iconName;
+    private getMappedCategories(sortedCategories: Category[], games: Game[]): CategoryWithAmount[] {
+        const gamesCategoriesIds = games.flatMap((game) => game.categories.map(({ id }) => id));
 
-        const mappedGames: MappedGame[] = games
-            .map((game: Game) => {
-                const mappedGame: MappedGame = { ...game, categories: this.getMappedGameCategories(game.categories, categories), oneHundredPercentIconName };
-
-                return mappedGame;
-            })
-            .sort((a: MappedGame, b: MappedGame) => a.name.localeCompare(b.name));
-
-        return mappedGames;
+        return sortedCategories
+            .filter((category) => category.kind !== CategoryKind.ONE_HUNDRED_PERCENT)
+            .map(({ id, kind, name, description, iconName, shouldHideGames }) => ({
+                id,
+                kind,
+                name,
+                description,
+                iconName,
+                shouldHideGames,
+                amount: gamesCategoriesIds.filter((categoryId) => categoryId === id).length,
+            }));
     }
 
-    private getMappedGameCategories(gameCategories: CategoryType[], categories: Category[]): GameCategory[] {
-        return gameCategories
-            .map((categoryType: CategoryType) => ({ type: categoryType, iconName: categories.find((category: Category) => category.type === categoryType).iconName }))
-            .sort((a: GameCategory, b: GameCategory) => this.categoriesSortOrder.indexOf(a.type) - this.categoriesSortOrder.indexOf(b.type));
+    private getMappedGames(sortedCategories: Category[], games: Game[]): MappedGame[] {
+        const oneHundredPercentIconName = sortedCategories.find((category) => category.kind === CategoryKind.ONE_HUNDRED_PERCENT)?.iconName ?? '';
+
+        return games
+            .map((game) => ({
+                id: game.id,
+                name: game.name,
+                hasNewAchievements: game.hasNewAchievements,
+                categories: this.getMappedGameCategories(
+                    game.categories.map(({ id }) => id),
+                    sortedCategories
+                ),
+                oneHundredPercentIconName,
+                groups: this.getMappedGroups(game.groups),
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    private getMappedGroups(groups: GameGroup[]): MappedGroup[] {
+        return groups.map(({ id, name, hasNewAchievements }) => ({ id, name, hasNewAchievements })).sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    private getMappedGameCategories(gameCategoriesIds: number[], sortedCategories: Category[]): GameCategory[] {
+        return sortedCategories
+            .filter((category) => category.kind !== CategoryKind.ONE_HUNDRED_PERCENT && gameCategoriesIds.includes(category.id))
+            .map(({ id, kind, iconName, shouldHideGames }) => ({ id, kind, iconName, shouldHideGames }));
+    }
+
+    // A completed base game lists its completed groups below itself, otherwise each completed group is a separate entry
+    private getCompletedEntries(game: MappedGame): DescriptionEntry[] {
+        const completedGroups = game.groups.filter((group) => !group.hasNewAchievements);
+
+        if (!game.hasNewAchievements) {
+            return [{ game, group: null, listedGroups: completedGroups }];
+        }
+
+        return completedGroups.map((group) => ({ game, group, listedGroups: [] }));
+    }
+
+    private getNewAchievementsEntries(game: MappedGame): DescriptionEntry[] {
+        const groupEntries = game.groups.filter((group) => group.hasNewAchievements).map((group) => ({ game, group, listedGroups: [] }));
+
+        return game.hasNewAchievements ? [{ game, group: null, listedGroups: [] }, ...groupEntries] : groupEntries;
+    }
+
+    private getSection(entries: DescriptionEntry[]): DescriptionSection {
+        const gamesAmount = entries.filter(({ group }) => group === null).length;
+        const groupsAmount = entries.reduce((amount, { group, listedGroups }) => amount + (group ? 1 : 0) + listedGroups.length, 0);
+
+        return {
+            amount: gamesAmount + groupsAmount,
+            gamesAmount,
+            groupsAmount,
+            entries,
+        };
     }
 }

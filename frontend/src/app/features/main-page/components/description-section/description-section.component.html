@@ -1,71 +1,107 @@
-<mados-section-heading [headingText]="headingText"></mados-section-heading>
+<section [attr.aria-labelledby]="headingId">
+    <div class="heading-container">
+        <mados-section-heading [headingText]="'descriptionSection.heading' | transloco" [id]="headingId" />
+        <p [class.limit-reached]="isLimitReached()" aria-live="polite" class="characters-counter" data-testId="charactersCounter">
+            {{ 'descriptionSection.charactersCounter' | transloco: { size: descriptionSize(), max: maxDescriptionSize } }}
+        </p>
+    </div>
 
-<section class="description">
-    <div class="icons-container">
-        <mat-icon
-            *ngIf="!shouldShowEdition"
-            (click)="handleEditionMode()"
-            fontIcon="edit_off"
-            class="icon"
-        ></mat-icon>
-        <mat-icon
-            *ngIf="shouldShowEdition"
-            (click)="handleEditionMode()"
-            fontIcon="edit"
-            class="icon"
-        ></mat-icon>
-        <mat-icon
-            #tooltip="matTooltip"
-            (click)="handleTooltip($event, tooltip)"
-            (mouseenter)="$event.stopImmediatePropagation()"
-            (mouseleave)="$event.stopImmediatePropagation()"
-            [matTooltip]="tooltipText"
-            [cdkCopyToClipboard]="descriptionToCopy"
-            fontIcon="content_copy"
-            class="icon"
-        ></mat-icon>
+    <div class="description">
+        <div class="icons-container">
+            <button
+                #editModeButton
+                (click)="handleEditionMode()"
+                [attr.aria-pressed]="shouldShowEdition()"
+                [attr.aria-label]="'descriptionSection.editModeAriaLabel' | transloco"
+                class="icon-button"
+                data-testId="editModeButton"
+                type="button"
+                matIconButton
+            >
+                <mat-icon [fontIcon]="shouldShowEdition() ? 'edit' : 'edit_off'"></mat-icon>
+            </button>
+            <button
+                (cdkCopyToClipboardCopied)="handleDescriptionCopied($event)"
+                [cdkCopyToClipboard]="descriptionToCopy()"
+                [attr.aria-label]="'descriptionSection.copyDescriptionAriaLabel' | transloco"
+                class="icon-button"
+                data-testId="copyDescriptionButton"
+                matIconButton
+                type="button"
+            >
+                <mat-icon fontIcon="content_copy"></mat-icon>
+            </button>
+        </div>
+
+        @for (category of descriptionData().categories; track category.id) {
+            @let categoryKey = `category-${category.id}`;
+
+            <mados-category
+                [cutOffIndex]="cutOffIndexes().get(categoryKey)"
+                [isBlockStart]="blockStartCategoriesIds().has(category.id)"
+                [iconName]="category.iconName"
+                [description]="category.description"
+                [amount]="category.amount"
+            />
+        }
+
+        @if (descriptionData().completed.amount) {
+            <div class="margin-top">
+                <p aria-hidden="true" class="section-line">
+                    <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-top')" />
+                </p>
+                <p class="section-line">
+                    <mados-cut-off-text [text]="completedHeading()" [cutOffIndex]="cutOffIndexes().get('completed-heading')" />
+                </p>
+                <p aria-hidden="true" class="section-line">
+                    <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('completed-separator-bottom')" />
+                </p>
+            </div>
+            <div class="margin-top">
+                @for (entry of descriptionData().completed.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
+                    @let completedEntryKey = `completed-${entry.game.id}-${entry.group?.id ?? 'base'}`;
+
+                    <mados-game (reloadDescription)="handleEntryDeleted()" [cutOffIndex]="cutOffIndexes().get(completedEntryKey)" [entry]="entry" [shouldShowEdition]="shouldShowEdition()" data-testId="descriptionGame" />
+                }
+
+                @if (completedHiddenGamesText()) {
+                    <p class="hidden-games-text">
+                        <mados-cut-off-text [text]="completedHiddenGamesText()" [cutOffIndex]="cutOffIndexes().get('completed-hidden-games')" />
+                    </p>
+                }
+            </div>
+        }
+
+        @if (descriptionData().newAchievements.amount) {
+            <div class="margin-top">
+                <p aria-hidden="true" class="section-line">
+                    <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-top')" />
+                </p>
+                <p class="section-line">
+                    <mados-cut-off-text [text]="newAchievementsHeading()" [cutOffIndex]="cutOffIndexes().get('new-achievements-heading')" />
+                </p>
+                <p aria-hidden="true" class="section-line">
+                    <mados-cut-off-text [text]="sectionSeparator" [cutOffIndex]="cutOffIndexes().get('new-achievements-separator-bottom')" />
+                </p>
+            </div>
+            <div class="margin-top">
+                @for (entry of descriptionData().newAchievements.entries; track `${entry.game.id}-${entry.group?.id ?? 'base'}`) {
+                    @let newAchievementsEntryKey = `new-achievements-${entry.game.id}-${entry.group?.id ?? 'base'}`;
+
+                    <mados-game
+                        (reloadDescription)="handleEntryDeleted()"
+                        [cutOffIndex]="cutOffIndexes().get(newAchievementsEntryKey)"
+                        [entry]="entry"
+                        [shouldShowEdition]="shouldShowEdition()"
+                    />
+                }
+
+                @if (newAchievementsHiddenGamesText()) {
+                    <p class="hidden-games-text">
+                        <mados-cut-off-text [text]="newAchievementsHiddenGamesText()" [cutOffIndex]="cutOffIndexes().get('new-achievements-hidden-games')" />
+                    </p>
+                }
+            </div>
+        }
     </div>
-    <div class="categories">
-        <mados-category
-            *ngFor="let category of description?.categories"
-            [type]="category.type"
-            [iconName]="category.iconName"
-            [description]="category.description"
-            [amount]="category?.amount"
-        ></mados-category>
-    </div>
-    <ng-container *ngIf="description.completedGames?.length">
-        <div class="margin-top">
-            <p>{{ sectionSeparator }}</p>
-            <p>COMPLETED ({{ description.completedGames.length }}):</p>
-            <p>{{ sectionSeparator }}</p>
-        </div>
-        <div *ngIf="description.completedGames?.length" class="margin-top">
-            <mados-game
-                *ngFor="let game of description.completedGames"
-                (reloadDescription)="deleteGame()"
-                [oneHundredPercentIconName]="game.oneHundredPercentIconName"
-                [name]="game.name"
-                [categories]="game?.categories"
-                [shouldShowEdition]="shouldShowEdition"
-            ></mados-game>
-        </div>
-    </ng-container>
-    <ng-container *ngIf="description.gamesWithNewAchievements?.length">
-        <div class="margin-top">
-            <p>{{ sectionSeparator }}</p>
-            <p>NEW ACHIEVEMENTS ({{ description.gamesWithNewAchievements.length }}):</p>
-            <p>{{ sectionSeparator }}</p>
-        </div>
-        <div class="margin-top">
-            <mados-game
-                *ngFor="let game of description.gamesWithNewAchievements"
-                (reloadDescription)="deleteGame()"
-                [oneHundredPercentIconName]="game.oneHundredPercentIconName"
-                [name]="game.name"
-                [categories]="game?.categories"
-                [shouldShowEdition]="shouldShowEdition"
-            ></mados-game>
-        </div>
-    </ng-container>
 </section>

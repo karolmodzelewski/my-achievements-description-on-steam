@@ -1,22 +1,26 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
-import { CategoryType } from '../../../../../../enums/category-type.enum';
+import { TranslocoPipe } from '@jsverse/transloco';
+
+import { joinDescriptionParts } from '../../../../utils/description-text.util';
+import { CutOffTextComponent } from '../cut-off-text/cut-off-text.component';
 
 @Component({
     selector: 'mados-category',
     templateUrl: './category.component.html',
-    styleUrls: ['./category.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrl: './category.component.scss',
+    imports: [CutOffTextComponent, TranslocoPipe],
 })
 export class CategoryComponent {
-    @Input()
-    public type: CategoryType;
-    @Input()
-    public iconName: string;
-    @Input()
-    public description: string | null;
-    @Input()
-    public amount: number | undefined;
+    public readonly iconName = input.required<string>();
+    public readonly description = input.required<string | null>();
+    public readonly amount = input<number>();
+    public readonly cutOffIndex = input<number>();
+    // The first category of a kind, separated from the categories of the previous kind
+    public readonly isBlockStart = input<boolean>(false);
 
-    public CategoryType: typeof CategoryType = CategoryType;
+    // Empty categories are hidden information, presented only in the application and never copied
+    public readonly isHidden = computed<boolean>(() => this.amount() === 0);
+    // Shared with the copied description, so the cut off index points to the same character
+    public readonly categoryLine = computed<string>(() => joinDescriptionParts(this.iconName(), this.description() ?? '', `(${this.amount() ?? 0})`));
 }

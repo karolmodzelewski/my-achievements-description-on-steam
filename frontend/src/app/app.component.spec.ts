@@ -1,19 +1,29 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
-            declarations: [AppComponent],
-        }).compileComponents();
-    }));
+    let component: AppComponent;
+    let fixture: ComponentFixture<AppComponent>;
 
-    it('should create the app', () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        const app = fixture.componentInstance;
-        expect(app).toBeTruthy();
+    beforeEach(async () => {
+        TestBed.configureTestingModule({
+            imports: [AppComponent],
+            providers: [provideRouter([])],
+        });
+
+        fixture = TestBed.createComponent(AppComponent);
+        component = fixture.componentInstance;
+
+        await fixture.whenStable();
+    });
+
+    it('should create a component', () => {
+        // Assert
+        expect(component).toBeTruthy();
     });
 });
