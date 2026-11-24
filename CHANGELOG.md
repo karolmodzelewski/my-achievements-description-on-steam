@@ -2,6 +2,10 @@
 
 Both frontend and backend changes and the final version of the application will be documented in this file.
 
+## 2.0.0 - 24.11.2026
+
+- Release MADOS 2.0.0 version
+
 ## 1.22.0 - 24.11.2026
 
 - Rewrite README with a detailed description of the application, its features, prerequisites and missing commands
